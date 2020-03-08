@@ -20,7 +20,6 @@ from robot_manager.pepper.enums.motion_enums import HeadMotion, Animation, Auton
 from robot_manager.pepper.enums.tablet_enums import TabletAction
 from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
 from robot_manager.pepper.model.pepper_robot import PepperRobot
-from robot_manager.pepper.hre_chat.robot_chat import RobotChatAgent
 from es_common.utils.timer_helper import TimerHelper
 
 import math
@@ -208,27 +207,27 @@ class RobotController(object):
     """
     CHAT AGENT
     """
-    def activate_chat_agent(self):
-        self.pepper_robot.subscribe_to_sound_detection()
-        if self.chat_agent is None:
-            self.chat_agent = RobotChatAgent()
-            self.pepper_robot.subscribe_to_speech_events()
-            self.robot_id = self.pepper_robot.last_input.signal.connect(functools.partial(self.on_speech))
-            self.logger.info("### Chat is enabled")
-
-    def on_speech(self, input):
-        if input is None or input.strip() == '':
-            return
-        self.pepper_robot.last_input.signal.disconnect(self.robot_id)
-
-        self.logger.info("Pepper heard: {}".format(input))
-        response = self.chat_agent.get_intent_from_text(input)
-        self.pepper_robot.animated_say(message=response)
-        # Subscribe to speech events
-        self.robot_id = self.pepper_robot.last_input.signal.connect(functools.partial(self.on_speech))
-
-    def set_sound_sensitivity(self, sensitivity=pconfig.sound_sensitivity):
-        self.pepper_robot.sound_sensitivity(sensitivity=sensitivity)
+    # def activate_chat_agent(self):
+    #     self.pepper_robot.subscribe_to_sound_detection()
+    #     if self.chat_agent is None:
+    #         self.chat_agent = RobotChatAgent()
+    #         self.pepper_robot.subscribe_to_speech_events()
+    #         self.robot_id = self.pepper_robot.last_input.signal.connect(functools.partial(self.on_speech))
+    #         self.logger.info("### Chat is enabled")
+    #
+    # def on_speech(self, input):
+    #     if input is None or input.strip() == '':
+    #         return
+    #     self.pepper_robot.last_input.signal.disconnect(self.robot_id)
+    #
+    #     self.logger.info("Pepper heard: {}".format(input))
+    #     response = self.chat_agent.get_intent_from_text(input)
+    #     self.pepper_robot.animated_say(message=response)
+    #     # Subscribe to speech events
+    #     self.robot_id = self.pepper_robot.last_input.signal.connect(functools.partial(self.on_speech))
+    #
+    # def set_sound_sensitivity(self, sensitivity=pconfig.sound_sensitivity):
+    #     self.pepper_robot.sound_sensitivity(sensitivity=sensitivity)
 
     """
     Tablet control methods
