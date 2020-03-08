@@ -123,3 +123,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.DS_Store
+logs/
+blocks/
+./idea
+robot_manager/pepper/hre_chat/credentials*.json

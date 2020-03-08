@@ -1,0 +1,9 @@
+logger:
+    name: interaction_logger
+
+scene:
+  width: 1000
+  height: 1000
+
+history:
+  step_limit: 30

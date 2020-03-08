@@ -1,0 +1,44 @@
+topic: ~service()
+language: enu
+
+include: general.top
+
+#u: (e:startTopicTag) ^gotoReactivate(pepperTag)
+#u: (e:pageLoaded $pageLoaded=="help") back to $pageLoaded
+
+#u: (e:Dialog/Fallback) Can you please answer my question ? ^gotoReactivate(offerHelpTag)
+
+u: ({can you} help {me} {please}) ^gotoReactivate(offerHelpTag)
+
+#u: (["How are" "How're"] you) ~i_am fine, thanks. $iAmFine=1 ^gotoReactivate(howAreYouTag)
+
+# when a user clicks on the buttons
+u: (e:checkIn) "Sure. $checkInEvent=1 $blockCompleted=1 ^gotoReactivate(resetWebPageTag)"
+u: (e:serviceType $serviceType==1) "Sure." $checkInEvent=1 $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+u: (e:newAppointment) Can't do that, sorry. Let me ask you again ^gotoReactivate(offerHelpTag)
+
+u: (e:noAnswer) No worries $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+u: (e:yesAnswer) Okay $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+
+u: ({can you} repeat {please}) "Sure, i'll repeat." ^gotoReactivate($lastTagName)
+
+# PROPOSALS:
+# ----------
+# Offer Help
+proposal: %offerHelpTag $lastTagName=offerHelpTag $anim=["^notExist(customAnimation) ~neutralAnimation" "$customAnimation"] "^start($anim) ["^notExist(customMessage) How can I help you?" "$customMessage"] ^wait($anim)" ^stayInScope
+    u1: ( [~no Nothing "not now"]) Okay $blockCompleted=1 $stageCompleted=1 ^gotoReactivate(resetWebPageTag)
+    u1: ({I want to} check in {for an appointment}) Okay $checkInEvent=1 $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+    u1: (["{I want} an appointment" "new appointment"]) "Can't do that, sorry. Let me ask you again" $newAppointmentEvent=1 ^gotoReactivate(offerHelpTag)
+
+# Ask for Name
+proposal: %askForNameTag $lastTagName=askForNameTag $anim=["^notExist(customAnimation) ~neutralAnimation" "$customAnimation"] "^start($anim) ["^notExist(customMessage) ~what_is your name?" "$customMessage"] ^wait($anim)" ^stayInScope
+    u1: ({~myname} {~myname_shorter} {my name is} _~namesList) $name=$1 ^gotoReactivate(welcomeWebPageTag) Okay $name $blockCompleted=1
+
+# confirm appointment
+proposal: %confirmApptTag $lastTagName=confirmApptTag $anim=["^notExist(customAnimation) ~neutralAnimation" "$customAnimation"] "^start($anim) ["^notExist(customMessage) Your appointment is at 10am, is that correct?" "$customMessage"] ^wait($anim)"
+    u1: (~yes) "Okay" $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+    u1: (~no) "Oh, don't worry, we will find you something." $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
+
+proposal: %welcomeWebPageTag $lastTagName=welcomeWebPageTag $pageName="displayinfo" $pageHeading="Welcome $name" $pageText="I am happy to assist you." ^topicTagReactivate(general, getAndFillPageTag)
+
+proposal: %resetWebPageTag $lastTagName=resetWebPageTag $pageName="index" ^topicTagReactivate(general, loadPageTag)

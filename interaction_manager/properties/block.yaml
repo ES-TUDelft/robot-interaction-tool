@@ -1,0 +1,63 @@
+colors:
+    white: FFFFFF
+    gray: D1D0CE
+    silver: BCC6CC
+    maroon: A52A2A
+    pen:
+        default: FF000000
+        selected: 3090C7
+        light: 2F2F2F
+        dark: 1F1F1F
+        edge: BCC6CC
+        edge_selected: 3090C7
+    brush:
+        block_title: D6D6D6 #FF313131
+        scene_bg: 5E5E5E # 393939
+        block_bg: E3212121
+    socket:
+        in: BCC6CC
+        out: 848482
+        out_selected: 008080
+
+font: 'Courier New'
+size:
+    block_width: 150
+    block_height: 110
+    rounded_edge_size: 10.0 # rounded_edge of the triangle
+    title_height: 24.0
+
+icons:
+    settings: interaction_manager/icons/gray/parameters.png
+    edit: interaction_manager/icons/gray/edit.png
+
+patterns:
+    start:
+        inputs: 0
+        outputs: 1
+        icon: interaction_manager/icons/blue/start.png
+    end:
+        inputs: 1
+        outputs: 0
+        icon: interaction_manager/icons/blue/x.png
+    question:
+        inputs: 1
+        outputs: 1
+        icon: interaction_manager/icons/blue/question-mark.png
+    instructions:
+        inputs: 1
+        outputs: 1
+        icon: interaction_manager/icons/blue/instructions.png
+    monologue:
+        inputs: 1
+        outputs: 1
+        icon: interaction_manager/icons/blue/speaker.png
+    action_wait:
+        inputs: 1
+        outputs: 1
+        icon: interaction_manager/icons/blue/action-wait.png
+    condition:
+        inputs: 1
+        outputs: 1
+        icon: interaction_manager/icons/blue/condition.png
+
+block_mimetype: application/x-item

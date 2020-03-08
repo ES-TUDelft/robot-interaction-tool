@@ -1,0 +1,24 @@
+topics:
+    question:
+      tags:
+        askQuestionTag:
+          pages:
+            - index
+            - displayinfo
+        confirmationTag:
+          pages:
+            - index
+            - displayinfo
+            - confirmation
+        offerHelpTag:
+          pages:
+            - index
+            - displayinfo
+            - help
+tablet:
+  pages:
+    - index
+    - displayinfo
+  images:
+    - pepper-standing.png
+    - pepper-question.png
