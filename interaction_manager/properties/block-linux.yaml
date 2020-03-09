@@ -23,10 +23,11 @@ font: Arial
 size:
     block:
         width: 320
-        height: 200
+        height: 220
         rounded_edge_size: 10.0 # rounded_edge of the triangle
         title_height: 50.0
-        icon_dim: [60, 60]
+        icon_dim: [70, 70]
+        list_icon_dim: [60, 60]
     socket:
         width: 10.0
         height: 10.0

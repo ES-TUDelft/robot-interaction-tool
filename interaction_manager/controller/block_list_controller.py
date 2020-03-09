@@ -23,7 +23,7 @@ class BlockListWidget(QListWidget):
 
         self.logger = logging.getLogger("BlockList Widget")
 
-        self.icon_dim = [50, 50]
+        self.icon_dim = config_helper.get_block_size_settings()["list_icon_dim"]
         self._init_ui()
 
     def _init_ui(self):
