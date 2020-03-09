@@ -23,7 +23,7 @@ class InteractionBlock(Serializable):
                  behavioral_parameters=None, block=None):
         super(InteractionBlock, self).__init__()
 
-        self.name = "New Block" if name is None else name
+        self.name = "start" if name is None else name
         self.stage = "Opening" if stage is None else stage
         self.topic_tag = TopicTag() if topic_tag is None else topic_tag
         self.tablet_page = TabletPage() if tablet_page is None else tablet_page

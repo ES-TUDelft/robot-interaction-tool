@@ -1,0 +1,74 @@
+start:
+    inputs: 0
+    outputs: 1
+    icon: interaction_manager/icons/blue/start.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo
+end:
+    inputs: 1
+    outputs: 0
+    icon: interaction_manager/icons/blue/x.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo
+question:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/question-mark.png
+    topic: "question"
+    tags:
+        - askQuestionTag
+    tablet:
+        - index
+        - displayinfo
+confirmation:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/question-mark.png
+    topic: "question"
+    tags:
+        - confirmationTag
+    tablet:
+        - index
+        - displayinfo
+instructions:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/instructions.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo
+monologue:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/speaker.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo
+action_wait:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/action-wait.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo
+condition:
+    inputs: 1
+    outputs: 1
+    icon: interaction_manager/icons/blue/condition.png
+    topic: ""
+    tags: []
+    tablet:
+        - index
+        - displayinfo

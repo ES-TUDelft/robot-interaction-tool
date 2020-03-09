@@ -13,11 +13,11 @@
 import logging
 import time
 
-from interaction_manager.controller.app_robot_controller import AppRobotController
+import es_common.hre_config as pconfig
 from interaction_manager.model.interaction_design import InteractionDesign
+from robot_manager.pepper.controller.robot_controller import RobotController
 from thread_manager.robot_animation_threads import WakeUpRobotThread, AnimateRobotThread
 from thread_manager.robot_engagement_threads import EngagementThread, FaceTrackerThread
-import es_common.hre_config as pconfig
 
 
 class InteractionController(object):
@@ -50,7 +50,7 @@ class InteractionController(object):
         pconfig.robot_ip = self.robot_ip
         pconfig.naoqi_port = self.port
 
-        self.robot_controller = AppRobotController()
+        self.robot_controller = RobotController()
 
         message, error, is_awake = self.robot_controller.connect(robot_ip=self.robot_ip, port=self.port)
 

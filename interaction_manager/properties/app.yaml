@@ -1,20 +1,18 @@
-topics:
-    question:
-      tags:
-        askQuestionTag:
-          pages:
-            - index
-            - displayinfo
-        confirmationTag:
-          pages:
-            - index
-            - displayinfo
-            - confirmation
-        offerHelpTag:
-          pages:
-            - index
-            - displayinfo
-            - help
+tags:
+  askQuestionTag:
+    pages:
+      - index
+      - displayinfo
+  confirmationTag:
+    pages:
+      - index
+      - displayinfo
+      - confirmation
+  offerHelpTag:
+    pages:
+      - index
+      - displayinfo
+      - help
 tablet:
   pages:
     - index

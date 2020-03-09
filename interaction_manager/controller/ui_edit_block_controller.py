@@ -35,6 +35,9 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         self.interaction_block = interaction_block
 
+        self.pattern = self.interaction_block.block.title.lower()
+        self.pattern_settings = config_helper.get_patterns()[self.pattern]
+
         # init ui elements
         self._init_ui()
 
@@ -48,7 +51,7 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.setWindowTitle("Edit Block")
 
         # block properties
-        self.ui.patternLineEdit.setText(self.interaction_block.block.title)
+        self.ui.patternLineEdit.setText(self.pattern)
         self.ui.blockDescriptionLineEdit.setText(self.interaction_block.block.description)
 
         # Message
@@ -99,41 +102,51 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.toggle_topic_tab()
 
     def toggle_topic_tab(self):
-        pattern = "{}".format(self.ui.patternLineEdit.text())
         topic_index = self.ui.tabWidget.indexOf(self.ui.tabWidget.findChild(QtWidgets.QWidget, 'topicTab'))
 
-        if "monologue" in pattern.lower():
-            self.ui.tabWidget.setTabEnabled(topic_index, False)  # or use: self.ui.topicTab.setEnabled(False)
+        if self.pattern_settings["topic"] == "":
+            self.ui.tabWidget.setTabEnabled(topic_index, False)  # self.ui.topicTab.setEnabled(False)
             self._set_topic_tab(reset=True)
         else:
-            self.ui.tabWidget.setTabEnabled(topic_index, True)  # or use: self.ui.topicTab.setEnabled(True)
+            self.ui.topicTab.setEnabled(True)
             self._set_topic_tab(reset=False)
 
     def update_tags(self):
         # tags
         self.ui.topicTagComboBox.clear()
         # self.ui.topicTagComboBox.addItems([pconfig.SELECT_OPTION])
-        topic_name = "{}".format(self.ui.topicNameComboBox.currentText())
-        topics = config_helper.get_topics()
-        if topic_name in topics:
+
+        tags = self.pattern_settings["tags"]
+        if len(tags) > 1:
             self.ui.topicTagComboBox.addItems([pconfig.SELECT_OPTION])
-            self.ui.topicTagComboBox.addItems([tag for tag in topics[topic_name]['tags']])
+        self.ui.topicTagComboBox.addItems(tags)
+
+        tag = self.interaction_block.topic_tag.name
+        if tag != "" and tag.lower() in tags:
+            self.ui.topicTagComboBox.setCurrentIndex(
+                self.ui.topicTagComboBox.findText(tag.lower(), QtCore.Qt.MatchFixedString))
 
         self.update_pages()
 
     def update_pages(self):
         self.ui.tabletPageNameComboBox.clear()
         self.ui.tabletPageNameComboBox.addItems([pconfig.SELECT_OPTION])
-        app_props = self.get_app_properties()
 
-        # check topic tag pages
-        tag = "{}".format(self.ui.topicTagComboBox.currentText())
-        if (pconfig.SELECT_OPTION in tag) or (tag == ""):
-            # use default pages
-            self.ui.tabletPageNameComboBox.addItems(app_props['tablet']['pages'])
+        # No topic ==> use default pages
+        # Topic with no tag ==> use default
+        # Topic with tag ==> check options
+        if self.pattern_settings["topic"] == "":
+            self.ui.tabletPageNameComboBox.addItems(self.pattern_settings["tablet"])
         else:
-            self.ui.tabletPageNameComboBox.addItems(
-                app_props['topics']["{}".format(self.ui.topicNameComboBox.currentText())]['tags'][tag]['pages'])
+            # check topic tag pages
+            tag = "{}".format(self.ui.topicTagComboBox.currentText())
+            tags = config_helper.get_tags()
+
+            if (pconfig.SELECT_OPTION in tag) or (tag == "") or tag not in tags:
+                # use default pages
+                self.ui.tabletPageNameComboBox.addItems(self.pattern_settings["tablet"])
+            else:
+                self.ui.tabletPageNameComboBox.addItems(tags[tag]["pages"])
 
     def update_gesture_text_box(self, combo_box, text_box, gesture_type):
         gesture_name = "{}".format(combo_box.currentText())
@@ -145,38 +158,38 @@ class UIEditBlockController(QtWidgets.QDialog):
         if gesture_name in gest:
             text_box.setText("{}".format(gest[gesture_name][0]))
 
-    def get_app_properties(self):
-        return config_helper.get_app_properties()
-
     def _set_topic_tab(self, reset=False):
+        # clear the combo-boxes
+        self.ui.topicNameComboBox.clear()
+        self.ui.topicTagComboBox.clear()
+
         # set answers and feedbacks
         if reset is True:
-            tag, topic, a1, a2, f1, f2 = ('',) * 6
+            tag, topic, a1, a2, f1, f2 = ("", ) * 6
         else:
             topic_tag = self.interaction_block.topic_tag
             tag = topic_tag.name
             topic = topic_tag.topic
+
             a1 = '' if len(topic_tag.answers) == 0 else topic_tag.answers[0]
             a2 = '' if len(topic_tag.answers) < 2 else topic_tag.answers[1]
 
             f1 = '' if len(topic_tag.feedbacks) == 0 else topic_tag.feedbacks[0]
             f2 = '' if len(topic_tag.feedbacks) < 2 else topic_tag.feedbacks[1]
 
-        app_props = self.get_app_properties()
+            # topic properties ==> we're using one topic for now!
+            # self.ui.topicNameComboBox.addItems([pconfig.SELECT_OPTION])
+            # available_topics = [t for t in config_helper.get_topics()]
+            self.ui.topicNameComboBox.addItems([self.pattern_settings["topic"]])
 
-        # set topic tab
-        self.ui.topicNameComboBox.clear()
-        self.ui.topicNameComboBox.addItems([pconfig.SELECT_OPTION])
-        available_topics = [t for t in config_helper.get_topics()]
-        self.ui.topicNameComboBox.addItems(available_topics)
-        if topic.lower() != "":
-            self.ui.topicNameComboBox.setCurrentIndex(
-                self.ui.topicNameComboBox.findText(topic.lower(), QtCore.Qt.MatchFixedString))
-        # tags
-        self.update_tags()
-        self.ui.topicTagComboBox.setCurrentIndex(
-            self.ui.topicTagComboBox.findText(tag.lower(), QtCore.Qt.MatchFixedString))
+            if topic.lower() != "" and topic.lower() != self.pattern_settings["topic"]:
+                self.ui.topicNameComboBox.addItems([topic.lower()])
+                self.ui.topicNameComboBox.setCurrentIndex(
+                    self.ui.topicNameComboBox.findText(topic.lower(), QtCore.Qt.MatchFixedString))
+            # tags
+            self.update_tags()
 
+        # update the slots
         self.ui.answer1TextEdit.setText(a1)
         self.ui.answer2TextEdit.setText(a2)
         self.ui.feedback1TextEdit.setText(f1)

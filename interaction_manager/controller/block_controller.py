@@ -103,6 +103,8 @@ class BlockController(object):
             num_inputs = patterns[pattern.lower()]["inputs"]
             num_outputs = patterns[pattern.lower()]["outputs"]
             icon = patterns[pattern.lower()]["icon"]
+        else:
+            pattern = "start"
 
         # TODO: create block from pattern
         interaction_block = InteractionBlock(name=title)

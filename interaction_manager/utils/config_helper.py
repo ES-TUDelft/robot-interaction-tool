@@ -43,10 +43,10 @@ def get_app_properties():
 app_properties = get_app_properties()
 
 
-def get_topics():
-    # returns dict of gestures: 
+def get_tags():
+    # returns dict of gestures:
     # names are the keys and path are values
-    return _get_property(app_properties, 'topics')
+    return _get_property(app_properties, 'tags')
 
 
 ####
@@ -98,10 +98,6 @@ def get_icons():
     return block_props["icons"]
 
 
-def get_patterns():
-    return block_props["patterns"]
-
-
 def get_block_mimetype():
     return block_props["block_mimetype"]
 
@@ -112,6 +108,28 @@ def get_block_size_settings():
 
 def get_socket_size_settings():
     return block_props["size"]["socket"]
+
+
+####
+# Patterns
+###
+def _get_patterns_properties():
+    patt = None
+    try:
+        # on Linux use: block-linux.yaml
+        with open("interaction_manager/properties/patterns.yaml", 'r') as yaml_file:
+            patt = yaml.load(yaml_file, Loader=yaml.SafeLoader)
+    except Exception as e:
+        logger.error("Error while opening the patterns properties file! {}".format(e))
+    finally:
+        return patt
+
+
+_patterns = _get_patterns_properties()
+
+
+def get_patterns():
+    return _patterns
 
 
 ####
