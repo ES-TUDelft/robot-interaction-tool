@@ -19,17 +19,17 @@ colors:
         out: 848482
         out_selected: 008080
 
-font: 'Courier New'
+font: 'Arial'
 size:
     block:
-        width: 160
-        height: 110
+        width: 300
+        height: 2000
         rounded_edge_size: 10.0 # rounded_edge of the triangle
-        title_height: 24.0
-        icon_dim: [40, 40]
+        title_height: 50.0
+        icon_dim: [60, 60]
     socket:
-        width: 6.0
-        height: 6.0
+        width: 10.0
+        height: 10.0
 
 icons:
     settings: interaction_manager/icons/gray/parameters.png

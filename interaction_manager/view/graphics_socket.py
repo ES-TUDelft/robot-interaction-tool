@@ -15,7 +15,8 @@ class ESGraphicsSocket(QGraphicsItem):
         self.socket = socket
 
         # properties
-        self.width, self.height = 6.0, 6.0
+        socket_size_settings = config_helper.get_socket_size_settings()
+        self.width, self.height = socket_size_settings["width"], socket_size_settings["height"]
         self.outline_width = 2.0
 
         block_colors = config_helper.get_colors()

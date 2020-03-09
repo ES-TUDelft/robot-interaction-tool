@@ -19,7 +19,7 @@ class ESGraphicsEdge(QGraphicsPathItem):
         self.edge = edge
 
         # pen
-        block_colors = config_helper.block_props['colors']
+        block_colors = config_helper.get_colors()
         self._pen = QPen(QColor("#{}".format(block_colors['pen']['edge'])))
         self._pen.setWidth(2)
         self._pen_selected = QPen(QColor("#{}".format(block_colors['pen']['edge_selected'])))

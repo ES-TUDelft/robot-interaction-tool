@@ -7,3 +7,5 @@ pyuic5 -x ui/connectiondialog.ui -o view/ui_connection_dialog.py -x
 pyuic5 -x ui/editblockdialog.ui -o hre_view/ui_editblock_dialog.py -x
 pyuic5 -x ui/confirmationdialog.ui -o view/ui_confirmation_dialog.py -x
 pyuic5 -x ui/dbconnectiondialog.ui -o view/ui_db_connection_dialog.py -x
+
+

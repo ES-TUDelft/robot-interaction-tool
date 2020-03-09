@@ -78,6 +78,7 @@ def get_db_mongo_settings():
 def _get_block_properties():
     props = None
     try:
+        # on Linux use: block-linux.yaml
         with open("interaction_manager/properties/block.yaml", 'r') as yaml_file:
             props = yaml.load(yaml_file, Loader=yaml.SafeLoader)
     except Exception as e:
@@ -103,6 +104,14 @@ def get_patterns():
 
 def get_block_mimetype():
     return block_props["block_mimetype"]
+
+
+def get_block_size_settings():
+    return block_props["size"]["block"]
+
+
+def get_socket_size_settings():
+    return block_props["size"]["socket"]
 
 
 ####

@@ -17,10 +17,11 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         self.logger = logging.getLogger("GraphicsBlock")
 
         # properties
-        self.width = config_helper.block_props["size"]["block_width"]
-        self.height = config_helper.block_props["size"]["block_height"]
-        self.rounded_edge_size = config_helper.block_props["size"]["rounded_edge_size"]
-        self.title_height = config_helper.block_props["size"]["title_height"]  # pixels
+        block_size_settings = config_helper.get_block_size_settings()
+        self.width = block_size_settings["width"]
+        self.height = block_size_settings["height"]
+        self.rounded_edge_size = block_size_settings["rounded_edge_size"]
+        self.title_height = block_size_settings["title_height"]
 
         self._padding = 5.0
         self.is_moved = False
@@ -63,7 +64,7 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         self.title_item.block = self.block
 
         # self.title_item.setDefaultTextColor(Qt.white)
-        self.title_item.setFont(QFont("Courier New", 14, QFont.Bold))
+        self.title_item.setFont(QFont("Arial", 14, QFont.Bold))
         x_pos = self._padding + self.title_height  # self._padding + self.title_icon.pixmap().width()
         self.title_item.setPos(x_pos, 0)
         self.title_item.setTextWidth(

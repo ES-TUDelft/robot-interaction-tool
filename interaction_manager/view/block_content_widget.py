@@ -17,7 +17,8 @@ class ESBlockContentWidget(QWidget, Serializable ):
         self.logger = logging.getLogger("BlockContent")
 
         self.block = block
-        self.icon_dimensions = [40, 40]  # [width, height]
+        self.icon_dimensions = config_helper.get_block_size_settings()["icon_dim"]
+
         self._init_ui()
 
     def _init_ui(self):
