@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'hre_ui/ui_dialog/confirmationdialog.ui'
+# Form implementation generated from reading ui file 'interaction_manager/ui/confirmationdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_ConfirmationDialog(object):
     def setupUi(self, ConfirmationDialog):
         ConfirmationDialog.setObjectName("ConfirmationDialog")
-        ConfirmationDialog.resize(350, 250)
+        ConfirmationDialog.resize(400, 292)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ConfirmationDialog.sizePolicy().hasHeightForWidth())
         ConfirmationDialog.setSizePolicy(sizePolicy)
-        ConfirmationDialog.setMinimumSize(QtCore.QSize(250, 200))
-        ConfirmationDialog.setMaximumSize(QtCore.QSize(350, 250))
+        ConfirmationDialog.setMinimumSize(QtCore.QSize(0, 0))
+        ConfirmationDialog.setMaximumSize(QtCore.QSize(700, 500))
         self.gridLayout = QtWidgets.QGridLayout(ConfirmationDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.gridLayout_2 = QtWidgets.QGridLayout()
@@ -86,8 +85,6 @@ class Ui_ConfirmationDialog(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-style:italic;\">All items will be deleted!</span></p></body></html>"))
 
 
-
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -96,3 +93,4 @@ if __name__ == "__main__":
     ui.setupUi(ConfirmationDialog)
     ConfirmationDialog.show()
     sys.exit(app.exec_())
+

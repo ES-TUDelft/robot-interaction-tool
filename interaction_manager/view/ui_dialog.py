@@ -2,12 +2,11 @@
 
 # Form implementation generated from reading ui file 'interaction_manager/ui/dialogmainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_DialogGUI(object):
     def setupUi(self, DialogGUI):
@@ -84,7 +83,7 @@ class Ui_DialogGUI(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.behavioralParametersDockWidget.sizePolicy().hasHeightForWidth())
         self.behavioralParametersDockWidget.setSizePolicy(sizePolicy)
-        self.behavioralParametersDockWidget.setMinimumSize(QtCore.QSize(340, 550))
+        self.behavioralParametersDockWidget.setMinimumSize(QtCore.QSize(400, 600))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -108,7 +107,7 @@ class Ui_DialogGUI(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 403, 594))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 401, 594))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_13 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_13.setContentsMargins(11, 11, 11, 11)
@@ -580,11 +579,13 @@ class Ui_DialogGUI(object):
         self.actionMenuNew = QtWidgets.QAction(DialogGUI)
         self.actionMenuNew.setObjectName("actionMenuNew")
         self.actionMenuImportBlocks = QtWidgets.QAction(DialogGUI)
+        self.actionMenuImportBlocks.setEnabled(False)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/hreresources/icons/import.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionMenuImportBlocks.setIcon(icon2)
         self.actionMenuImportBlocks.setObjectName("actionMenuImportBlocks")
         self.actionMenuExportBlocks = QtWidgets.QAction(DialogGUI)
+        self.actionMenuExportBlocks.setEnabled(False)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/hreresources/icons/export.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionMenuExportBlocks.setIcon(icon3)
@@ -756,6 +757,7 @@ class Ui_DialogGUI(object):
         self.menuRobot.addAction(self.actionMenuVolumeDown)
         self.menuRobot.addSeparator()
         self.menuRobot.addAction(self.actionMenuTest)
+        self.menuRobot.addSeparator()
         self.menuRobot.addAction(self.actionMenuPlay)
         self.menuRobot.addAction(self.actionMenuPause)
         self.menuRobot.addAction(self.actionMenuStop)
@@ -894,9 +896,7 @@ class Ui_DialogGUI(object):
         self.actionMenuDatabaseConnect.setText(_translate("DialogGUI", "Connect"))
         self.actionMenuDatabaseDisconnect.setText(_translate("DialogGUI", "Disconnect"))
 
-
 import resources_rc
-
 
 if __name__ == "__main__":
     import sys
@@ -906,3 +906,4 @@ if __name__ == "__main__":
     ui.setupUi(DialogGUI)
     DialogGUI.show()
     sys.exit(app.exec_())
+

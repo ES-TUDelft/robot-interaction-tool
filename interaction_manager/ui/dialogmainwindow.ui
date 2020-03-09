@@ -193,8 +193,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>340</width>
-     <height>550</height>
+     <width>400</width>
+     <height>600</height>
     </size>
    </property>
    <property name="font">
@@ -245,7 +245,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>403</width>
+          <width>401</width>
           <height>594</height>
          </rect>
         </property>
@@ -1219,6 +1219,9 @@
    </property>
   </action>
   <action name="actionMenuImportBlocks">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="hre_resources/resources.qrc">
      <normaloff>:/hreresources/icons/import.png</normaloff>:/hreresources/icons/import.png</iconset>
@@ -1228,6 +1231,9 @@
    </property>
   </action>
   <action name="actionMenuExportBlocks">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="hre_resources/resources.qrc">
      <normaloff>:/hreresources/icons/export.png</normaloff>:/hreresources/icons/export.png</iconset>
