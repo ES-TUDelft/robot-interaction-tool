@@ -42,6 +42,7 @@ class InteractionController(object):
         self.interaction_design = None
 
         self.stop_playing = False
+        self.execution_result = None
 
     def connect_to_robot(self, robot_ip, port):
         self.robot_ip = robot_ip
@@ -136,56 +137,40 @@ class InteractionController(object):
             self.logger.info(to_say)
         self.animated_say(message=to_say)
 
-    def start_playing(self, int_block):
+    def start_playing(self, int_block, engagement_counter=0):
         if int_block is None:
-            return
+            return False
 
         self.stop_playing = False
+        self.previous_block = None
         self.current_block = int_block
         self.logger.debug("Started playing the blocks")
 
-    def play_next(self):
-        # change edge & block colors
-        pass
-
-    def play_blocks(self, interaction_blocks, engagement_counter=0):
-        self.interaction_blocks = interaction_blocks
-        # reset the engagement counter
+        # set the engagement counter
         self.engagement_counter = int(engagement_counter)  # int(self.ui.enagementRepetitionsSpinBox.value())
-        if len(self.interaction_blocks) > 0:
-            self.logger.info("{} block(s) remained from previous run!".format(len(self.interaction_blocks)))
-            self.current_block = None
 
-        self.interaction_blocks = self.get_interaction_blocks(all_blocks=True)
-        print("{}".format(len(self.interaction_blocks)))
-        if len(self.interaction_blocks) > 0:
-            self.interaction_design = InteractionDesign(communication_style="Interaction")
+        # if len(self.interaction_blocks) > 0:
+        # TODO: check if needed!
+        self.interaction_design = InteractionDesign(communication_style="Interaction")
 
-            # ready to interact
-            self.is_ready_to_interact = True
+        # ready to interact
+        self.is_ready_to_interact = True
 
-            # self.animation_thread.robot_controller.posture(reset = True)
-            if self.animation_thread.dialog_thread is None or (not self.animation_thread.dialog_thread.isRunning()):
-                self.animation_thread.dialog(start=True)
-                self.logger.info("Called dialog to start!")
+        # self.animation_thread.robot_controller.posture(reset = True)
+        if self.animation_thread.dialog_thread is None or (not self.animation_thread.dialog_thread.isRunning()):
+            self.animation_thread.dialog(start=True)
+            self.logger.info("Called dialog to start!")
 
-            # start engagement
-            self.engagement(start=True)
+        # start engagement
+        self.engagement(start=True)
 
     def get_next_interaction_block(self):
         self.logger.debug("Getting the next interaction block...")
         if self.current_block is None:
-            pass
-
-    def get_interaction_blocks(self, all_blocks=False):
-        blocks = []
-        if all_blocks is True:
-            pass
-            # TODO: retrieve all blocks from the scene
-        else:
-            pass
-            # TODO: retrieve selected block(s)
-        return blocks
+            return None
+        # TODO: return next block!
+        self.logger.debug("Execution Result: {}".format(self.animation_thread.execution_result))
+        return self.current_block.get_next_block(execution_result=self.animation_thread.execution_result)
 
     def interaction(self, start):
         self.logger.info("Interaction called with start = {}".format(start))
@@ -232,7 +217,6 @@ class InteractionController(object):
 
             else:  # continue
                 self.animation_thread.dialog(start=False, pause=True)
-                self.interaction_blocks = self.get_interaction_blocks()
                 # ready to interact
                 self.is_ready_to_interact = True
 
@@ -241,50 +225,49 @@ class InteractionController(object):
             self.logger.debug("*** Animation Thread is still running!")
             time.sleep(1)  # wait for the thread to finish
 
-        if self.current_block is not None:
-            # save the block
-            self.interaction_design.blocks[
-                "{}".format(len(self.interaction_design.blocks))] = self.current_block.to_dict
+        if self.previous_block is not None:  # playing is in progress
+            # get the next block to say
+            self.current_block = self.get_next_interaction_block()
 
         # if there are no more blocks, stop interacting
-        if self.interaction_blocks is None or len(self.interaction_blocks) == 0:
+        if self.current_block is None or self.stop_playing is True:
             self.animation_thread.customized_say(reset=True)
             # stop interacting
             self.interaction(start=False)
 
             self.tablet_image(hide=False)
-
-            self.current_block = None
         else:
-            # Say the first block
-            self.current_block = self.interaction_blocks.pop(0)  # remove first message and say it
-
+            # execute the block
+            # TODO: set the block state to 'executing'
             # set the tracker's gaze pattern
             if not self.face_tracker_thread.isRunning():
                 self.face_tracker_thread.track()
 
             self.face_tracker_thread.gaze_pattern = self.current_block.behavioral_parameters.gaze_pattern
+
+            # get the result from the execution
             self.animation_thread.customized_say(interaction_block=self.current_block)
 
             self.logger.debug("Robot: {}".format(self.current_block.message))
 
+            # update previous block
             self.previous_block = self.current_block
 
-    def test_behavioral_parameters(self, behavioral_parameters, volume):
+    def test_behavioral_parameters(self, interaction_block, behavioral_parameters, volume):
         message, error = (None,) * 2
 
         if self.robot_controller is None:
             error = "Please connect to the robot to be able to test the parameters."
         else:
-            lst = self.get_interaction_blocks(all_blocks=False)
-            if len(lst) > 0:
-                b = lst[0].clone()
-                b.behavioral_parameters = behavioral_parameters
-                b.behavioral_parameters.voice.volume = volume
-                self.face_tracker_thread.gaze_pattern = b.behavioral_parameters.gaze_pattern
-                self.animation_thread.test_mode = True
-                self.animation_thread.customized_say(interaction_block=b)
-                message = "Testing: {}".format(b.message)
+            b = interaction_block.clone()
+            b.behavioral_parameters = behavioral_parameters
+            b.behavioral_parameters.speech_act = interaction_block.speech_act.clone()
+            b.behavioral_parameters.voice.volume = volume
+            print(b.to_dict)
+            self.face_tracker_thread.gaze_pattern = b.behavioral_parameters.gaze_pattern
+            self.animation_thread.test_mode = True
+            self.animation_thread.customized_say(interaction_block=b)
+            message = "Testing: {}".format(b.message)
 
         return message, error
 

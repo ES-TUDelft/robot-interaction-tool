@@ -27,7 +27,10 @@ class InteractionBlock(Serializable):
         self.stage = "Opening" if stage is None else stage
         self.topic_tag = TopicTag() if topic_tag is None else topic_tag
         self.tablet_page = TabletPage() if tablet_page is None else tablet_page
+
+        self.icon_path = None
         self.set_icon_path(icon_path)
+
         self.behavioral_parameters = BehavioralParameters() if behavioral_parameters is None else behavioral_parameters
         self.block = block
 
@@ -40,6 +43,7 @@ class InteractionBlock(Serializable):
     def clone(self):
         block = InteractionBlock()
         block.name = self.name
+        block.message = self.message
         block.stage = self.stage
         block.topic_tag = self.topic_tag.clone()
         block.tablet_page = self.tablet_page.clone()
@@ -60,6 +64,13 @@ class InteractionBlock(Serializable):
             self.icon_path = icon_path
         else:
             self.icon_path = ":/hreresources/pepper-icons/{}".format(icon_path)
+
+    def get_next_block(self, execution_result=None):
+        connected_blocks = self.block.get_connected_blocks()
+        if connected_blocks is not None and len(connected_blocks) > 0:
+            return connected_blocks[0].parent
+
+        return None
 
     # ===========
     # PROPERTIES

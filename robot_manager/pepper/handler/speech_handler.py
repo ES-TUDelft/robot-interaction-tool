@@ -22,14 +22,15 @@ class SpeechHandler:
 
     def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
 
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("Speech Handler")
 
         self.tts = ALProxy("ALTextToSpeech", robot_ip, port) if session is None else session.service("ALTextToSpeech")
         self.animated_speech = ALProxy("ALAnimatedSpeech", robot_ip, port) if session is None else session.service(
             "ALAnimatedSpeech")
-        self.speech_recognition = ALProxy("ALSpeechRecognition", robot_ip,
-                                          port) if session is None else session.service("ALSpeechRecognition")
-        self.sound_detector = session.service("ALSoundDetection")
+
+        # self.speech_recognition = ALProxy("ALSpeechRecognition", robot_ip,
+        #                                   port) if session is None else session.service("ALSpeechRecognition")
+        # self.sound_detector = session.service("ALSoundDetection")
         self.audio = session.service("ALAudioDevice")
         self.dialog = ALProxy("ALDialog", robot_ip, port) if session is None else session.service("ALDialog")
         self.memory = ALProxy("ALMemory", robot_ip, port) if session is None else session.service("ALMemory")
@@ -44,7 +45,6 @@ class SpeechHandler:
         # Notify when topic is completed
         self.block_completed = self.memory.subscriber("blockCompleted")
         self.block_completed.signal.connect(self.exit_topic)  # not important (for testing purposes)
-        self.stage_completed = self.memory.subscriber("stageCompleted")
 
         # self.sound_detected = self.memory.subscriber("SoundDetected")
         # self.sound_detected.signal.connect(self.log)
@@ -53,9 +53,8 @@ class SpeechHandler:
         self.pageLoaded = self.memory.subscriber("pageLoaded")
         self.pageLoaded.signal.connect(self.webpage_loaded)
 
-        self.user_answer = ""
         self.answer_listener = self.memory.subscriber("userAnswer")
-        self.answer_listener.signal.connect(self.set_user_answer)
+        self.answer_listener.signal.connect(self.set_user_answer)  # for testing purposes
 
         self.current_topic = None
 
@@ -77,6 +76,9 @@ class SpeechHandler:
 
     def customized_say(self, interaction_block=None):
         if interaction_block is None: return
+
+        # update the tablet page
+        self._set_page_fields(interaction_block.tablet_page)
 
         behavioral_parameters = interaction_block.behavioral_parameters
 
@@ -206,10 +208,9 @@ class SpeechHandler:
         # self.activate_topic(topic_name = input)
 
     def activate_topic(self, interaction_block):
-        if interaction_block is None: return
+        if interaction_block is None:
+            return None
 
-        # reset user answer
-        self.user_answer = ""
         topic_tag = interaction_block.topic_tag
         try:
             self.setup_voice(robot_voice=interaction_block.behavioral_parameters.voice)
@@ -238,6 +239,9 @@ class SpeechHandler:
 
         except Exception as e:
             self.logger.error("Error while loading topic {}. {}".format(topic_tag.topic, e))
+
+    def set_user_answer(self, value):
+        self.logger.info("UserAnswer: {}".format(value))
 
     def _set_topic_fields(self, custom_message, custom_animation, topic_tag):
         # Insert valid values into memory

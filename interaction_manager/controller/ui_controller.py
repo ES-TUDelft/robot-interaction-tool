@@ -263,8 +263,11 @@ class UIController(QtWidgets.QMainWindow):
                 self._enable_buttons([self.ui.actionMenuConnect], enabled=True)
                 self._enable_buttons([self.ui.actionMenuDisconnect, self.ui.actionMenuWakeUp], enabled=False)
                 self._display_message(error="Please enter a valid IP and PORT")
+        else:
+            self._display_message(error="Connection is canceled!")
+            self.robot_disconnect()
 
-            self.repaint()
+        self.repaint()
 
     def robot_disconnect(self):
         success = self.interaction_controller.disconnect_from_robot()
@@ -339,7 +342,8 @@ class UIController(QtWidgets.QMainWindow):
         self.interaction_controller.tracking(enable=enable)
 
     def test_behavioral_parameters(self):
-        message, error = self.interaction_controller.test_behavioral_parameters(self.behavioral_parameters.clone(),
+        message, error = self.interaction_controller.test_behavioral_parameters(self.selected_block.parent,
+                                                                                self.behavioral_parameters.clone(),
                                                                                 self.volume)
         self._display_message(message=message, error=error)
 
@@ -379,13 +383,13 @@ class UIController(QtWidgets.QMainWindow):
     def play_blocks(self):
         # check if the scene contains a valid start block
         # if yes, send the request to the interaction controller
-        int_block = self.block_controller.has_block(pattern="start")
-        if int_block is None:
+        block = self.block_controller.has_block(pattern="start")
+        if block is None:
             self._display_message(error="The scene doesn't contain a starting block! "
                                         "Please add a 'START' block then click on play")
         else:
             self._display_message(message="Attempting to play the interaction!")
-            self.interaction_controller.start_playing(int_block=int_block)
+            self.interaction_controller.start_playing(int_block=block.parent)
 
         # TODO: call interaction_controller
         # self.interaction_controller.play_blocks(...)

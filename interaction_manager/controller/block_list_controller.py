@@ -36,10 +36,18 @@ class BlockListWidget(QListWidget):
     def add_block_items(self):
         patterns = config_helper.get_patterns()
 
+        # set the pattern order in the list
+        # start block
+        self.add_block_item("Start", patterns["start"]["icon"])
+
         for pattern in patterns:
             # get the item icon
-            icon = patterns[pattern]["icon"]
-            self.add_block_item(pattern.title(), icon)
+            if pattern not in ("start", "end"):
+                icon = patterns[pattern]["icon"]
+                self.add_block_item(pattern.title(), icon)
+
+        # end block
+        self.add_block_item("End", patterns["end"]["icon"])
 
     def add_block_item(self, name, icon=None, op_code=0):
         item = QListWidgetItem(name, self)

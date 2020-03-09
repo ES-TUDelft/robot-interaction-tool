@@ -84,6 +84,13 @@ class Socket(Serializable, Observable):
     def is_on_same_block_as(self, other_socket):
         return self.block == other_socket.block
 
+    def get_connected_sockets(self):
+        sockets = []
+        for edge in self.edges:
+            sockets.append(edge.start_socket if edge.start_socket != self else edge.end_socket)
+
+        return sockets
+
     ###
     # SERIALIZATION
     ###

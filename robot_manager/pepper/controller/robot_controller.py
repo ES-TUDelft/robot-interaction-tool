@@ -35,7 +35,7 @@ class RobotController(object):
         self.robot_id, self.last_time_touched = None, 0
         self.timer_helper = TimerHelper()
 
-    def connect(self, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def connect(self, robot_ip, port):
         self.pepper_robot = PepperRobot()
         return self.pepper_robot.connect(robot_ip=robot_ip, port=port)
 
@@ -201,8 +201,8 @@ class RobotController(object):
                             gaze_pattern=None):
         self.pepper_robot.divert_look(indexes=indexes, thresh=thresh, gaze_pattern=gaze_pattern)
 
-    def subscribe_to_dialog_events(self, block_completed_signal, stage_completed_signal):
-        self.pepper_robot.subscribe_to_dialog_events(block_completed_signal, stage_completed_signal)
+    def subscribe_to_dialog_events(self, block_completed_signal, user_answer_signal):
+        self.pepper_robot.subscribe_to_dialog_events(block_completed_signal, user_answer_signal)
 
     """
     CHAT AGENT

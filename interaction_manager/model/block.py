@@ -104,6 +104,15 @@ class Block(Serializable, Observable):
 
         return False
 
+    def get_connected_blocks(self):
+        blocks = []
+        if len(self.outputs) > 0:
+            # for now, assume we have one output socket
+            for socket in self.outputs[0].get_connected_sockets():
+                blocks.append(socket.block)
+
+        return blocks
+
     def remove(self):
         # remove socket edges
         for socket in (self.inputs + self.outputs):

@@ -148,6 +148,11 @@ class UIEditBlockController(QtWidgets.QDialog):
             else:
                 self.ui.tabletPageNameComboBox.addItems(tags[tag]["pages"])
 
+        tablet_page = self.interaction_block.tablet_page
+        if not tablet_page.name == "":
+            self.ui.tabletPageNameComboBox.setCurrentIndex(
+                self.ui.tabletPageNameComboBox.findText(tablet_page.name, QtCore.Qt.MatchFixedString))
+
     def update_gesture_text_box(self, combo_box, text_box, gesture_type):
         gesture_name = "{}".format(combo_box.currentText())
 

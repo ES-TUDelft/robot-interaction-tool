@@ -30,13 +30,13 @@ class DialogThread(QThread):
     """
     dialog_started = pyqtSignal(bool)
     block_completed = pyqtSignal(bool)
-    stage_completed = pyqtSignal(bool)
+    user_answer = pyqtSignal(str)
     topic_completed = pyqtSignal(bool)
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
         self.robot_controller = robot_controller
-        self.robot_controller.subscribe_to_dialog_events(self.block_completed, self.stage_completed)
+        self.robot_controller.subscribe_to_dialog_events(self.block_completed, self.user_answer)
         self.stop_dialog = False
         self.logger = logging.getLogger(pconfig.logger_name)
 

@@ -39,7 +39,7 @@ class Ui_ConnectionDialog(object):
         self.gridLayout_12.addWidget(self.portLabel, 1, 0, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(self.groupBox)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Close)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout_12.addWidget(self.buttonBox, 5, 1, 1, 2)
         self.robotPortValue = QtWidgets.QLineEdit(self.groupBox)

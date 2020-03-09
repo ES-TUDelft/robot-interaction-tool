@@ -40,7 +40,7 @@ class PepperRobot(object):
         self.pid = 0  # person id
         self.last_input = None
         self.person_approached, self.person_approached_event = (None,) * 2
-        self.is_engaged_signal, self.block_completed_signal, self.stage_completed_signal = (None,) * 3
+        self.is_engaged_signal, self.block_completed_signal, self.user_answer_signal = (None,) * 3
         self.animation_handler, self.sensor_handler, self.engagement_handler = (None,) * 3
         self.speech_handler, self.screen_handler = (None,) * 2
         self.time_of_last_picture = 0
@@ -49,10 +49,10 @@ class PepperRobot(object):
         self.sound_detected = None
         self.session = None
 
-    def connect(self, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
-        self.session = qi.Session()
+    def connect(self, robot_ip, port):
         message, error, is_awake = [None, None, False]
         try:
+            self.session = qi.Session()
             self.session.connect("tcp://{}:{}".format(robot_ip, port))
             self._init_handlers(robot_ip, port)
             message = "Successfully connected to Pepper:\n- IP: {} | Port: {}".format(robot_ip, port)
@@ -62,6 +62,11 @@ class PepperRobot(object):
             error = "Unable to connect to Naoqi:\n- IP: {} | Port: {}\n{}".format(robot_ip, port, e)
             self.logger.error(error)
         finally:
+            self.logger.debug("Message: {} | Error: {} | IsAwake: {} | IP: {} | Port: {}".format(message,
+                                                                                                 error,
+                                                                                                 is_awake,
+                                                                                                 robot_ip,
+                                                                                                 port))
             return message, error, is_awake
 
     def _init_handlers(self, robot_ip, port):
@@ -99,19 +104,19 @@ class PepperRobot(object):
     DIALOG EVENTS
     """
 
-    def subscribe_to_dialog_events(self, block_completed_signal, stage_completed_signal):
+    def subscribe_to_dialog_events(self, block_completed_signal, user_answer_signal):
         self.block_completed_signal = block_completed_signal
-        self.stage_completed_signal = stage_completed_signal
+        self.user_answer_signal = user_answer_signal
         self.speech_handler.block_completed.signal.connect(self.raise_block_completed_event)
-        self.speech_handler.stage_completed.signal.connect(self.raise_stage_completed_event)
+        self.speech_handler.answer_listener.signal.connect(self.raise_user_answer_event)
 
     def raise_block_completed_event(self, val):
         if self.block_completed_signal is not None:
             self.block_completed_signal.emit(True)
 
-    def raise_stage_completed_event(self, val):
-        if not self.stage_completed_signal is None:
-            self.stage_completed_signal.emit(True)
+    def raise_user_answer_event(self, val):
+        if self.user_answer_signal is not None:
+            self.user_answer_signal.emit(val)
 
     """
     SOUND EVENTS

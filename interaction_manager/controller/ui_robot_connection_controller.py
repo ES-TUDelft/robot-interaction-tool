@@ -67,12 +67,12 @@ class UIRobotConnectionController(QtWidgets.QDialog):
 
         message, error, self.is_awake = self.interaction_controller.connect_to_robot(robot_ip=self.robot_ip,
                                                                                      port=self.robot_port)
-        if self.error is None:
-            self.success = True
-            self.ui.connectPushButton.setEnabled(False)
-        else:
+        if message is None:
             self.success = False
             error = "Please enter a valid IP and PORT | {}".format(error)
+        else:
+            self.success = True
+            self.ui.connectPushButton.setEnabled(False)
 
         self._display_message(message=message, error=error)
 

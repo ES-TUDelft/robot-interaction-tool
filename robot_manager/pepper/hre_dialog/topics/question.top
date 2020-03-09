@@ -29,14 +29,14 @@ proposal: %askQuestionTag $lastTagName=askQuestionTag $anim=["^notExist(customAn
 
 # confirmation with yes or no answers
 proposal: %confirmationTag $lastTagName=confirmationTag $anim=["^notExist(customAnimation) ~neutralAnimation" "$customAnimation"] "^start($anim) $customMessage ^wait($anim)"
-    u1: ([~answer1 yes]) $userAnswer=$1 ["^notExist(feedback1) Ok" "$feedback1"] ^gotoReactivate(finishedTag)
-    u1: ([~answer2 no]) $userAnswer=$1 ["^notExist(feedback2) Oh" "$feedback2"] ^gotoReactivate(finishedTag)
+    u1: (_[~answer1 yes]) $userAnswer=$1 ["^notExist(feedback1) Ok" "$feedback1"] ^gotoReactivate(finishedTag)
+    u1: (_[~answer2 no]) $userAnswer=$1 ["^notExist(feedback2) Oh" "$feedback2"] ^gotoReactivate(finishedTag)
 
 # Offer Help
 proposal: %offerHelpTag $lastTagName=offerHelpTag $anim=["^notExist(customAnimation) ~neutralAnimation" "$customAnimation"] "^start($anim) ["^notExist(customMessage) Can I help?" "$customMessage"] ^wait($anim)" ^stayInScope
-    u1: ( [Nothing "not now"]) Come back when you need something ^gotoReactivate(finishedTag)
-    u1: (~answer1) $userAnswer=$1 "$feedback1" $checkInEvent=1 ^gotoReactivate(finishedTag)
-    u1: (~answer2) $userAnswer=$1 "$feedback2" ^gotoReactivate(offerHelpTag)
+    u1: ( _[Nothing "not now"]) $userAnswer=$1 Come back when you need something ^gotoReactivate(finishedTag)
+    u1: (_~answer1) $userAnswer=$1 "$feedback1" $checkInEvent=1 ^gotoReactivate(finishedTag)
+    u1: (_~answer2) $userAnswer=$1 "$feedback2" ^gotoReactivate(offerHelpTag)
 
 proposal: %finishedTag $lastTagName=finishedTag $blockCompleted=1 ^gotoReactivate(resetWebPageTag)
 

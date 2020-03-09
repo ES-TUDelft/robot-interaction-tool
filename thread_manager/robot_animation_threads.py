@@ -106,6 +106,7 @@ class AnimateRobotThread(QThread):
         self.is_first_block = True
         self.test_mode = False
         self.moving_enabled = False
+        self.execution_result = None
 
     def connect_to_robot(self, robot_ip, port):
         self.robot_controller = RobotController()
@@ -137,6 +138,7 @@ class AnimateRobotThread(QThread):
             self.dialog(start=False)  # stop the dialog
         elif interaction_block:
             self.interaction_block = interaction_block
+            self.execution_result = None
             if not self.isRunning():
                 self.start()
 
@@ -207,6 +209,7 @@ class AnimateRobotThread(QThread):
                     self.dialog_thread = DialogThread(self.robot_controller)
                     self.dialog_thread.dialog_started.connect(self.raise_dialog_started_event)
                     self.dialog_thread.block_completed.connect(self.raise_completed_event)
+                    self.dialog_thread.user_answer.connect(self.set_execution_result)
                 self.dialog_thread.start_dialog()
             else:
                 # no need to stop/pause dialog if it's none
@@ -222,6 +225,10 @@ class AnimateRobotThread(QThread):
         except Exception as e:
             self.logger.error("Dialog error: {}".format(e))
             return False
+
+    def set_execution_result(self, val):
+        self.logger.debug("User Answer: {}".format(val))
+        self.execution_result = "{}".format(val)
 
     def raise_dialog_started_event(self, val):
         self.dialog_started.emit(True)
