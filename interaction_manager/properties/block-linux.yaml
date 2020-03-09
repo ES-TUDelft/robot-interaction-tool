@@ -23,7 +23,7 @@ font: 'Arial'
 size:
     block:
         width: 300
-        height: 2000
+        height: 200
         rounded_edge_size: 10.0 # rounded_edge of the triangle
         title_height: 50.0
         icon_dim: [60, 60]
