@@ -639,15 +639,8 @@ class UIController(QtWidgets.QMainWindow):
             self._display_message(message="Successfully exported the interaction blocks.")
 
     def backup_blocks(self):
-        # TODO: backup!
-        interaction_design = self.create_interaction_design()
-        interaction_design.blocks = {}
-
-        foldername = "{}/logs".format(os.getcwd())
-        _, error = json_helper.export_blocks(filename=interaction_design.communication_style,
-                                             foldername=foldername, interaction_design=interaction_design)
-        if error is not None:
-            self._display_message(error=error)
+        filename = "{}/logs/interaction.json".format(os.getcwd())
+        self.block_controller.save_blocks(filename=filename)
 
     def save_blocks(self):
         filename = "{}/logs/blocks_{}.json".format(os.getcwd(), date_helper.get_time())
