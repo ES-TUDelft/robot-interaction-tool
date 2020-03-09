@@ -27,7 +27,7 @@ size:
         rounded_edge_size: 10.0 # rounded_edge of the triangle
         title_height: 50.0
         icon_dim: [70, 70]
-        list_icon_dim: [60, 60]
+        list_icon_dim: [100, 100]
     socket:
         width: 10.0
         height: 10.0
