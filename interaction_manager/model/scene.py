@@ -50,11 +50,23 @@ class Scene(Serializable):
         self.logger.debug("Removed edge from scene '{}: {} | {}".format(edge, edge.start_socket, edge.end_socket))
 
     def save_scene(self, filename):
-        data_helper.save_to_file(filename, self.serialize())
+        try:
+            data_helper.save_to_file(filename, self.serialize())
+        except Exception as e:
+            self.logger.error("Error while saving scene data to: {} | {}".format(filename, e))
+            return False
 
     def load_scene(self, filename):
         scene_data = data_helper.load_data_from_file(filename)
-        return self.deserialize(scene_data)
+        return self.load_scene_data(scene_data)
+
+    def load_scene_data(self, data):
+        try:
+            self.deserialize(data)
+            return True
+        except Exception as e:
+            self.logger.error("Error while loading scene data: {} | {}".format(data, e))
+            return False
 
     def clear(self):
         for edge in self.edges:

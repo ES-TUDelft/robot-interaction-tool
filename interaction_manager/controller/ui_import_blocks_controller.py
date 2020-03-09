@@ -16,6 +16,7 @@ from PyQt5 import QtGui, QtWidgets
 
 import interaction_manager.utils.json_helper as json_helper
 from interaction_manager.model.interaction_block import InteractionBlock
+from interaction_manager.utils import data_helper
 from interaction_manager.view.ui_import_blocks_dialog import Ui_ImportBlocksDialog
 
 
@@ -25,7 +26,7 @@ class UIImportBlocksController(QtWidgets.QDialog):
         super(UIImportBlocksController, self).__init__(parent)
 
         self.logger = logging.getLogger("ImportController")
-        self.blocks = []
+        self.blocks_data = None
 
         # init UI elements
         self._init_ui()
@@ -54,24 +55,18 @@ class UIImportBlocksController(QtWidgets.QDialog):
     def import_blocks(self):
         error, message = (None,) * 2
         filename = self.ui.fileNameLineEdit.text()
-        self.blocks = []
 
         if filename is None or filename == "":
             self.display_message(error="ERROR: Please select a file to import.")
             return
 
-        blocks_data, error = json_helper.import_blocks(filename)
-        if error is None:
-            try:
-                for _, block_dict in blocks_data.items():
-                    self.blocks.append(InteractionBlock.create_interaction_block(block_dict=block_dict))
-                message = "Data successfully imported (total of {} block(s)).".format(len(self.blocks))
-            except Exception as e:
-                error = "{} | {}".format("Error while importing data!" if error is None else error, e)
-            finally:
-                self.display_message(message=message, error=error)
-        else:  # there was an error while reading the file
-            self.display_message(error=error)
+        try:
+            self.blocks_data = data_helper.load_data_from_file(filename)
+            message = "Data successfully imported."
+        except Exception as e:
+            error = "{} | {}".format("Error while importing data!" if error is None else error, e)
+        finally:
+            self.display_message(message=message, error=error)
 
     def display_message(self, message=None, error=None):
         if message is None:

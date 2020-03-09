@@ -61,12 +61,16 @@ class InteractionController(object):
 
     def disconnect_from_robot(self):
         self.engagement_counter = 0
-        self.engagement(start=False)
+        try:
+            if self.animation_thread is not None:
+                self.engagement(start=False)
+        except Exception as e:
+            self.logger.error("Error while disconnecting from robot. | {}".format(e))
+        finally:
+            self.robot_controller = None
 
-        self.robot_controller = None
-        if self.animation_thread is not None:
-            self.animation_thread.dialog(start=False)
-
+        # if self.animation_thread is not None:
+        #     self.animation_thread.dialog(start=False)
         return True
 
     def update_threads(self, enable_moving=False):

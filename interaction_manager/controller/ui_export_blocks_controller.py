@@ -19,16 +19,17 @@ from PyQt5 import QtGui, QtWidgets
 
 import interaction_manager.utils.json_helper as json_helper
 from interaction_manager.model.interaction_design import InteractionDesign
+from interaction_manager.utils import data_helper
 from interaction_manager.view.ui_export_blocks_dialog import Ui_ExportBlocksDialog
 
 
 class UIExportBlocksController(QtWidgets.QDialog):
 
-    def __init__(self, parent=None, interaction_design=None):
+    def __init__(self, parent=None, serialized_data=None):
         super(UIExportBlocksController, self).__init__(parent)
 
         self.logger = logging.getLogger("ExportController")
-        self.dialogue_design = InteractionDesign() if interaction_design is None else interaction_design
+        self.serialized_data = serialized_data
 
         # init UI elements
         self._init_ui()
@@ -40,11 +41,11 @@ class UIExportBlocksController(QtWidgets.QDialog):
         self.ui = Ui_ExportBlocksDialog()
         self.ui.setupUi(self)
         # current directory
-        self.ui.folderNameLineEdit.setText("{}/blocks".format(os.getcwd()))
+        self.ui.folderNameLineEdit.setText("{}/logs".format(os.getcwd()))
 
         # file name
-        self.ui.fileNameLineEdit.setText("{}Blocks_{}".format(self.dialogue_design.communication_style,
-                                                              time.strftime("%d-%m-%y_%H-%M-%S", time.localtime())))
+        self.ui.fileNameLineEdit.setText("InteractionBlocks_{}".format(
+            time.strftime("%d-%m-%y_%H-%M-%S", time.localtime())))
 
         # button listeners
         self.ui.selectFolderToolButton.clicked.connect(self.select_folder)
@@ -75,11 +76,16 @@ class UIExportBlocksController(QtWidgets.QDialog):
         foldername = self.ui.folderNameLineEdit.text()
 
         if self.check_fields(foldername=foldername, filename=filename) is False:
-            return
+            return False
 
-        [message, error] = json_helper.export_blocks(filename=filename, foldername=foldername,
-                                                     interaction_design=self.dialogue_design)
-        self.display_message(message=message, error=error)
+        try:
+            data_helper.save_to_file(filename="{}/{}.json".format(foldername, filename),
+                                     serialized_data=self.serialized_data)
+            self.display_message(message="Successfully exported the design.")
+            return True
+        except Exception as e:
+            self.logger.error("Error while saving design data to: {} | {}".format(filename, e))
+            return False
 
     def display_message(self, message=None, error=None):
         if message is None:

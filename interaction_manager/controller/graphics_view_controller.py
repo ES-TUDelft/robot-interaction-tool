@@ -68,10 +68,10 @@ class ESGraphicsViewController(QGraphicsView):
     def keyPressEvent(self, event):
         if event.key() in (Qt.Key_Delete, Qt.Key_Backspace):
             self.delete_selected()
-        elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-            self.graphics_scene.scene.save_scene("graph.json")
-        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
-            self.graphics_scene.scene.load_scene("graph.json")
+        # elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
+        #     self.graphics_scene.scene.save_scene("graph.json")
+        # elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
+        #     self.graphics_scene.scene.load_scene("graph.json")
         # elif event.key() == Qt.Key_Z \
         #        and event.modifiers() & Qt.ControlModifier \
         #        and not event.modifiers() & Qt.ShiftModifier:

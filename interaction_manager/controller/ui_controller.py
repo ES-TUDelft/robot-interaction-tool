@@ -20,6 +20,7 @@ import interaction_manager.utils.json_helper as json_helper
 from es_common.enums.led_enums import LedColor
 from es_common.enums.speech_enums import *
 from es_common.enums.voice_enums import *
+from es_common.utils import date_helper
 from interaction_manager.controller.block_controller import BlockController
 from interaction_manager.controller.database_controller import DatabaseController
 from interaction_manager.controller.interaction_controller import InteractionController
@@ -107,7 +108,7 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionMenuRedo.triggered.connect(self.on_redo)
         # CLEAR/DELETE
         # ============
-        self.ui.actionMenuClear.triggered.connect(self.clear_drop_list)
+        self.ui.actionMenuClear.triggered.connect(self.clear_blocks)
 
         # COPY/PASTE
         # ----------
@@ -144,9 +145,11 @@ class UIController(QtWidgets.QMainWindow):
             lambda: self.apply_behavioral_parameters(to_all_items=True))
 
         # DELETE, RESET, CLEAR, IMPORT and SAVE list listeners
-        self.ui.actionMenuSave.triggered.connect(self.save_drop_list)
-        self.ui.actionMenuImportBlocks.triggered.connect(self.import_drop_list)
-        self.ui.actionMenuExportBlocks.triggered.connect(self.export_drop_list)
+        self.ui.actionMenuSave.triggered.connect(self.save_blocks)
+        self.ui.actionMenuImportBlocks.setEnabled(True)
+        self.ui.actionMenuExportBlocks.setEnabled(True)
+        self.ui.actionMenuImportBlocks.triggered.connect(self.import_blocks)
+        self.ui.actionMenuExportBlocks.triggered.connect(self.export_blocks)
 
         # CREATE BLOCK
         # -------------
@@ -219,7 +222,7 @@ class UIController(QtWidgets.QMainWindow):
             self.block_controller.store("Edited block")
 
         # backup
-        self.backup_drop_list()
+        self.backup_blocks()
 
     def block_settings(self, block):
         # Enable behavioral parameters widget
@@ -265,7 +268,8 @@ class UIController(QtWidgets.QMainWindow):
                 self._display_message(error="Please enter a valid IP and PORT")
         else:
             self._display_message(error="Connection is canceled!")
-            self.robot_disconnect()
+            if self.interaction_controller.robot_controller is not None:
+                self.robot_disconnect()
 
         self.repaint()
 
@@ -290,7 +294,8 @@ class UIController(QtWidgets.QMainWindow):
 
         if error is None:
             self._display_message(message=message)
-            self._enable_buttons([self.ui.actionMenuDatabaseDisconnect, self.ui.actionMenuSave, self.ui.saveDropListButton],
+            self._enable_buttons([self.ui.actionMenuDatabaseDisconnect,
+                                  self.ui.actionMenuSave, self.ui.actionMenuSaveAs],
                                  enabled=True)
             self._enable_buttons([self.ui.actionMenuDatabaseConnect], enabled=False)
         else:
@@ -308,7 +313,8 @@ class UIController(QtWidgets.QMainWindow):
             else:
                 self._display_message(error=error)
 
-        self._enable_buttons([self.ui.actionMenuDatabaseDisconnect, self.ui.actionMenuSave, self.ui.saveDropListButton],
+        self._enable_buttons([self.ui.actionMenuDatabaseDisconnect,
+                              self.ui.actionMenuSave, self.ui.actionMenuSaveAs],
                              enabled=False)
         self._enable_buttons([self.ui.actionMenuDatabaseConnect], enabled=True)
 
@@ -454,7 +460,7 @@ class UIController(QtWidgets.QMainWindow):
                 self.block_controller.store("Updated parameters for {}".format(self.selected_block.title))
 
         # backup
-        self.backup_drop_list()
+        self.backup_blocks()
         # reset warning
         self._set_warning_label_color(reset=True)
 
@@ -480,7 +486,7 @@ class UIController(QtWidgets.QMainWindow):
                 behavioral_parameters=self.copied_behavioral_parameters)
 
             # backup
-            self.backup_drop_list()
+            self.backup_blocks()
 
             self.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
             self._set_behavioral_parameters_elements(self.behavioral_parameters)
@@ -578,7 +584,7 @@ class UIController(QtWidgets.QMainWindow):
     def duplicate_block(self):
         # TODO: implement duplicating a block
         # backup
-        self.backup_drop_list()
+        self.backup_blocks()
 
         self._display_message(message="Successfully duplicated the block.")
         self.ui.behavioralParametersDockWidget.repaint()
@@ -590,7 +596,7 @@ class UIController(QtWidgets.QMainWindow):
 
         # self.block_controller.clear_selection()
 
-    def clear_drop_list(self):
+    def clear_blocks(self):
         # Ask for confirmation
         confirmation_dialog = UIConfirmationDialogController(message="All blocks will be deleted!")
         if confirmation_dialog.exec_():
@@ -600,18 +606,18 @@ class UIController(QtWidgets.QMainWindow):
             self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
                                 btns=[], enable=False)
             # backup
-            self.backup_drop_list()
+            self.backup_blocks()
 
             self.repaint()
 
-    def delete_drop_list_items(self):
+    def delete_blocks(self):
         # TODO: delete selected blocks
 
         # Disable widget
         self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
                             btns=[], enable=False)
         # backup
-        self.backup_drop_list()
+        self.backup_blocks()
         self.repaint()
 
     def create_interaction_design(self):
@@ -623,17 +629,16 @@ class UIController(QtWidgets.QMainWindow):
         self._display_message(message="Successfully inserted the selected interaction blocks.") if success is True else \
             self._display_message(error="Error while inserting interaction blocks.")
 
-    def export_drop_list(self):
+    def export_blocks(self):
         # TODO: get dict of blocks
-        interaction_design = self.create_interaction_design()
-        interaction_design.blocks = {}
+        interaction_design = self.block_controller.get_serialized_scene()
 
         # open export dialog
-        export_dialog = UIExportBlocksController(interaction_design=interaction_design)
+        export_dialog = UIExportBlocksController(serialized_data=interaction_design)
         if export_dialog.exec_():
             self._display_message(message="Successfully exported the interaction blocks.")
 
-    def backup_drop_list(self):
+    def backup_blocks(self):
         # TODO: backup!
         interaction_design = self.create_interaction_design()
         interaction_design.blocks = {}
@@ -644,29 +649,32 @@ class UIController(QtWidgets.QMainWindow):
         if error is not None:
             self._display_message(error=error)
 
-    def save_drop_list(self):
-        # TODO: save list
-        self._display_message(error="Save method is not implemented!")
+    def save_blocks(self):
+        filename = "{}/logs/blocks_{}.json".format(os.getcwd(), date_helper.get_time())
+
+        self.block_controller.save_blocks(filename=filename)
+        self._display_message(message="Successfully saved the blocks!")
+
         # interaction_design = self.create_interaction_design()
         # interaction_design.blocks = {}  # self.ui.dropListWidget.to_dict
 
         # self.insert_interaction_design(interaction_design)
 
-    def import_drop_list(self):
-        # TODO: import blocks
+    def import_blocks(self):
         # open import dialog
         import_dialog = UIImportBlocksController()
 
         if import_dialog.exec_():
-            if import_dialog.blocks is None or len(import_dialog.blocks) == 0: return
-            # TODO: fill scene with blocks
-            # self._fill_widget_with_blocks(self.ui.dropListWidget, import_dialog.blocks)
+            if import_dialog.blocks_data is None or len(import_dialog.blocks_data) == 0:
+                return
+            # fill scene with blocks
+            self.block_controller.load_blocks_data(data=import_dialog.blocks_data)
 
             # Disable behavioral parameters widget
             self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
                                 btns=[], enable=False)
             # backup
-            self.backup_drop_list()
+            self.backup_blocks()
             self._display_message(message="New blocks are imported.")
             self.repaint()
 

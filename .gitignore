@@ -124,7 +124,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-logs/
 blocks/
 robot_manager/pepper/hre_chat/credentials*.json
 .idea/
+logs/*.json

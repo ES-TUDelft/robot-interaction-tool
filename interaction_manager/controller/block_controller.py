@@ -195,6 +195,18 @@ class BlockController(object):
     def store(self, description):
         self.scene.history.store(description=description)
 
+    def save_blocks(self, filename):
+        self.scene.save_scene(filename=filename)
+
+    def load_blocks(self, filename):
+        self.scene.load_scene(filename=filename)
+
+    def load_blocks_data(self, data):
+        self.scene.load_scene_data(data=data)
+
+    def get_serialized_scene(self):
+        return self.scene.serialize()
+
     def get_scene_position(self, mouse_position):
         return self._block_widget.get_scene_position(mouse_position)
 
