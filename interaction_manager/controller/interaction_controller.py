@@ -194,6 +194,8 @@ class InteractionController(object):
         execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
         self.logger.debug("Execution Result: {}".format(execution_result))
         return self.current_block.get_next_block(execution_result=execution_result)
+        # return self.current_block.get_next_block_totest(previous_interaction_block=self.previous_block,
+        # execution_result=execution_result)
 
     def interaction(self, start):
         self.logger.info("Interaction called with start = {}".format(start))
@@ -254,7 +256,6 @@ class InteractionController(object):
         if self.previous_block is not None:  # playing is in progress
             # get the next block to say
             self.current_block = self.get_next_interaction_block()
-        self.current_block.set_selected(True)
 
         # if there are no more blocks, stop interacting
         if self.current_block is None or self.stop_playing is True:
@@ -265,6 +266,7 @@ class InteractionController(object):
             self.tablet_image(hide=False)
         else:
             # execute the block
+            self.current_block.set_selected(True)
             # TODO: set the block state to 'executing'
             # set the tracker's gaze pattern
             if not self.face_tracker_thread.isRunning():

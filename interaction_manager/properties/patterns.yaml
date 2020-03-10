@@ -63,12 +63,12 @@ action_wait:
     tablet:
         - index
         - displayinfo
-condition:
-    inputs: 1
-    outputs: 1
-    icon: interaction_manager/icons/blue/condition.png
-    topic: ""
-    tags: []
-    tablet:
-        - index
-        - displayinfo
+#condition:
+#    inputs: 1
+#    outputs: 1
+#    icon: interaction_manager/icons/blue/condition.png
+#    topic: ""
+#    tags: []
+#    tablet:
+#        - index
+#        - displayinfo

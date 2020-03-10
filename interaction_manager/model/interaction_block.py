@@ -72,6 +72,31 @@ class InteractionBlock(Serializable):
 
         return None
 
+    def get_next_block_totest(self, previous_interaction_block, execution_result=None):
+        connected_blocks = self.block.get_connected_blocks()
+        if connected_blocks is not None and len(connected_blocks) > 0:
+            # check the answers
+            if len(self.topic_tag.answers) > 1:
+                if execution_result is not None and execution_result != "":
+                    # check if answer is in the second set ==> return previous
+                    if execution_result in self.topic_tag.answers[1]:
+                        print("### found it in answers 1")
+                        return previous_interaction_block
+                    else:
+                        # if previous, return next
+                        print("# Trying previous: {} | {}".format(connected_blocks[0].parent.message,
+                                                                  previous_interaction_block.message))
+                        if connected_blocks[0].parent.message != previous_interaction_block.message:
+                            print("*** HERE")
+                            return connected_blocks[0].parent
+                        else:
+                            print("# returned previous")
+                            return connected_blocks[1].parent if len(connected_blocks) > 1 else None
+            else:
+                return connected_blocks[0].parent
+
+        return None
+
     def set_selected(self, val):
         if val is not None:
             self.block.set_selected(val)

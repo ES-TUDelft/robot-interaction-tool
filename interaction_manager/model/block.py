@@ -109,7 +109,8 @@ class Block(Serializable, Observable):
         if len(self.outputs) > 0:
             # for now, assume we have one output socket
             for socket in self.outputs[0].get_connected_sockets():
-                blocks.append(socket.block)
+                if socket.block != self:
+                    blocks.append(socket.block)
 
         return blocks
 
