@@ -11,7 +11,7 @@
 # **
 
 import logging
-
+import sys
 import yaml
 
 
@@ -79,7 +79,11 @@ def _get_block_properties():
     props = None
     try:
         # on Linux use: block-linux.yaml
-        with open("interaction_manager/properties/block.yaml", 'r') as yaml_file:
+        filename = "block.yaml"
+        if "linux" in sys.platform:  # for Mac: darwin | for windows: win32
+            filename = "block-linux.yaml"
+
+        with open("interaction_manager/properties/{}".format(filename), 'r') as yaml_file:
             props = yaml.load(yaml_file, Loader=yaml.SafeLoader)
     except Exception as e:
         logger.error("Error while opening the block properties file! {}".format(e))
