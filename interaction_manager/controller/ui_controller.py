@@ -191,6 +191,8 @@ class UIController(QtWidgets.QMainWindow):
 
     def block_is_selected(self, block):
         self.selected_block = block
+        # connected_blocks = self.selected_block.get_connected_blocks()
+
         self.update_parameters_widget()
 
     def no_block_selected(self, event):

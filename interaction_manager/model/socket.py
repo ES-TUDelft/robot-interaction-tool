@@ -88,7 +88,7 @@ class Socket(Serializable, Observable):
         sockets = []
         for edge in self.edges:
             sockets.append(edge.start_socket if edge.start_socket != self else edge.end_socket)
-        self.logger.debug("Found {} connected sockets".format(len(sockets)))
+        self.logger.debug("Found {} connected sockets and {} edges".format(len(sockets), len(self.edges)))
         return sockets
 
     ###

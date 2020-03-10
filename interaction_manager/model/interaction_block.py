@@ -9,6 +9,7 @@
 #
 # @author ES
 # **
+import logging
 from collections import OrderedDict
 
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
@@ -22,6 +23,8 @@ class InteractionBlock(Serializable):
     def __init__(self, name=None, stage=None, topic_tag=None, tablet_page=None, icon_path=None,
                  behavioral_parameters=None, block=None):
         super(InteractionBlock, self).__init__()
+
+        self.logger = logging.getLogger("Interaction Block")
 
         self.name = "start" if name is None else name
         self.stage = "Opening" if stage is None else stage
@@ -73,29 +76,33 @@ class InteractionBlock(Serializable):
         return None
 
     def get_next_block_totest(self, previous_interaction_block, execution_result=None):
-        connected_blocks = self.block.get_connected_blocks()
-        if connected_blocks is not None and len(connected_blocks) > 0:
-            # check the answers
-            if len(self.topic_tag.answers) > 1:
-                if execution_result is not None and execution_result != "":
-                    # check if answer is in the second set ==> return previous
-                    if execution_result in self.topic_tag.answers[1]:
-                        print("### found it in answers 1")
-                        return previous_interaction_block
-                    else:
-                        # if previous, return next
-                        print("# Trying previous: {} | {}".format(connected_blocks[0].parent.message,
-                                                                  previous_interaction_block.message))
-                        if connected_blocks[0].parent.message != previous_interaction_block.message:
-                            print("*** HERE")
-                            return connected_blocks[0].parent
-                        else:
-                            print("# returned previous")
-                            return connected_blocks[1].parent if len(connected_blocks) > 1 else None
-            else:
-                return connected_blocks[0].parent
+        next_block = None
+        try:
+            connected_blocks = self.block.get_connected_blocks()
 
-        return None
+            # in the absence of a condition
+            if execution_result is None or execution_result == "":
+                # select first
+                next_block = None if len(connected_blocks) == 0 else connected_blocks[0].parent
+            else:
+                # check the answers
+                if len(self.topic_tag.answers) > 1:
+                    # if answer is in answer1 ==> return previous block; else return next
+                    if execution_result in self.topic_tag.answers[1]:
+                        next_block = previous_interaction_block
+                    else:
+                        next_block = connected_blocks[0].parent
+                        if connected_blocks[0].parent == previous_interaction_block and len(connected_blocks) > 1:
+                            next_block = connected_blocks[1].parent
+                else:
+                    next_block = connected_blocks[0].parent
+
+            self.logger.info(
+                "NextBlock is: {} | {}".format("" if next_block is None else next_block.name, next_block))
+        except Exception as e:
+            self.logger.error("Error while getting the next block! {}".format(e))
+        finally:
+            return next_block
 
     def set_selected(self, val):
         if val is not None:

@@ -18,7 +18,6 @@ class Edge(Serializable, Observable):
         self.scene = scene
 
         # init sockets
-        self.__start_socket, self.__end_socket = (None,) * 2
         self.start_socket = start_socket
         self.end_socket = end_socket
 

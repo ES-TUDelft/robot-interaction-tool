@@ -193,9 +193,14 @@ class InteractionController(object):
             return None
         execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
         self.logger.debug("Execution Result: {}".format(execution_result))
-        return self.current_block.get_next_block(execution_result=execution_result)
-        # return self.current_block.get_next_block_totest(previous_interaction_block=self.previous_block,
-        # execution_result=execution_result)
+
+        # return self.current_block.get_next_block(execution_result=execution_result)
+        next_block = self.current_block.get_next_block_totest(previous_interaction_block=self.previous_block,
+                                                              execution_result=execution_result)
+        # update previous block
+        self.previous_block = self.current_block
+
+        return next_block
 
     def interaction(self, start):
         self.logger.info("Interaction called with start = {}".format(start))
@@ -253,7 +258,9 @@ class InteractionController(object):
 
         self.block_controller.clear_selection()
 
-        if self.previous_block is not None:  # playing is in progress
+        if self.previous_block is None:  # interaction has just started
+            self.previous_block = self.current_block
+        else: # playing is in progress
             # get the next block to say
             self.current_block = self.get_next_interaction_block()
 
@@ -280,7 +287,7 @@ class InteractionController(object):
             self.logger.debug("Robot: {}".format(self.current_block.message))
 
             # update previous block
-            self.previous_block = self.current_block
+            # self.previous_block = self.current_block
 
     def test_behavioral_parameters(self, interaction_block, behavioral_parameters, volume):
         message, error = (None,) * 2
