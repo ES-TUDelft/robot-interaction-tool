@@ -14,7 +14,7 @@ import logging
 import time
 
 import es_common.hre_config as pconfig
-from interaction_manager.model.interaction_design import InteractionDesign
+from es_common.model.observable import Observable
 from robot_manager.pepper.controller.robot_controller import RobotController
 from thread_manager.robot_animation_threads import WakeUpRobotThread, AnimateRobotThread
 from thread_manager.robot_engagement_threads import EngagementThread, FaceTrackerThread
@@ -43,6 +43,8 @@ class InteractionController(object):
 
         self.stop_playing = False
         self.execution_result = None
+        self.is_simulation_mode = False
+        self.has_finished_playing_observable = Observable()
 
     def connect_to_robot(self, robot_ip, port):
         self.robot_ip = robot_ip
@@ -153,12 +155,14 @@ class InteractionController(object):
         # set the engagement counter
         self.engagement_counter = int(engagement_counter)  # int(self.ui.enagementRepetitionsSpinBox.value())
 
-        # if len(self.interaction_blocks) > 0:
-        # TODO: check if needed!
-        self.interaction_design = InteractionDesign(communication_style="Interaction")
-
         # ready to interact
         self.is_ready_to_interact = True
+
+        if self.is_simulation_mode:
+            self.on_simulation_mode()
+            self.is_simulation_mode = False
+            self.has_finished_playing_observable.notify_all(True)
+            return True
 
         # self.animation_thread.robot_controller.posture(reset = True)
         if self.animation_thread.dialog_thread is None or (not self.animation_thread.dialog_thread.isRunning()):
@@ -167,14 +171,29 @@ class InteractionController(object):
 
         # start engagement
         self.engagement(start=True)
+        return True
+
+    def on_simulation_mode(self):
+        self.block_controller.clear_selection()
+
+        if self.previous_block is not None:  # playing is in progress
+            # get the next block to say
+            self.current_block = self.get_next_interaction_block()
+
+        if self.current_block is not None:
+            self.logger.debug("Executing: {}".format(self.current_block.name))
+            self.current_block.set_selected(True)
+            time.sleep(5)
+            self.previous_block = self.current_block
+            self.on_simulation_mode()
 
     def get_next_interaction_block(self):
         self.logger.debug("Getting the next interaction block...")
         if self.current_block is None:
             return None
-        # TODO: return next block!
-        self.logger.debug("Execution Result: {}".format(self.animation_thread.execution_result))
-        return self.current_block.get_next_block(execution_result=self.animation_thread.execution_result)
+        execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
+        self.logger.debug("Execution Result: {}".format(execution_result))
+        return self.current_block.get_next_block(execution_result=execution_result)
 
     def interaction(self, start):
         self.logger.info("Interaction called with start = {}".format(start))
@@ -215,6 +234,7 @@ class InteractionController(object):
                 self.engagement_thread.engagement(start=False)
                 self.face_tracker_thread.track(start=False)
 
+                self.has_finished_playing_observable.notify_all(True)
                 # TODO: move to ui
                 # self._enable_buttons([self.ui.actionPlay], enabled=True)
                 # self._enable_buttons([self.ui.actionStop], enabled=False)
@@ -229,9 +249,12 @@ class InteractionController(object):
             self.logger.debug("*** Animation Thread is still running!")
             time.sleep(1)  # wait for the thread to finish
 
+        self.block_controller.clear_selection()
+
         if self.previous_block is not None:  # playing is in progress
             # get the next block to say
             self.current_block = self.get_next_interaction_block()
+        self.current_block.set_selected(True)
 
         # if there are no more blocks, stop interacting
         if self.current_block is None or self.stop_playing is True:

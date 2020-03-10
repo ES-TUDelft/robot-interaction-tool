@@ -69,7 +69,7 @@ class UIController(QtWidgets.QMainWindow):
         # init controllers
         self._setup_block_controller()
         self.interaction_controller = InteractionController(block_controller=self.block_controller)
-
+        self.interaction_controller.has_finished_playing_observable.add_observer(self.on_finished_playing)
         # Attach action listeners
         # CONNECTIONS
         # ===========
@@ -91,7 +91,7 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionMenuHideImage.triggered.connect(self.hide_image_on_tablet)
         # SPEECH
         # ------
-        self.ui.actionMenuPlay.setEnabled(True)
+        self.ui.actionMenuPlay.setEnabled(False)
         self.ui.actionMenuPlay.triggered.connect(self.play_blocks)
         # TODO: check these listeners
         self.ui.actionMenuStop.triggered.connect(self.interaction_controller.stop_engagement_callback)
@@ -395,13 +395,14 @@ class UIController(QtWidgets.QMainWindow):
                                         "Please add a 'START' block then click on play")
         else:
             self._display_message(message="Attempting to play the interaction!")
+            # self.interaction_controller.is_simulation_mode = True
+            self._enable_buttons([self.ui.actionMenuPlay], enabled=False)
+            self._enable_buttons([self.ui.actionMenuStop], enabled=True)
             self.interaction_controller.start_playing(int_block=block.parent)
 
-        # TODO: call interaction_controller
-        # self.interaction_controller.play_blocks(...)
-        # if len(self.interaction_blocks) > 0:
-        #    self._enable_buttons([self.ui.actionMenuPlay], enabled=False)
-        #    self._enable_buttons([self.ui.actionMenuStop], enabled=True)
+    def on_finished_playing(self, event):
+        self._enable_buttons([self.ui.actionMenuPlay], enabled=True)
+        self._enable_buttons([self.ui.actionMenuStop], enabled=False)
 
     # BEHAVIORAL PARAMETERS
     # ---------------------

@@ -72,6 +72,10 @@ class InteractionBlock(Serializable):
 
         return None
 
+    def set_selected(self, val):
+        if val is not None:
+            self.block.set_selected(val)
+
     # ===========
     # PROPERTIES
     # ===========

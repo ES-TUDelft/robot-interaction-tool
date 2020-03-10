@@ -223,6 +223,9 @@ class BlockController(object):
         self.scene.clear()
         self.store("Cleared scene.")
 
+    def clear_selection(self):
+        self.scene.clear_selection()
+        
     def undo(self):
         self.scene.history.undo()
 

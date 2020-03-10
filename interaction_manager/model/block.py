@@ -160,6 +160,10 @@ class Block(Serializable, Observable):
     def description(self, desc):
         self.content.description = desc
 
+    def set_selected(self, val):
+        if val is not None:
+            self.graphics_block.setSelected(val)
+
     ###
     # SERIALIZATION
     ###
