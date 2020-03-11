@@ -18,6 +18,9 @@ import yaml
 ####
 # Logger
 ###
+from PyQt5.QtWidgets import QApplication
+
+
 def _setup_logger():
     logging.basicConfig(level=logging.DEBUG)
     return logging.getLogger('app_logger')
@@ -180,6 +183,19 @@ def _get_config():
 
 
 sys_config = _get_config()
+
+
+###
+# STYLESHEET
+###
+def load_stylesheet():
+    try:
+        filename = "interaction_manager/qss/blockstyle.qss"
+
+        with open(filename, 'r') as stylesheet:
+            QApplication.instance().setStyleSheet(stylesheet.read())
+    except Exception as e:
+        logger.error("Error while reading the stylesheet file! {}".format(e))
 
 
 ###

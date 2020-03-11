@@ -11,9 +11,6 @@ class BlockManagerWidget(QWidget):
 
         self.logger = logging.getLogger("BlockManagerWidget")
 
-        self.stylesheet_filename = "interaction_manager/qss/blockstyle.qss"
-        self.load_stylesheet(self.stylesheet_filename)
-
         self._init_ui(scene)
 
         self.right_click_block_observable = Observable()
@@ -60,13 +57,6 @@ class BlockManagerWidget(QWidget):
         # called on exit
         del self.scene
         del self.blocks_view
-
-    def load_stylesheet(self, filename):
-        try:
-            with open(filename, 'r') as stylesheet:
-                QApplication.instance().setStyleSheet(stylesheet.read())
-        except Exception as e:
-            self.logger.error("Error while reading the stylesheet file! {}".format(e))
 
     ###
     # OBSERVERS

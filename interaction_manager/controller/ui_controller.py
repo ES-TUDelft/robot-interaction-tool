@@ -31,6 +31,7 @@ from interaction_manager.controller.ui_import_blocks_controller import UIImportB
 from interaction_manager.controller.ui_robot_connection_controller import UIRobotConnectionController
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
 from interaction_manager.model.interaction_design import InteractionDesign
+from interaction_manager.utils import config_helper
 from interaction_manager.view.ui_dialog import Ui_DialogGUI
 
 
@@ -59,6 +60,8 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller = None
         self.interaction_controller = None
 
+        # load stylesheet
+        config_helper.load_stylesheet()
         # init UI elements
         self._init_ui()
 
