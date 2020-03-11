@@ -105,14 +105,17 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 
 ==> you should see PyQt5 in the results
 
-# 8. Launch the Interaction Tool
+### 8. Launch the Interaction Tool
 
-Once you finish installing all the requirements, open a terminal and cd to where you saved the git repository:
+Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
 
-`$ cd ~/robot-interaction-tool`
+`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+`$ cd robot-interaction-tool`
 
 `$ python main.py`
 
+The user interface should run now, good luck!
 
 <div align="center">
   <img src="interaction_manager/ui/ui_view.png" width="500px" />
