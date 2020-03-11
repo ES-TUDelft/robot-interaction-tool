@@ -12,7 +12,7 @@ colors:
         edge_selected: 3090C7
     brush:
         block_title: D6D6D6 #FF313131
-        scene_bg: ececec  # f8f7f7  # 393939  # C0C0C0 # 5E5E5E
+        scene_bg: EFF0F1  # f8f7f7  # 393939  # C0C0C0 # 5E5E5E
         block_bg: 212121  # E3212121
     socket:
         in: BCC6CC

@@ -281,7 +281,7 @@ class ESGraphicsViewController(QGraphicsView):
                                 end_socket=item.socket,
                                 edge_type=EdgeType.BEZIER)
                     # update
-                    edge.update_positions()
+                    # edge.update_positions()
 
                     # store
                     self.graphics_scene.scene.history.store("New edge created")

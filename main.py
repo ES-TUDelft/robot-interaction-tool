@@ -22,7 +22,7 @@ from interaction_manager.controller.ui_controller import UIController
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("macintosh")
-    
+
     win = UIController()
     win.show()
     win.repaint()

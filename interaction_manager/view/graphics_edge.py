@@ -22,11 +22,11 @@ class ESGraphicsEdge(QGraphicsPathItem):
         block_colors = config_helper.get_colors()
         self._pen = QPen(QColor("#{}".format(block_colors['pen']['edge'])))
         self._pen.setWidth(2)
-        self._pen_selected = QPen(QColor("#{}".format(block_colors['pen']['edge_selected'])))
-        self._pen_selected.setWidthF(3.0)
-        self._pen_dragging = QPen(QColor("#{}".format(block_colors['pen']['edge'])))
-        self._pen_dragging.setStyle(Qt.DashLine)
-        self._pen_dragging.setWidthF(3.0)
+        self._selected_pen = QPen(QColor("#{}".format(block_colors['pen']['edge_selected'])))
+        self._selected_pen.setWidthF(4.0)
+        self._dragging_pen = QPen(QColor("#{}".format(block_colors['pen']['edge'])))
+        self._dragging_pen.setStyle(Qt.DashLine)
+        self._dragging_pen.setWidthF(3.0)
 
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setAcceptHoverEvents(True)
@@ -43,8 +43,8 @@ class ESGraphicsEdge(QGraphicsPathItem):
         self.pos_destination = [x, y]
 
     # TODO: this was causing segmentation errors!
-    def boundingRect(self):
-        return self.shape().boundingRect()
+    # def boundingRect(self):
+    #     return self.shape().boundingRect()
     #
     # def shape(self):
     #     return self.compute_path()
@@ -55,9 +55,9 @@ class ESGraphicsEdge(QGraphicsPathItem):
         painter.setBrush(Qt.NoBrush)
 
         if self.edge.end_socket is None:
-            painter.setPen(self._pen_dragging)
+            painter.setPen(self._dragging_pen)
         else:
-            painter.setPen(self._pen_selected if self.isSelected() else self._pen)
+            painter.setPen(self._selected_pen if self.isSelected() else self._pen)
 
         painter.drawPath(self.path())
 
