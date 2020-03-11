@@ -15,7 +15,39 @@ The tool was tested on MAC and Linux.
 ## Linux: Installation guide
 After installing [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html), proceed with installing the following:
 
-### Install qt513
+### 1. Install PIP
+
+* Open a terminal
+
+`$ sudo apt-get update`
+
+`$ sudo apt-get install python-pip`
+
+### 2. Install PyYAML
+
+`$ pip install PyYAML`
+
+### 3. Install MONGO DB
+
+`$ pip install pymongo`
+
+### 4. Install qi
+
+* LibQi Python bindings for NAOqi
+
+`$ pip install qi`
+
+### ***Note***: 
+*Before proceeding with the next steps, check if you already have **PyQt5** installed on your system.* 
+*For example, try these commands in a terminal:*
+    
+`$ python`
+    
+`>> import PyQt5`
+    
+*If the import is successful (i.e., no errors), go to **Step 8**; otherwise, continue.*
+
+### 5. Install qt513
 
 * Open a terminal:
 
@@ -28,7 +60,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 ==> Qt should be now in: /opt/qt513
 
 
-### Install SIP 4.19.x
+### 6. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
@@ -51,7 +83,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 ==> you should see PyQt5-sip in the list
 
 
-### Install PyQt5
+### 7. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
@@ -73,31 +105,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 
 ==> you should see PyQt5 in the results
 
-
-### Install PIP
-
-* Open a terminal
-
-`$ sudo apt-get update`
-
-`$ sudo apt-get install python-pip`
-
-### Install PyYAML
-
-`$ pip install PyYAML`
-
-### Install MONGO DB
-
-`$ pip install pymongo`
-
-### Install qi
-
-* LibQi Python bindings for NAOqi
-
-`$ pip install qi`
-
-
-# Launch the Interaction Tool
+# 8. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you saved the git repository:
 
