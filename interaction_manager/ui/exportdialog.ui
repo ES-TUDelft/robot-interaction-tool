@@ -133,6 +133,9 @@
           <property name="text">
            <string>Note: if the file exists, it will be overwritten!</string>
           </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item row="7" column="0" colspan="4">

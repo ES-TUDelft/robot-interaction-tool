@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file 'interaction_manager/ui/importdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_ImportBlocksDialog(object):
     def setupUi(self, ImportBlocksDialog):
@@ -89,6 +90,8 @@ class Ui_ImportBlocksDialog(object):
         self.selectFileToolButton.setText(_translate("ImportBlocksDialog", "..."))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -97,4 +100,3 @@ if __name__ == "__main__":
     ui.setupUi(ImportBlocksDialog)
     ImportBlocksDialog.show()
     sys.exit(app.exec_())
-

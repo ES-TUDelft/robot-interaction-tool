@@ -12,6 +12,7 @@
 import logging
 from collections import OrderedDict
 
+from interaction_manager.enums.block_enums import SocketType
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
 from es_common.datasource.serializable import Serializable
 from es_common.model.tablet_page import TabletPage
@@ -68,45 +69,51 @@ class InteractionBlock(Serializable):
         else:
             self.icon_path = ":/hreresources/pepper-icons/{}".format(icon_path)
 
-    def get_next_block(self, execution_result=None):
-        connected_blocks = self.block.get_connected_blocks()
-        if connected_blocks is not None and len(connected_blocks) > 0:
-            return connected_blocks[0].parent
+    def get_connected_blocks(self, socket_type=SocketType.OUTPUT):
+        return self.block.get_connected_blocks(socket_type=socket_type)
 
+    def get_connected_interaction_blocks(self, socket_type=SocketType.OUTPUT):
+
+        blocks = self.get_connected_blocks(socket_type)
+        if blocks is not None:
+            return [b.parent for b in blocks]
         return None
 
-    def get_next_block_totest(self, previous_interaction_block, execution_result=None):
+    def get_next_interaction_block(self, execution_result=None):
         next_block = None
         try:
-            connected_blocks = self.block.get_connected_blocks()
+            int_blocks = self.get_connected_interaction_blocks(socket_type=SocketType.OUTPUT)
+
+            if int_blocks is None or len(int_blocks) == 0:  # no next block available!
+                return None
 
             # in the absence of a condition
             if execution_result is None or execution_result == "":
-                # select first
-                next_block = None if len(connected_blocks) == 0 else connected_blocks[0].parent
+                # select first if possible
+                next_block = int_blocks[0]  # we already verified the len to be > 0
             else:
                 # check the answers
-                if len(self.topic_tag.answers) > 1:
-                    # if answer is in answer1 ==> return previous block; else return next
-                    if execution_result in self.topic_tag.answers[1]:
-                        next_block = previous_interaction_block
-                    else:
-                        next_block = connected_blocks[0].parent
-                        if connected_blocks[0].parent == previous_interaction_block and len(connected_blocks) > 1:
-                            next_block = connected_blocks[1].parent
-                else:
-                    next_block = connected_blocks[0].parent
-
-            self.logger.info(
-                "NextBlock is: {} | {}".format("" if next_block is None else next_block.name, next_block))
+                for i in range(len(self.topic_tag.answers)):
+                    # if the result is in the answers ==> go to appropriate interaction block
+                    if execution_result.lower() in self.topic_tag.answers[i].lower():
+                        next_block = self._get_block_by_id(int_blocks, self.topic_tag.goto_ids[i])
+                        break
         except Exception as e:
-            self.logger.error("Error while getting the next block! {}".format(e))
+            self.logger.error("Error while attempting to get the next block! {}".format(e))
         finally:
+            self.logger.debug("Next block is: {} | {}".format(0 if next_block is None else next_block.title,
+                                                              next_block))
             return next_block
 
     def set_selected(self, val):
         if val is not None:
             self.block.set_selected(val)
+
+    def _get_block_by_id(self, b_lst, target_id):
+        for b in b_lst:
+            if b.id == target_id:
+                return b
+        return None
 
     # ===========
     # PROPERTIES
@@ -156,6 +163,10 @@ class InteractionBlock(Serializable):
     def description(self, desc):
         if self.block is not None:
             self.block.description = desc
+
+    @property
+    def title(self):
+        return "" if self.block is None else self.block.title
 
     @property
     def to_dict(self):

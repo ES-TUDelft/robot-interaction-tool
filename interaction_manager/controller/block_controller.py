@@ -216,6 +216,11 @@ class BlockController(object):
     def get_blocks(self):
         return self.scene.blocks
 
+    def get_parent_blocks(self):
+        blocks = self.scene.blocks
+
+        return None if blocks is None else [b.parent for b in blocks]
+
     def get_edges(self):
         return self.scene.edges
 
@@ -225,12 +230,32 @@ class BlockController(object):
 
     def clear_selection(self):
         self.scene.clear_selection()
-        
+
     def undo(self):
         self.scene.history.undo()
 
     def redo(self):
         self.scene.history.redo()
+
+    def get_block_by_id(self, block_id=0):
+        blocks = self.get_blocks()
+        if blocks is None:
+            return None
+
+        for b in blocks:
+            if b.id == block_id:
+                return b
+        return None
+
+    def get_block_by_parent_id(self, parent_id=0):
+        parent_blocks = self.get_parent_blocks()
+        if parent_blocks is None:
+            return None
+
+        for p in parent_blocks:
+            if p.id == parent_id:
+                return p
+        return None
 
     ###
     # DRAG and DROP OBSERVERS

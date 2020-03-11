@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file 'interaction_manager/ui/exportdialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_ExportBlocksDialog(object):
     def setupUi(self, ExportBlocksDialog):
@@ -72,6 +73,7 @@ class Ui_ExportBlocksDialog(object):
         font.setPointSize(12)
         font.setItalic(True)
         self.label.setFont(font)
+        self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.gridLayout_12.addWidget(self.label, 2, 0, 1, 4)
         self.buttonBox = QtWidgets.QDialogButtonBox(self.groupBox)
@@ -99,6 +101,8 @@ class Ui_ExportBlocksDialog(object):
         self.label.setText(_translate("ExportBlocksDialog", "Note: if the file exists, it will be overwritten!"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -107,4 +111,3 @@ if __name__ == "__main__":
     ui.setupUi(ExportBlocksDialog)
     ExportBlocksDialog.show()
     sys.exit(app.exec_())
-

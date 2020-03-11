@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file 'interaction_manager/ui/dialogmainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogGUI(object):
     def setupUi(self, DialogGUI):
@@ -107,7 +108,7 @@ class Ui_DialogGUI(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 401, 594))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 403, 594))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout_13 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout_13.setContentsMargins(11, 11, 11, 11)
@@ -795,7 +796,7 @@ class Ui_DialogGUI(object):
 
     def retranslateUi(self, DialogGUI):
         _translate = QtCore.QCoreApplication.translate
-        DialogGUI.setWindowTitle(_translate("DialogGUI", "Pepper Dialog"))
+        DialogGUI.setWindowTitle(_translate("DialogGUI", "Interaction Design"))
         self.label_8.setText(_translate("DialogGUI", "DESIGN PANEL"))
         self.menuFile.setTitle(_translate("DialogGUI", "File"))
         self.menuEdit.setTitle(_translate("DialogGUI", "Edit"))
@@ -896,7 +897,9 @@ class Ui_DialogGUI(object):
         self.actionMenuDatabaseConnect.setText(_translate("DialogGUI", "Connect"))
         self.actionMenuDatabaseDisconnect.setText(_translate("DialogGUI", "Disconnect"))
 
+
 import resources_rc
+
 
 if __name__ == "__main__":
     import sys
@@ -906,4 +909,3 @@ if __name__ == "__main__":
     ui.setupUi(DialogGUI)
     DialogGUI.show()
     sys.exit(app.exec_())
-

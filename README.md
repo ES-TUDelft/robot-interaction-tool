@@ -107,5 +107,5 @@ Once you finish installing all the requirements, open a terminal and cd to where
 
 
 <div align="center">
-  <img src="hre_ui/ui_view.png" width="500px" />
+  <img src="interaction_manager/ui/ui_view.png" width="500px" />
 </div>

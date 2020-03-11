@@ -30,7 +30,7 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         block_colors = config_helper.get_colors()
         self._default_pen = QPen(QColor("#{}".format(block_colors['pen']['default'])))
         self._selected_pen = QPen(QColor("#{}".format(block_colors['pen']['selected'])))
-        self._selected_pen.setWidthF(4.0)
+        self._selected_pen.setWidthF(block_size_settings["selected_pen_width"])
 
         self._title_brush = QBrush(QColor("#{}".format(block_colors['brush']['block_title'])))
         self._bg_brush = QBrush(QColor("#{}".format(block_colors['brush']['block_bg'])))

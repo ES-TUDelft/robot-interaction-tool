@@ -14,6 +14,7 @@ import logging
 
 from PyQt5 import QtCore, QtWidgets
 
+from interaction_manager.enums.block_enums import SocketType
 from interaction_manager.utils import config_helper
 import es_common.hre_config as pconfig
 from interaction_manager.model.interaction_block import InteractionBlock
@@ -24,19 +25,20 @@ from es_common.model.topic_tag import TopicTag
 
 
 class UIEditBlockController(QtWidgets.QDialog):
-    def __init__(self, parent=None, interaction_block=None):
+    def __init__(self, interaction_block, block_controller, parent=None):
         super(UIEditBlockController, self).__init__(parent)
 
         self.logger = logging.getLogger("EditBlockController")
 
-        # init UI elements
-        self.ui = Ui_EditBlockDialog()
-        self.ui.setupUi(self)
-
+        self.block_controller = block_controller
         self.interaction_block = interaction_block
 
         self.pattern = self.interaction_block.block.title.lower()
         self.pattern_settings = config_helper.get_patterns()[self.pattern]
+
+        # init UI elements
+        self.ui = Ui_EditBlockDialog()
+        self.ui.setupUi(self)
 
         # init ui elements
         self._init_ui()
@@ -47,6 +49,10 @@ class UIEditBlockController(QtWidgets.QDialog):
     def _init_ui(self):
         if self.interaction_block is None:
             self.interaction_block = InteractionBlock()
+
+        self.connected_interaction_blocks = self.interaction_block.get_connected_interaction_blocks(
+            socket_type=SocketType.OUTPUT
+        )
 
         self.setWindowTitle("Edit Block")
 
@@ -170,7 +176,7 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         # set answers and feedbacks
         if reset is True:
-            tag, topic, a1, a2, f1, f2 = ("", ) * 6
+            tag, topic, a1, a2, f1, f2 = ("",) * 6
         else:
             topic_tag = self.interaction_block.topic_tag
             tag = topic_tag.name
@@ -200,21 +206,63 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.ui.feedback1TextEdit.setText(f1)
         self.ui.feedback2TextEdit.setText(f2)
 
+        self.update_go_to()
+
+    def update_go_to(self):
+        if self.connected_interaction_blocks is not None and len(self.connected_interaction_blocks) > 0:
+            items = [pconfig.SELECT_OPTION]
+            items.extend(["{}: {}".format(b.title, b.description) for b in self.connected_interaction_blocks])
+
+            self.ui.answer1GoToComboBox.addItems(items)
+            self.ui.answer2GoToComboBox.addItems(items)
+
+            goto_ids = self.interaction_block.topic_tag.goto_ids
+            if goto_ids is None or len(goto_ids) == 0:
+                return
+
+            for i in range(len(goto_ids)):
+                b = self.block_controller.get_block_by_parent_id(parent_id=goto_ids[i])
+                if b is None:  # block is not found!
+                    self.logger.debug("Found 0 blocks for id: {}".format(goto_ids[i]))
+                    continue
+
+                opt = "{}: {}".format(b.title, b.description)
+                if opt in items:
+                    if i == 0:
+                        self.ui.answer1GoToComboBox.setCurrentIndex(
+                            self.ui.answer1GoToComboBox.findText(opt, QtCore.Qt.MatchFixedString))
+                    else:
+                        self.ui.answer2GoToComboBox.setCurrentIndex(
+                            self.ui.answer2GoToComboBox.findText(opt, QtCore.Qt.MatchFixedString))
+
     def get_speech_act(self):
         return SpeechAct.create_speech_act({"message": "{}".format(self.ui.messageTextEdit.toPlainText()).strip(),
                                             "message_type": "{}".format(self.ui.messageTypeComboBox.currentText())
                                             })
 
     def get_topic_tag(self):
+        topic_tag = TopicTag()
         if self.ui.topicTab.isEnabled():
-            return TopicTag(name="{}".format(self.ui.topicTagComboBox.currentText()),
-                            topic="{}".format(self.ui.topicNameComboBox.currentText()),
-                            answers=["{}".format(self.ui.answer1TextEdit.toPlainText()).strip(),
-                                     "{}".format(self.ui.answer2TextEdit.toPlainText()).strip()],
-                            feedbacks=["{}".format(self.ui.feedback1TextEdit.toPlainText()).strip(),
-                                       "{}".format(self.ui.feedback2TextEdit.toPlainText()).strip()])
-        else:
-            return TopicTag()
+            topic_tag.name = "{}".format(self.ui.topicTagComboBox.currentText())
+            topic_tag.topic = "{}".format(self.ui.topicNameComboBox.currentText())
+            topic_tag.answers = ["{}".format(self.ui.answer1TextEdit.toPlainText()).strip(),
+                                 "{}".format(self.ui.answer2TextEdit.toPlainText()).strip()]
+            topic_tag.feedbacks = ["{}".format(self.ui.feedback1TextEdit.toPlainText()).strip(),
+                                   "{}".format(self.ui.feedback2TextEdit.toPlainText()).strip()]
+
+            # set GoTos
+            goto_ids = [-1, -1]
+            options = ["{}".format(self.ui.answer1GoToComboBox.currentText()),
+                       "{}".format(self.ui.answer2GoToComboBox.currentText())]
+            for i in range(len(options)):
+                if self._is_valid_option(options[i]):
+                    b = self._get_block_from_details(*options[i].split(":"))
+                    if b is not None:
+                        goto_ids[i] = b.id
+            self.logger.debug("GoTo IDS: {} | {}".format(*goto_ids))
+            topic_tag.goto_ids = goto_ids
+
+        return topic_tag
 
     def get_tablet_page(self):
         return TabletPage(name="{}".format(self.ui.tabletPageNameComboBox.currentText()),
@@ -237,10 +285,21 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         return d_block
 
+    def _is_valid_option(self, option):
+        if option is not None and option != "" and option != pconfig.SELECT_OPTION:
+            return True
+
+        return False
+
+    def _get_block_from_details(self, title, desc):
+        for b in self.connected_interaction_blocks:
+            if b.title == title.strip() and b.description == desc.strip():
+                return b
+        return None
+
     def _toggle_item(self, item, status):
         if item is None or status is None:
             return
-
         try:
             item.setEnabled(status)
             self.repaint()

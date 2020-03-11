@@ -14,10 +14,8 @@ import logging
 
 from PyQt5 import QtGui, QtWidgets
 
-import interaction_manager.utils.json_helper as json_helper
-from interaction_manager.model.interaction_block import InteractionBlock
 from interaction_manager.utils import data_helper
-from interaction_manager.view.ui_import_blocks_dialog import Ui_ImportBlocksDialog
+from interaction_manager.view.ui_importblocks_dialog import Ui_ImportBlocksDialog
 
 
 class UIImportBlocksController(QtWidgets.QDialog):

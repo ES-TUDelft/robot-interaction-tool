@@ -72,20 +72,23 @@ class Block(Serializable, Observable):
 
     def get_socket_position(self, index, position):
         # set x
-        x = 0  # for the left side
-        if position in (Position.TOP_RIGHT, Position.BOTTOM_RIGHT, Position.CENTER_RIGHT):
-            x = self.graphics_block.width
+        x, y = 0, 0  # for the left side
+        try:
+            if position in (Position.TOP_RIGHT, Position.BOTTOM_RIGHT, Position.CENTER_RIGHT):
+                x = self.graphics_block.width
 
-        # set y
-        if position in (Position.CENTER_LEFT, Position.CENTER_RIGHT):
-            y = (self.graphics_block.height / 2) - index * self.socket_spacing
-        elif position in (Position.BOTTOM_LEFT, Position.BOTTOM_RIGHT):
-            # start on bottom
-            y = self.graphics_block.height - (2 * self.graphics_block.rounded_edge_size) - index * self.socket_spacing
-        else:
-            y = self.graphics_block.title_height + self.graphics_block.rounded_edge_size + index * self.socket_spacing
-
-        return [x, y]
+            # set y
+            if position in (Position.CENTER_LEFT, Position.CENTER_RIGHT):
+                y = (self.graphics_block.height / 2) - index * self.socket_spacing
+            elif position in (Position.BOTTOM_LEFT, Position.BOTTOM_RIGHT):
+                # start on bottom
+                y = self.graphics_block.height - (2 * self.graphics_block.rounded_edge_size) - index * self.socket_spacing
+            else:
+                y = self.graphics_block.title_height + self.graphics_block.rounded_edge_size + index * self.socket_spacing
+        except Exception as e:
+            self.logger.debug("Error while getting the socket position! {}".format(e))
+        finally:
+            return [x, y]
 
     def update_connected_edges(self):
         for socket in self.inputs + self.outputs:
@@ -104,14 +107,15 @@ class Block(Serializable, Observable):
 
         return False
 
-    def get_connected_blocks(self):
+    def get_connected_blocks(self, socket_type=SocketType.OUTPUT):
         blocks = []
-        if len(self.outputs) > 0:
-            # for now, assume we have one output socket
-            for socket in self.outputs[0].get_connected_sockets():
-                if socket.block != self:
-                    blocks.append(socket.block)
+        # go through target sockets and get the connected blocks
+        for output_socket in (self.outputs if socket_type is SocketType.OUTPUT else self.inputs):
+            connected_sockets = output_socket.get_connected_sockets()
+            if connected_sockets is not None:
+                blocks.extend([s.block for s in connected_sockets])
 
+        self.logger.debug("# of Connected blocks: {}".format(0 if blocks is None else len(blocks)))
         return blocks
 
     def remove(self):
@@ -162,7 +166,7 @@ class Block(Serializable, Observable):
         self.content.description = desc
 
     def set_selected(self, val):
-        if val is not None:
+        if val is not None and self.graphics_block is not None:
             self.graphics_block.setSelected(val)
 
     ###

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pepper Dialog</string>
+   <string>Interaction Design</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -245,7 +245,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>401</width>
+          <width>403</width>
           <height>594</height>
          </rect>
         </property>

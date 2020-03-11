@@ -212,22 +212,27 @@ class UIController(QtWidgets.QMainWindow):
     def block_editing(self, block):
         self.selected_block = block
 
-        # Open edit dialog
-        edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent)
+        try:
+            # Open edit dialog
+            edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
+                                                block_controller=self.block_controller)
 
-        if edit_dialog.exec_():
-            d_block = edit_dialog.get_interaction_block()
-            self.selected_block.parent.name = d_block.name
-            self.selected_block.parent.description = d_block.description
-            self.selected_block.parent.speech_act = d_block.speech_act
-            self.selected_block.parent.gestures = d_block.gestures
-            self.selected_block.parent.topic_tag = d_block.topic_tag
-            self.selected_block.parent.tablet_page = d_block.tablet_page
+            if edit_dialog.exec_():
+                d_block = edit_dialog.get_interaction_block()
+                self.selected_block.parent.name = d_block.name
+                self.selected_block.parent.description = d_block.description
+                self.selected_block.parent.speech_act = d_block.speech_act
+                self.selected_block.parent.gestures = d_block.gestures
+                self.selected_block.parent.topic_tag = d_block.topic_tag
+                self.selected_block.parent.tablet_page = d_block.tablet_page
 
-            self.block_controller.store("Edited block")
+                self.block_controller.store("Edited block")
 
-        # backup
-        self.backup_blocks()
+            # backup
+            self.backup_blocks()
+        except Exception as e:
+            self._display_message(error="Error while attempting to edit the block! {}".format(e))
+            self.repaint()
 
     def block_settings(self, block):
         # Enable behavioral parameters widget
@@ -255,39 +260,47 @@ class UIController(QtWidgets.QMainWindow):
     # Connection
     # ---------- #
     def robot_connect(self):
-        if self.interaction_controller is None:
-            self.interaction_controller = InteractionController()
+        try:
+            if self.interaction_controller is None:
+                self.interaction_controller = InteractionController()
 
-        connection_dialog = UIRobotConnectionController(self.interaction_controller)
+            connection_dialog = UIRobotConnectionController(self.interaction_controller)
 
-        if connection_dialog.exec_():
-            if connection_dialog.success is True:
-                self.logger.debug("Robot is_awake = {}".format(connection_dialog.is_awake))
-                self._toggle_buttons(is_awake=connection_dialog.is_awake)
+            if connection_dialog.exec_():
+                if connection_dialog.success is True:
+                    self.logger.debug("Robot is_awake = {}".format(connection_dialog.is_awake))
+                    self._toggle_buttons(is_awake=connection_dialog.is_awake)
 
-                self._enable_buttons([self.ui.actionMenuConnect], enabled=False)
-                self._enable_buttons([self.ui.actionMenuDisconnect], enabled=True)
+                    self._enable_buttons([self.ui.actionMenuConnect], enabled=False)
+                    self._enable_buttons([self.ui.actionMenuDisconnect], enabled=True)
+                    self._display_message(message="Successfully connected to the robot.")
+                else:
+                    self._enable_buttons([self.ui.actionMenuConnect], enabled=True)
+                    self._enable_buttons([self.ui.actionMenuDisconnect, self.ui.actionMenuWakeUp], enabled=False)
+                    self._display_message(error="Please enter a valid IP and PORT")
             else:
-                self._enable_buttons([self.ui.actionMenuConnect], enabled=True)
-                self._enable_buttons([self.ui.actionMenuDisconnect, self.ui.actionMenuWakeUp], enabled=False)
-                self._display_message(error="Please enter a valid IP and PORT")
-        else:
-            self._display_message(error="Connection is canceled!")
-            if self.interaction_controller.robot_controller is not None:
-                self.robot_disconnect()
+                self._display_message(error="Connection is canceled!")
+                if self.interaction_controller.robot_controller is not None:
+                    self.robot_disconnect()
 
-        self.repaint()
+            self.repaint()
+        except Exception as e:
+            self._display_message(error="Error while attempting to connect to the robot! {}".format(e))
+            self.repaint()
 
     def robot_disconnect(self):
-        success = self.interaction_controller.disconnect_from_robot()
+        try:
+            success = self.interaction_controller.disconnect_from_robot()
 
-        # update GUI
-        self._toggle_buttons(is_awake=False)
-        self._enable_buttons([self.ui.actionMenuConnect], enabled=True)
-        self._enable_buttons([self.ui.actionMenuDisconnect, self.ui.actionMenuWakeUp], enabled=False)
-        self._display_message(message="### Disconnected from the robot.")
-
-        self.repaint()
+            # update GUI
+            self._toggle_buttons(is_awake=False)
+            self._enable_buttons([self.ui.actionMenuConnect], enabled=True)
+            self._enable_buttons([self.ui.actionMenuDisconnect, self.ui.actionMenuWakeUp], enabled=False)
+            self._display_message(message="### Disconnected from the robot.")
+            self.repaint()
+        except Exception as e:
+            self._display_message(error="Error while attempting to disconnect from the robot! {}".format(e))
+            self.repaint()
 
     # --------- #
     # MONGO DB

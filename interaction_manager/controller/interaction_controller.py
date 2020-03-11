@@ -194,9 +194,9 @@ class InteractionController(object):
         execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
         self.logger.debug("Execution Result: {}".format(execution_result))
 
-        # return self.current_block.get_next_block(execution_result=execution_result)
-        next_block = self.current_block.get_next_block_totest(previous_interaction_block=self.previous_block,
-                                                              execution_result=execution_result)
+        next_block = self.current_block.get_next_interaction_block(execution_result=execution_result)
+        # next_block = self.current_block.get_next_interaction_block_totest(previous_interaction_block=self.previous_block,
+        #                                                                  execution_result=execution_result)
         # update previous block
         self.previous_block = self.current_block
 
@@ -299,7 +299,7 @@ class InteractionController(object):
             b.behavioral_parameters = behavioral_parameters
             b.behavioral_parameters.speech_act = interaction_block.speech_act.clone()
             b.behavioral_parameters.voice.volume = volume
-            print(b.to_dict)
+
             self.face_tracker_thread.gaze_pattern = b.behavioral_parameters.gaze_pattern
             self.animation_thread.test_mode = True
             self.animation_thread.customized_say(interaction_block=b)

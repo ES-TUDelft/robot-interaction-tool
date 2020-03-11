@@ -17,10 +17,8 @@ from os.path import expanduser
 
 from PyQt5 import QtGui, QtWidgets
 
-import interaction_manager.utils.json_helper as json_helper
-from interaction_manager.model.interaction_design import InteractionDesign
 from interaction_manager.utils import data_helper
-from interaction_manager.view.ui_export_blocks_dialog import Ui_ExportBlocksDialog
+from interaction_manager.view.ui_exportblocks_dialog import Ui_ExportBlocksDialog
 
 
 class UIExportBlocksController(QtWidgets.QDialog):
