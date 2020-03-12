@@ -9,26 +9,26 @@
 #
 # @author ES
 # **
+import copy
 import logging
 from collections import OrderedDict
 
-from interaction_manager.enums.block_enums import SocketType
-from interaction_manager.model.behavioral_parameters import BehavioralParameters
 from es_common.datasource.serializable import Serializable
 from es_common.model.tablet_page import TabletPage
 from es_common.model.topic_tag import TopicTag
-import copy
+from interaction_manager.enums.block_enums import SocketType
+from interaction_manager.model.behavioral_parameters import BehavioralParameters
 
 
 class InteractionBlock(Serializable):
-    def __init__(self, name=None, stage=None, topic_tag=None, tablet_page=None, icon_path=None,
+    def __init__(self, name=None, pattern=None, topic_tag=None, tablet_page=None, icon_path=None,
                  behavioral_parameters=None, block=None):
         super(InteractionBlock, self).__init__()
 
         self.logger = logging.getLogger("Interaction Block")
 
-        self.name = "start" if name is None else name
-        self.stage = "Opening" if stage is None else stage
+        self.name = "Start" if name is None else name
+        self.pattern = pattern if pattern is not None else self.title
         self.topic_tag = TopicTag() if topic_tag is None else topic_tag
         self.tablet_page = TabletPage() if tablet_page is None else tablet_page
 
@@ -42,13 +42,17 @@ class InteractionBlock(Serializable):
         self.interaction_end_time = 0
 
     def set_behavioral_parameters(self, p_name, behavioral_parameters):
+        """
+        :param p_name: name of the behavioral parameter (i.e., property to set)
+        :param behavioral_parameters
+        """
         self.behavioral_parameters.set_parameters(p_name, behavioral_parameters)
 
     def clone(self):
         block = InteractionBlock()
         block.name = self.name
+        block.pattern = self.pattern
         block.message = self.message
-        block.stage = self.stage
         block.topic_tag = self.topic_tag.clone()
         block.tablet_page = self.tablet_page.clone()
         block.icon_path = self.icon_path
@@ -173,7 +177,7 @@ class InteractionBlock(Serializable):
         block_dict = OrderedDict([
             ("id", self.id),
             ("name", self.name),
-            ("stage", self.stage),
+            ("pattern", self.pattern),
             ("topic_tag", self.topic_tag.to_dict),
             ("tablet_page", self.tablet_page.to_dict),
             ("icon_path", self.icon_path),
@@ -188,8 +192,9 @@ class InteractionBlock(Serializable):
     @staticmethod
     def create_interaction_block(block_dict):
         if block_dict:
+            b_pattern = block_dict["pattern"] if "pattern" in block_dict.keys() else block_dict["name"]
             block = InteractionBlock(name=block_dict['name'],
-                                     stage=block_dict['stage'],
+                                     pattern=b_pattern,
                                      topic_tag=TopicTag.create_topic_tag(tag_dict=block_dict['topic_tag']),
                                      tablet_page=TabletPage.create_tablet_page(page_dict=block_dict["tablet_page"]),
                                      icon_path=block_dict['icon_path']

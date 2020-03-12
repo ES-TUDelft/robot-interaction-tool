@@ -95,9 +95,10 @@ class BlockController(object):
             self.logger.debug("*** drop ignored")
             event.ignore()
 
-    def create_interaction_block(self, title, pos, pattern=None):
-        num_inputs, num_outputs = 2, 1
+    def create_interaction_block(self, title, pos, pattern):
+        num_inputs, num_outputs = 0, 1
         icon = None
+
         patterns = config_helper.get_patterns()
         if pattern is not None and pattern.lower() in patterns:
             num_inputs = patterns[pattern.lower()]["inputs"]
@@ -107,7 +108,7 @@ class BlockController(object):
             pattern = "start"
 
         # TODO: create block from pattern
-        interaction_block = InteractionBlock(name=title)
+        interaction_block = InteractionBlock(name=title, pattern=pattern)
         interaction_block.block = self.add_block(title=title,
                                                  num_inputs=num_inputs, num_outputs=num_outputs,
                                                  pos=pos,

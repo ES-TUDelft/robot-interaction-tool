@@ -24,7 +24,7 @@ class Block(Serializable, Observable):
         self.graphics_block = None
 
         self.icon = icon
-        self.title = title
+        self.title = title  # is also the pattern name
 
         self.inputs = []
         self.outputs = []
@@ -168,6 +168,10 @@ class Block(Serializable, Observable):
     def set_selected(self, val):
         if val is not None and self.graphics_block is not None:
             self.graphics_block.setSelected(val)
+
+    @property
+    def pattern(self):
+        return self.parent.pattern if self.parent is not None else self.title
 
     ###
     # SERIALIZATION

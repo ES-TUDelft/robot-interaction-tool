@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from es_common.datasource.serializable import Serializable
+from interaction_manager.utils import config_helper
 from interaction_manager.view.graphics_socket import ESGraphicsSocket
 from interaction_manager.enums.block_enums import Position, SocketType
 import logging
@@ -54,6 +55,20 @@ class Socket(Serializable, Observable):
 
     def has_edge(self, edge):
         return edge in self.edges
+
+    def can_have_more_edges(self):
+        result = True
+        try:
+            if self.socket_type is SocketType.OUTPUT:
+                output_edges = config_helper.get_patterns()[self.block.pattern.lower()]["output_edges"]
+                if len(self.edges) >= output_edges:
+                    result = False
+        except Exception as e:
+            self.logger.error("Error while checking for edges! {}".format(e))
+        finally:
+            self.logger.debug("Socket {} of {} {} have more edges.".format(self, self.block.title,
+                                                                           "can" if result is True else "cannot"))
+            return result
 
     def update_edge_positions(self):
         for edge in self.edges:

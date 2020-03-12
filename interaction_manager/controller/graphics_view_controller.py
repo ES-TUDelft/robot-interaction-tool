@@ -17,9 +17,10 @@ from PyQt5.QtGui import *
 
 from es_common.model.observable import Observable
 from interaction_manager.model.edge import Edge
+from interaction_manager.utils import config_helper
 from interaction_manager.view.graphics_edge import ESGraphicsEdge
 from interaction_manager.view.graphics_socket import ESGraphicsSocket
-from interaction_manager.enums.block_enums import Mode, EdgeType
+from interaction_manager.enums.block_enums import Mode, EdgeType, SocketType
 import logging
 
 
@@ -303,6 +304,10 @@ class ESGraphicsViewController(QGraphicsView):
         # check if one of the sockets is connected to the other's block
         if self.drag_start_socket.is_connected_to_block(other_socket.block) \
                 or other_socket.is_connected_to_block(self.drag_start_socket.block):
+            return False
+
+        # check the number of allowed edges for the each block
+        if not (self.drag_start_socket.can_have_more_edges() and other_socket.can_have_more_edges()):
             return False
 
         # connect to a block once

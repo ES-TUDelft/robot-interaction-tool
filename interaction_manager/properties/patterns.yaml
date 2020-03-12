@@ -1,6 +1,7 @@
 start:
-    inputs: 0
-    outputs: 1
+    inputs: 0  # sockets
+    outputs: 1  # sockets
+    output_edges: 1
     icon: interaction_manager/icons/blue/start.png
     topic: ""
     tags: []
@@ -10,6 +11,7 @@ start:
 end:
     inputs: 1
     outputs: 0
+    output_edges: 0
     icon: interaction_manager/icons/blue/x.png
     topic: ""
     tags: []
@@ -19,6 +21,7 @@ end:
 question:
     inputs: 1
     outputs: 1
+    output_edges: 2
     icon: interaction_manager/icons/blue/question-mark.png
     topic: "question"
     tags:
@@ -29,6 +32,7 @@ question:
 confirmation:
     inputs: 1
     outputs: 1
+    output_edges: 2
     icon: interaction_manager/icons/blue/question-mark.png
     topic: "question"
     tags:
@@ -39,6 +43,7 @@ confirmation:
 instructions:
     inputs: 1
     outputs: 1
+    output_edges: 1
     icon: interaction_manager/icons/blue/instructions.png
     topic: ""
     tags: []
@@ -48,6 +53,7 @@ instructions:
 monologue:
     inputs: 1
     outputs: 1
+    output_edges: 1
     icon: interaction_manager/icons/blue/speaker.png
     topic: ""
     tags: []
@@ -57,6 +63,7 @@ monologue:
 action_wait:
     inputs: 1
     outputs: 1
+    output_edges: 2
     icon: interaction_manager/icons/blue/action-wait.png
     topic: ""
     tags: []
