@@ -6,4 +6,4 @@ scene:
   height: 1000
 
 history:
-  step_limit: 30
+  step_limit: 50

@@ -103,9 +103,7 @@ class ESGraphicsViewController(QGraphicsView):
     def mouseMoveEvent(self, event):
         if self.mode == Mode.DRAG_EDGE:
             pos = self.mapToScene(event.pos())
-            self.drag_edge.graphics_edge.set_destination(pos.x(), pos.y())
-            self.drag_edge.graphics_edge.update_path()
-            # self.logger.debug("Mouse Position: {} | {}".format(pos.x(), pos.y()))
+            self.drag_edge.update_destination(pos.x(), pos.y())
 
         super(ESGraphicsViewController, self).mouseMoveEvent(event)
 
@@ -132,7 +130,7 @@ class ESGraphicsViewController(QGraphicsView):
     def left_mouse_button_press(self, event):
         item = self.get_clicked_item(event)
 
-        self.logger.debug("Item {} is clicked!".format(item))
+        # self.logger.debug("Item {} is clicked!".format(item))
         if hasattr(item, "block"):
             # send the item not the event
             self.block_selected_observable.notify_all(event)
@@ -178,6 +176,7 @@ class ESGraphicsViewController(QGraphicsView):
         item = self.get_clicked_item(event)
 
         if item is None:
+            # displays the number of blocks and edges in the scene
             to_log = "\nSCENE:\n\tBlocks:"
             for block in self.graphics_scene.scene.blocks:
                 to_log = "{}\n\t\t{}".format(to_log, block)
@@ -239,7 +238,7 @@ class ESGraphicsViewController(QGraphicsView):
         self.delete_selected_edges()
         self.delete_selected_blocks()
 
-        self.graphics_scene.scene.history.store("Deleted selected items")
+        self.graphics_scene.scene.store("Deleted selected items")
 
     def delete_selected_blocks(self):
         for item in self.graphics_scene.selectedItems():
@@ -283,11 +282,9 @@ class ESGraphicsViewController(QGraphicsView):
                                 start_socket=self.drag_start_socket,
                                 end_socket=item.socket,
                                 edge_type=EdgeType.BEZIER)
-                    # update
-                    edge.update_path()
 
                     # store
-                    self.graphics_scene.scene.history.store("New edge created")
+                    self.graphics_scene.scene.store("New edge created")
                     success = True
         except Exception as e:
             self.logger.error("Error while ending drag! {}".format(e))

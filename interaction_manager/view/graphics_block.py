@@ -117,7 +117,7 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         if self.is_moved:
             self.is_moved = False
             self.logger.debug("Storing history on block move.")
-            self.block.scene.history.store("Block moved")
+            self.block.scene.store("Block moved")
 
     @property
     def title(self):

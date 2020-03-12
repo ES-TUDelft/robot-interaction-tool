@@ -27,17 +27,28 @@ class Edge(Serializable, Observable):
         # add edge to the scene
         self.scene.add_edge(self)
 
-    def _init_graphics_edge(self):
+    def __str__(self):
+        return "<Edge id {}..{}>".format((hex(id(self))[2:5]), (hex(id(self))[-3:]))
+
+    def update_destination(self, x, y):
+        self.graphics_edge.set_destination(x, y)
+        self.update_path()
+
+    def update_path(self):
+        self.graphics_edge.update_path()
+
+    def _update_graphics_edge(self):
+        if hasattr(self, "graphics_edge") and self.graphics_edge is not None:
+            self.scene.graphics_scene.removeItem(self.graphics_edge)
+
         if self.edge_type is EdgeType.DIRECT:
             self.graphics_edge = ESGraphicsEdgeDirect(self)
         else:  # EdgeType.BEZIER
             self.graphics_edge = ESGraphicsEdgeBezier(self)
 
-    def __str__(self):
-        return "<Edge id {}..{}>".format((hex(id(self))[2:5]), (hex(id(self))[-3:]))
+        self.scene.graphics_scene.addItem(self.graphics_edge)
 
-    def update_path(self):
-        self.graphics_edge.update_path()
+        self.update_positions()
 
     def update_positions(self):
         # in case the edge has no starting point, return
@@ -58,6 +69,9 @@ class Edge(Serializable, Observable):
         else:
             self.graphics_edge.set_destination(*s_pos)
 
+        # this was useful for preventing the path from being invisible in the scene
+        # it will update the edge path which will notify the paint functionality
+        self.graphics_edge.update_path()
         self.graphics_edge.update()
 
     @property
@@ -94,19 +108,6 @@ class Edge(Serializable, Observable):
             return [self.start_socket.block]
 
         return [self.start_socket.block, self.end_socket.block]
-
-    def _update_graphics_edge(self):
-        if hasattr(self, "graphics_edge") and self.graphics_edge is not None:
-            self.scene.graphics_scene.removeItem(self.graphics_edge)
-
-        if self.edge_type is EdgeType.DIRECT:
-            self.graphics_edge = ESGraphicsEdgeDirect(self)
-        else:  # EdgeType.BEZIER
-            self.graphics_edge = ESGraphicsEdgeBezier(self)
-
-        self.scene.graphics_scene.addItem(self.graphics_edge)
-
-        self.update_positions()
 
     def connect_socket(self, socket):
         if socket is not None:

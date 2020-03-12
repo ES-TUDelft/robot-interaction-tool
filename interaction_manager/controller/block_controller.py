@@ -32,8 +32,8 @@ class BlockController(object):
         self._block_widget = BlockFactory.create_block_widget(scene=self.scene, parent=parent_widget)
         self._block_list_widget = BlockListWidget()
 
-        self.block_is_selected_observable = Observable()
-        self.no_block_selected_observable = Observable()
+        self.on_block_selected_observable = Observable()
+        self.on_no_block_selected_observable = Observable()
         self.block_settings_observable = Observable()
         self.block_editing_observable = Observable()
         self.start_block_observable = Observable()
@@ -162,13 +162,13 @@ class BlockController(object):
     def block_is_selected(self, block):
         if type(block) is Block:
             self.logger.debug("Block '{}' is selected. | id = {}".format(block.title, block.id))
-            self.block_is_selected_observable.notify_all(block)
+            self.on_block_selected_observable.notify_all(block)
 
     def no_block_selected(self, event):
         item = self.get_item_at(event.pos())
         self.logger.debug("No block is selected | {}".format(item))
 
-        self.no_block_selected_observable.notify_all(event)
+        self.on_no_block_selected_observable.notify_all(event)
 
     def block_settings_selected(self, block):
         if type(block) is Block:
@@ -207,7 +207,7 @@ class BlockController(object):
         self.logger.debug("Removed edge")
 
     def store(self, description):
-        self.scene.history.store(description=description)
+        self.scene.store(description=description)
 
     def save_blocks(self, filename):
         self.scene.save_scene(filename=filename)
@@ -291,17 +291,17 @@ class BlockController(object):
     def add_no_block_selected_observer(self, observer):
         self._block_widget.add_no_block_selected_observer(observer)
 
-    def remove_no_block_selected_observer(self, observer):
-        self._block_widget.remove_no_block_selected_observer(observer)
-
     def add_right_click_block_observer(self, observer):
         self._block_widget.right_click_block_observable.add_observer(observer)
-
-    def add_remove_click_block_observer(self, observer):
-        self._block_widget.right_click_block_observable.remove_observer(observer)
 
     def add_invalid_edge_observer(self, observer):
         self._block_widget.add_invalid_edge_observer(observer)
 
-    def remove_invalid_edge_observer(self, observer):
-        self._block_widget.remove_invalid_edge_observer(observer)
+    ###
+    # Scene observers
+    #################
+    def add_on_scene_change_observer(self, observer):
+        self.scene.add_observer(observer)
+
+    def remove_on_scene_change_observer(self, observer):
+        self.scene.remove_observer(observer)

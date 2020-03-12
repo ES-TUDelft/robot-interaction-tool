@@ -32,7 +32,7 @@ class ESGraphicsEdge(QGraphicsPathItem):
         self.setZValue(-1)
 
         self.pos_source = [0, 0]
-        self.pos_destination = [100, 300]
+        self.pos_destination = [10, 30]
         self.pos_counter = 0
 
     def boundingRect(self):

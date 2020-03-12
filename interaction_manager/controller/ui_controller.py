@@ -149,7 +149,7 @@ class UIController(QtWidgets.QMainWindow):
             lambda: self.apply_behavioral_parameters(to_all_items=True))
 
         # DELETE, RESET, CLEAR, IMPORT and SAVE list listeners
-        self._enable_buttons([self.ui.actionMenuNew, self.ui.actionMenuSaveAs, self.ui.actionMenuSave],
+        self._enable_buttons([self.ui.actionMenuNew, self.ui.actionMenuSaveAs],
                              enabled=False)  # disabled for now!
         self.ui.actionMenuSave.triggered.connect(self.save_blocks)
         self.ui.actionMenuImportBlocks.setEnabled(True)
@@ -189,10 +189,11 @@ class UIController(QtWidgets.QMainWindow):
         self.removeDockWidget(self.ui.blocksDockWidget)
 
         # observe selected blocks
-        self.block_controller.block_is_selected_observable.add_observer(self.on_block_selected)
-        self.block_controller.no_block_selected_observable.add_observer(self.on_no_block_selected)
+        self.block_controller.on_block_selected_observable.add_observer(self.on_block_selected)
+        self.block_controller.on_no_block_selected_observable.add_observer(self.on_no_block_selected)
         self.block_controller.start_block_observable.add_observer(self.on_invalid_action)
         self.block_controller.add_invalid_edge_observer(self.on_invalid_action)
+        self.block_controller.add_on_scene_change_observer(self.on_scene_change)
         self.block_controller.block_settings_observable.add_observer(self.block_settings)
         self.block_controller.block_editing_observable.add_observer(self.block_editing)
         self.block_controller.add_right_click_block_observer(self.create_popup_menu)
@@ -368,6 +369,10 @@ class UIController(QtWidgets.QMainWindow):
     # ----------------
     def on_invalid_action(self, val):
         self._display_message(warning="{}".format(val))
+
+    def on_scene_change(self, val):
+        # backup scene
+        self.backup_blocks()
 
     def on_block_selected(self, block):
         self.selected_block = block
@@ -641,19 +646,6 @@ class UIController(QtWidgets.QMainWindow):
 
             self.repaint()
 
-    def delete_blocks(self):
-        # TODO: delete selected blocks
-
-        # Disable widget
-        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                            btns=[], enable=False)
-        # backup
-        self.backup_blocks()
-        self.repaint()
-
-    def create_interaction_design(self):
-        return InteractionDesign(communication_style="Interaction")
-
     def insert_interaction_design(self, design):
         success = self.database_controller.insert_interaction_design(design=design)
 
@@ -674,7 +666,7 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.save_blocks(filename=filename)
 
     def save_blocks(self):
-        filename = "{}/logs/blocks_{}.json".format(os.getcwd(), date_helper.get_time())
+        filename = "{}/logs/blocks_{}.json".format(os.getcwd(), date_helper.get_day_and_month())
 
         self.block_controller.save_blocks(filename=filename)
         self._display_message(message="Successfully saved the blocks!")

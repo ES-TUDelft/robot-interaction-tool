@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import logging
 
+from es_common.model.observable import Observable
 from interaction_manager.model.edge import Edge
 from interaction_manager.model.block import Block
 from interaction_manager.view.graphics_scene import ESGraphicsScene
@@ -9,9 +10,10 @@ from interaction_manager.utils import data_helper
 from interaction_manager.controller.scene_history_controller import SceneHistoryController
 
 
-class Scene(Serializable):
+class Scene(Serializable, Observable):
     def __init__(self):
         super(Scene, self).__init__()
+        Observable.__init__(self)
 
         self.logger = logging.getLogger("Scene")
 
@@ -31,11 +33,13 @@ class Scene(Serializable):
     def add_block(self, block):
         self.blocks.append(block)
         self.graphics_scene.addItem(block.graphics_block)
+        self.notify_all("Added block")
         self.logger.debug("Added block '{}': {}".format(block.title, block))
 
     def remove_block(self, block):
         self.graphics_scene.removeItem(block.graphics_block)
         self.blocks.remove(block)
+        self.notify_all("Removed block")
         self.logger.debug("Removed block '{}: {}".format(block.title, block))
 
     # Edges
@@ -48,6 +52,10 @@ class Scene(Serializable):
         self.edges.remove(edge)
         self.graphics_scene.removeItem(edge.graphics_edge)
         self.logger.debug("Removed edge from scene '{}: {} | {}".format(edge, edge.start_socket, edge.end_socket))
+
+    def store(self, description):
+        self.history.store(description)
+        self.notify_all("Stored scene")
 
     def save_scene(self, filename):
         try:
@@ -63,6 +71,7 @@ class Scene(Serializable):
     def load_scene_data(self, data):
         try:
             self.deserialize(data)
+            self.notify_all("Loaded Scene")
             return True
         except Exception as e:
             self.logger.error("Error while loading scene data: {} | {}".format(data, e))
@@ -80,14 +89,17 @@ class Scene(Serializable):
 
         self.edges = []
         self.blocks = []
+        self.notify_all("Cleared Scene")
 
     def undo(self):
         self.history.undo()
         self.update_edges()
+        self.notify_all("Undo Scene")
 
     def redo(self):
         self.history.redo()
         self.update_edges()
+        self.notify_all("Redo Scene")
 
     def update_edges(self):
         for e in self.edges:

@@ -73,7 +73,7 @@ class ESBlockContentWidget(QWidget, Serializable ):
         return icon
 
     def store_changes(self, event):
-        self.block.scene.history.store("Block Description changed")
+        self.block.scene.store("Block Description changed")
 
     def open_settings(self, event):
         self.logger.info("*** settings dialog is open!")

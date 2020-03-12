@@ -13,22 +13,25 @@
 import datetime
 
 
-def get_date_and_time(a_date=None):
-    d = datetime.datetime.today() if a_date is None else a_date
+def get_datetime(a_date=None):
+    return datetime.datetime.today() if a_date is None else a_date
 
+
+def get_date_and_time(a_date=None):
+    d = get_datetime(a_date)
     return "{} at {}".format(get_date(a_date=d), get_time(a_date=d))
 
 
 def get_date(a_date=None):
-    d = datetime.datetime.today() if a_date is None else a_date
-
-    return "{0:%A}, {0:%B} {0:%d}, {0:%Y}".format(d)
+    return "{0:%A}, {0:%B} {0:%d}, {0:%Y}".format(get_datetime(a_date))
 
 
 def get_time(a_date=None):
-    d = datetime.datetime.today() if a_date is None else a_date
+    return "{0:%I:%M:%S}".format(get_datetime(a_date))
 
-    return "{0:%I:%M:%S}".format(d)
+
+def get_day_and_month(a_date=None):
+    return "{0:%A}_{0:%B}{0:%d}_{0:%Y}".format(get_datetime(a_date))
 
 
 def get_daytime_message():
