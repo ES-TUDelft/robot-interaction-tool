@@ -20,6 +20,8 @@ class ESGraphicsScene(QGraphicsScene):
         self.grid_size = 20
         self.grid_squares = 5
 
+        self.setItemIndexMethod(QGraphicsScene.NoIndex)  # for dynamic scenes
+
         block_colors = config_helper.get_colors()
         self._light_pen = QPen(QColor("#{}".format(block_colors['pen']['light'])))
         self._dark_pen = QPen(QColor("#{}".format(block_colors['pen']['dark'])))
@@ -28,7 +30,6 @@ class ESGraphicsScene(QGraphicsScene):
         self._dark_pen.setWidth(2)
 
         self.setBackgroundBrush(QColor("#{}".format(block_colors['brush']['scene_bg'])))
-        # self.set_scene_rect(2000, 2000)
 
     # override to allow drag
     def dragMoveEvent(self, event):

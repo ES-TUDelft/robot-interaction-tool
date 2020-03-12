@@ -116,6 +116,7 @@ class UIController(QtWidgets.QMainWindow):
         # COPY/PASTE
         # ----------
         # TODO: Copy block not parameters
+        self.ui.actionMenuCopy.setEnabled(True)
         self.ui.actionMenuCopy.triggered.connect(self.copy_behavioral_parameters)
         self.ui.actionMenuPasteSettings.triggered.connect(self.paste_behavioral_parameters)
 
@@ -148,6 +149,8 @@ class UIController(QtWidgets.QMainWindow):
             lambda: self.apply_behavioral_parameters(to_all_items=True))
 
         # DELETE, RESET, CLEAR, IMPORT and SAVE list listeners
+        self._enable_buttons([self.ui.actionMenuNew, self.ui.actionMenuSaveAs, self.ui.actionMenuSave],
+                             enabled=False)  # disabled for now!
         self.ui.actionMenuSave.triggered.connect(self.save_blocks)
         self.ui.actionMenuImportBlocks.setEnabled(True)
         self.ui.actionMenuExportBlocks.setEnabled(True)
@@ -186,75 +189,13 @@ class UIController(QtWidgets.QMainWindow):
         self.removeDockWidget(self.ui.blocksDockWidget)
 
         # observe selected blocks
-        self.block_controller.block_is_selected_observable.add_observer(self.block_is_selected)
-        self.block_controller.no_block_selected_observable.add_observer(self.no_block_selected)
+        self.block_controller.block_is_selected_observable.add_observer(self.on_block_selected)
+        self.block_controller.no_block_selected_observable.add_observer(self.on_no_block_selected)
+        self.block_controller.start_block_observable.add_observer(self.on_invalid_action)
+        self.block_controller.add_invalid_edge_observer(self.on_invalid_action)
         self.block_controller.block_settings_observable.add_observer(self.block_settings)
         self.block_controller.block_editing_observable.add_observer(self.block_editing)
         self.block_controller.add_right_click_block_observer(self.create_popup_menu)
-
-    def block_is_selected(self, block):
-        self.selected_block = block
-        # connected_blocks = self.selected_block.get_connected_blocks()
-
-        self.update_parameters_widget()
-
-    def no_block_selected(self, event):
-        self.selected_block = None
-        self._set_warning_label_color(reset=True)
-
-        # Disable behavioral parameters widget
-        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                            btns=[],
-                            enable=False)
-
-        self.ui.behavioralParametersDockWidget.setHidden(True)
-
-    def block_editing(self, block):
-        self.selected_block = block
-
-        try:
-            # Open edit dialog
-            edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
-                                                block_controller=self.block_controller)
-
-            if edit_dialog.exec_():
-                d_block = edit_dialog.get_interaction_block()
-                self.selected_block.parent.name = d_block.name
-                self.selected_block.parent.description = d_block.description
-                self.selected_block.parent.speech_act = d_block.speech_act
-                self.selected_block.parent.gestures = d_block.gestures
-                self.selected_block.parent.topic_tag = d_block.topic_tag
-                self.selected_block.parent.tablet_page = d_block.tablet_page
-
-                self.block_controller.store("Edited block")
-
-            # backup
-            self.backup_blocks()
-        except Exception as e:
-            self._display_message(error="Error while attempting to edit the block! {}".format(e))
-            self.repaint()
-
-    def block_settings(self, block):
-        # Enable behavioral parameters widget
-        self.ui.behavioralParametersDockWidget.setHidden(False)
-
-        self.update_parameters_widget()
-
-    def update_parameters_widget(self):
-        if self.selected_block is None:
-            return False
-
-        self._set_warning_label_color(reset=True)
-
-        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                            btns=[],
-                            enable=True)
-
-        # Set widget's behavioral parameter
-        self.ui.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
-        self._set_behavioral_parameters_elements(self.ui.behavioral_parameters)
-
-        self.ui.behavioralParametersDockWidget.repaint()
 
     # ---------- #
     # Connection
@@ -422,6 +363,77 @@ class UIController(QtWidgets.QMainWindow):
         self._enable_buttons([self.ui.actionMenuPlay], enabled=True)
         self._enable_buttons([self.ui.actionMenuStop], enabled=False)
 
+    # ----------------
+    # Block Listeners:
+    # ----------------
+    def on_invalid_action(self, val):
+        self._display_message(warning="{}".format(val))
+
+    def on_block_selected(self, block):
+        self.selected_block = block
+        # connected_blocks = self.selected_block.get_connected_blocks()
+
+        self.update_parameters_widget()
+
+    def on_no_block_selected(self, event):
+        self.selected_block = None
+        self._set_warning_label_color(reset=True)
+
+        # Disable behavioral parameters widget
+        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
+                            btns=[],
+                            enable=False)
+
+        self.ui.behavioralParametersDockWidget.setHidden(True)
+
+    def block_editing(self, block):
+        self.selected_block = block
+
+        try:
+            # Open edit dialog
+            edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
+                                                block_controller=self.block_controller)
+
+            if edit_dialog.exec_():
+                d_block = edit_dialog.get_interaction_block()
+                self.selected_block.parent.name = d_block.name
+                self.selected_block.parent.description = d_block.description
+                self.selected_block.parent.speech_act = d_block.speech_act
+                self.selected_block.parent.gestures = d_block.gestures
+                self.selected_block.parent.topic_tag = d_block.topic_tag
+                self.selected_block.parent.tablet_page = d_block.tablet_page
+
+                self.block_controller.store("Edited block")
+
+            # backup
+            self.backup_blocks()
+        except Exception as e:
+            self._display_message(error="Error while attempting to edit the block! {}".format(e))
+            self.repaint()
+
+    def block_settings(self, block):
+        # Enable behavioral parameters widget
+        self.ui.behavioralParametersDockWidget.setHidden(False)
+
+        self.update_parameters_widget()
+
+    def update_parameters_widget(self):
+        if self.selected_block is None:
+            return False
+
+        self._set_warning_label_color(reset=True)
+
+        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
+                            btns=[],
+                            enable=True)
+
+        # Set widget's behavioral parameter
+        self.ui.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
+        self._set_behavioral_parameters_elements(self.ui.behavioral_parameters)
+
+        self.ui.behavioralParametersDockWidget.repaint()
+
+    # ---------------------
     # BEHAVIORAL PARAMETERS
     # ---------------------
     # Can be used to simplify the remaining functions!
@@ -516,18 +528,18 @@ class UIController(QtWidgets.QMainWindow):
 
     #
     # MENU ACTIONS
-    #
+    # ============
     def on_file_new(self):
         self.block_controller.clear_scene()
 
     def on_undo(self):
         self.block_controller.undo()
-        self.no_block_selected(None)
+        self.on_no_block_selected(None)
         # self.repaint()
 
     def on_redo(self):
         self.block_controller.redo()
-        self.no_block_selected(None)
+        self.on_no_block_selected(None)
         # self.repaint()
 
     # -------------------- #
@@ -756,15 +768,20 @@ class UIController(QtWidgets.QMainWindow):
             return indexes[0].row()
         return -1
 
-    def _display_message(self, message=None, error=None):
-        if message is None:
-            self.ui.logsTextEdit.setTextColor(QtGui.QColor('red'))  # red text for errors
-            self.ui.logsTextEdit.append(error)
-            self.logger.error(error)
+    def _display_message(self, message=None, error=None, warning=None):
+        if error is None:
+            # check if we have a warning or a normal message
+            c = QtGui.QColor("white") if warning is None else QtGui.QColor("orange")
+            to_display = message if message is not None else warning
+            self.logger.info(to_display)
         else:
-            self.ui.logsTextEdit.setTextColor(QtGui.QColor('white'))  # white text for normal
-            self.ui.logsTextEdit.append(message)
-            self.logger.info(message)
+            c = QtGui.QColor("red")
+            to_display = error
+            self.logger.error(to_display)
+
+        self.ui.logsTextEdit.setTextColor(c)
+        self.ui.logsTextEdit.append(to_display)
+
         self.repaint()
 
     def _enable_buttons(self, buttons=[], enabled=False):

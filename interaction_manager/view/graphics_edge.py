@@ -7,8 +7,6 @@ from interaction_manager.utils import config_helper
 from interaction_manager.enums.block_enums import Position
 import logging
 
-EDGE_CONTROL_POINT_ROUNDNESS = 100
-
 
 class ESGraphicsEdge(QGraphicsPathItem):
     def __init__(self, edge, parent=None):
@@ -35,17 +33,12 @@ class ESGraphicsEdge(QGraphicsPathItem):
 
         self.pos_source = [0, 0]
         self.pos_destination = [100, 300]
+        self.pos_counter = 0
 
-    def set_source(self, x, y):
-        self.pos_source = [x, y]
-
-    def set_destination(self, x, y):
-        self.pos_destination = [x, y]
+    def boundingRect(self):
+        return self.shape().boundingRect()
 
     # TODO: this was causing segmentation errors!
-    # def boundingRect(self):
-    #     return self.shape().boundingRect()
-    #
     # def shape(self):
     #     return self.compute_path()
 
@@ -70,6 +63,12 @@ class ESGraphicsEdge(QGraphicsPathItem):
         # computes and returns path from A to B
         raise NotImplemented("Abstract method")
 
+    def set_source(self, x, y):
+        self.pos_source = [x, y]
+
+    def set_destination(self, x, y):
+        self.pos_destination = [x, y]
+
 
 class ESGraphicsEdgeDirect(ESGraphicsEdge):
     def compute_path(self):
@@ -82,37 +81,44 @@ class ESGraphicsEdgeDirect(ESGraphicsEdge):
 class ESGraphicsEdgeBezier(ESGraphicsEdge):
     def compute_path(self):
         try:
-            s = self.pos_source
-            d = self.pos_destination
-            dist = (d[0] - s[0]) / 2.0
-
-            # set control points
-            cpx_s = dist
-            cpx_d = -dist
-            cpy_s = 0
-            cpy_d = 0
-
-            if self.edge.start_socket is not None:
-                start_socket_pos = self.edge.start_socket.position
-                if (s[0] > d[0] and start_socket_pos in (Position.TOP_RIGHT, Position.BOTTOM_RIGHT)) or \
-                        (s[0] < d[0] and start_socket_pos in (Position.BOTTOM_LEFT, Position.TOP_LEFT)):
-                    # reverse the distance
-                    cpx_d *= -1
-                    cpx_s *= -1
-                    # avoid division by 0
-                    cpy_d = (s[1] - d[1]) / math.fabs(
-                        (s[1] - d[1]) if (s[1] - d[1]) != 0 else 0.00001) * EDGE_CONTROL_POINT_ROUNDNESS
-                    cpy_s = (d[1] - s[1]) / math.fabs(
-                        (d[1] - s[1]) if (d[1] - s[1]) != 0 else 0.00001) * EDGE_CONTROL_POINT_ROUNDNESS
-            else:
-                self.logger.debug("Edge {} {} has no sockets!".format(type(self), self.edge))
+            control_source, control_dest = self._get_control_points()
 
             path = QPainterPath(QPointF(self.pos_source[0], self.pos_source[1]))
             path.cubicTo(
-                s[0] + cpx_s, s[1] + cpy_s,
-                d[0] + cpx_d, d[1] + cpy_d,  # control points
+                self.pos_source[0] + control_source[0], self.pos_source[1] + control_source[1],  # control points
+                self.pos_destination[0] + control_dest[0], self.pos_destination[1] + control_dest[1],  # control points
                 self.pos_destination[0], self.pos_destination[1])
 
             return path
         except Exception as e:
             self.logger.error("ERROR while computing edge path! {}".format(e))
+
+    def _get_control_points(self):
+        s0 = self.pos_source[0]
+        d0 = self.pos_destination[0]
+        distance = (d0 - s0) / 2.0
+
+        control_source = [distance, 0]
+        control_dest = [-distance, 0]
+
+        if self.edge.start_socket is not None:
+            # reverse the values if:
+            #   we're moving the curve to the left and the start socket is on the right; or
+            #   we're moving to the right and the start socket is on the left
+            start_socket_position = self.edge.start_socket.position
+            if (s0 > d0 and start_socket_position in (Position.TOP_RIGHT, Position.BOTTOM_RIGHT)) \
+                    or (s0 < d0 and start_socket_position in (Position.BOTTOM_LEFT, Position.TOP_LEFT)):
+                # reverse the x values
+                control_source[0], control_dest[0] = -distance, distance
+
+                # set the y values
+                s1 = self.pos_source[1]
+                d1 = self.pos_destination[1]
+                # avoid div by 0
+                div = math.fabs((d1 - s1) if (d1 - s1) != 0 else 0.00001)
+                control_source[1] = (d1 - s1) / div * 100
+                control_dest[1] = (s1 - d1) / div * 100
+        else:
+            self.logger.debug("Edge {} {} has no sockets!".format(type(self), self.edge))
+
+        return control_source, control_dest

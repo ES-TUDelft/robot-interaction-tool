@@ -51,6 +51,7 @@ class ESGraphicsViewController(QGraphicsView):
         self.drop_observable = Observable()
         self.block_selected_observable = Observable()
         self.no_block_selected_observable = Observable()
+        self.invalid_edge_observable = Observable()
 
     def _init_ui(self):
         self.setRenderHints(
@@ -103,7 +104,8 @@ class ESGraphicsViewController(QGraphicsView):
         if self.mode == Mode.DRAG_EDGE:
             pos = self.mapToScene(event.pos())
             self.drag_edge.graphics_edge.set_destination(pos.x(), pos.y())
-            self.drag_edge.graphics_edge.update()
+            self.drag_edge.graphics_edge.update_path()
+            # self.logger.debug("Mouse Position: {} | {}".format(pos.x(), pos.y()))
 
         super(ESGraphicsViewController, self).mouseMoveEvent(event)
 
@@ -282,13 +284,14 @@ class ESGraphicsViewController(QGraphicsView):
                                 end_socket=item.socket,
                                 edge_type=EdgeType.BEZIER)
                     # update
-                    # edge.update_positions()
+                    edge.update_path()
 
                     # store
                     self.graphics_scene.scene.history.store("New edge created")
                     success = True
         except Exception as e:
             self.logger.error("Error while ending drag! {}".format(e))
+            self.invalid_edge_observable.notify_all("Error while creating the edge!")
         finally:
             return success
 
@@ -299,6 +302,9 @@ class ESGraphicsViewController(QGraphicsView):
 
         # connected sockets should have opposite types (input vs output)
         if other_socket.socket_type == self.drag_start_socket.socket_type:
+            self.invalid_edge_observable.notify_all("* Cannot connect two sockets of the same type ({})".format(
+                self.drag_start_socket.socket_type.name
+            ))
             return False
 
         # check if one of the sockets is connected to the other's block
@@ -308,6 +314,8 @@ class ESGraphicsViewController(QGraphicsView):
 
         # check the number of allowed edges for the each block
         if not (self.drag_start_socket.can_have_more_edges() and other_socket.can_have_more_edges()):
+            self.invalid_edge_observable.notify_all("* The Edge cannot be created: "
+                                                    "The output has reached the max number of allowed edges!")
             return False
 
         # connect to a block once

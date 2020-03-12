@@ -78,3 +78,9 @@ class BlockManagerWidget(QWidget):
 
     def remove_no_block_selected_observer(self, observer):
         self.blocks_view.no_block_selected_observable.remove_observer(observer)
+
+    def add_invalid_edge_observer(self, observer):
+        self.blocks_view.invalid_edge_observable.add_observer(observer)
+
+    def remove_invalid_edge_observer(self, observer):
+        self.blocks_view.invalid_edge_observable.remove_observer(observer)

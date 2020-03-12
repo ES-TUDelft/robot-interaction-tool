@@ -36,6 +36,7 @@ class BlockController(object):
         self.no_block_selected_observable = Observable()
         self.block_settings_observable = Observable()
         self.block_editing_observable = Observable()
+        self.start_block_observable = Observable()
 
         # add observers
         self.add_drag_enter_observer(self.on_drag_enter)
@@ -67,6 +68,9 @@ class BlockController(object):
     def on_drop(self, event):
         # self.logger.debug("Drop event: {}".format(event.mimeData().text()))
         if event.mimeData().hasFormat(config_helper.get_block_mimetype()):
+            # clear selection
+            self.scene.clear_selection()
+
             event_data = event.mimeData().data(config_helper.get_block_mimetype())
             data_stream = QtCore.QDataStream(event_data, QtCore.QIODevice.ReadOnly)
 
@@ -75,22 +79,31 @@ class BlockController(object):
             op_code = data_stream.readInt()
             item_text = data_stream.readQString()
 
-            mouse_position = event.pos()
-            scene_position = self.get_scene_position(mouse_position)
+            # check if the block has a "start" pattern and the scene already contains one:
+            start_block = self.has_block(pattern="start")
+            if "start" == item_text.lower() and start_block is not None:
+                to_display = "The scene has already a start block! The drop is ignored."
+                self.logger.warning(to_display)
+                start_block.set_selected(True)
+                self.start_block_observable.notify_all(to_display)
+                event.ignore()
+            else:
+                mouse_position = event.pos()
+                scene_position = self.get_scene_position(mouse_position)
 
-            self.logger.debug("Item with: {} | {} | mouse: {} | scene pos: {}".format(op_code, item_text,
-                                                                                      mouse_position, scene_position))
-            # new interaction block
-            self.create_interaction_block(title=item_text,
-                                          pos=[scene_position.x(), scene_position.y()],
-                                          pattern=item_text.lower())
-            # self.add_block(title=item_text, num_inputs=2, num_outputs=1,
-            #                                pos=[scene_position.x(), scene_position.y()],
-            #                                observer=self.block_is_selected)
-            self.store("Added new {}".format(item_text))
+                self.logger.debug("Item with: {} | {} | mouse: {} | scene pos: {}".format(op_code, item_text,
+                                                                                          mouse_position, scene_position))
+                # new interaction block
+                self.create_interaction_block(title=item_text,
+                                              pos=[scene_position.x(), scene_position.y()],
+                                              pattern=item_text.lower())
+                # self.add_block(title=item_text, num_inputs=2, num_outputs=1,
+                #                                pos=[scene_position.x(), scene_position.y()],
+                #                                observer=self.block_is_selected)
+                self.store("Added new {}".format(item_text))
 
-            event.setDropAction(QtCore.Qt.MoveAction)
-            event.accept()
+                event.setDropAction(QtCore.Qt.MoveAction)
+                event.accept()
         else:
             self.logger.debug("*** drop ignored")
             event.ignore()
@@ -169,7 +182,7 @@ class BlockController(object):
 
     def has_block(self, pattern="start"):
         for block in self.get_blocks():
-            if block.title.lower() == pattern.lower():
+            if block.pattern.lower() == pattern.lower():
                 return block
         return None
 
@@ -233,10 +246,10 @@ class BlockController(object):
         self.scene.clear_selection()
 
     def undo(self):
-        self.scene.history.undo()
+        self.scene.undo()
 
     def redo(self):
-        self.scene.history.redo()
+        self.scene.redo()
 
     def get_block_by_id(self, block_id=0):
         blocks = self.get_blocks()
@@ -286,3 +299,9 @@ class BlockController(object):
 
     def add_remove_click_block_observer(self, observer):
         self._block_widget.right_click_block_observable.remove_observer(observer)
+
+    def add_invalid_edge_observer(self, observer):
+        self._block_widget.add_invalid_edge_observer(observer)
+
+    def remove_invalid_edge_observer(self, observer):
+        self._block_widget.remove_invalid_edge_observer(observer)

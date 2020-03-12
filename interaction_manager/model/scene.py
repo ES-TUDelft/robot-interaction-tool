@@ -81,31 +81,58 @@ class Scene(Serializable):
         self.edges = []
         self.blocks = []
 
+    def undo(self):
+        self.history.undo()
+        self.update_edges()
+
+    def redo(self):
+        self.history.redo()
+        self.update_edges()
+
+    def update_edges(self):
+        for e in self.edges:
+            e.update_path()
+
     ###
     # SERIALIZATION
     ###
     def serialize(self):
-        return OrderedDict([
-            ("id", self.id),
-            ("blocks", [b.serialize() for b in self.blocks]),
-            ("edges", [e.serialize() for e in self.edges])
-        ])
+        try:
+            to_return = OrderedDict([
+                ("id", self.id),
+                ("blocks", []),
+                ("edges", [])
+            ])
+            serialized_edges = []
+            for e in self.edges:
+                if e.start_socket is not None and e.end_socket is not None:
+                    serialized_edges.append(e.serialize())
+
+            to_return["blocks"] = [b.serialize() for b in self.blocks]
+            to_return["edges"] = serialized_edges
+        except Exception as e:
+            self.logger.error("Error while serializing the scene! {}".format(e))
+        finally:
+            return to_return
 
     def deserialize(self, data, hashmap={}):
-        # clear scene
-        self.clear()
+        try:
+            # clear scene
+            self.clear()
 
-        hashmap = {}
+            hashmap = {}
 
-        # create block
-        for b_data in data["blocks"]:
-            Block(self).deserialize(b_data, hashmap)
+            # create block
+            for b_data in data["blocks"]:
+                Block(self).deserialize(b_data, hashmap)
 
-        # create edges
-        for e_data in data["edges"]:
-            Edge(scene=self,
-                 start_socket=hashmap[e_data["start_socket"]],
-                 end_socket=hashmap[e_data["end_socket"]]
-                 ).deserialize(e_data, hashmap)
-
-        return True
+            # create edges
+            for e_data in data["edges"]:
+                Edge(scene=self,
+                     start_socket=hashmap[e_data["start_socket"]],
+                     end_socket=hashmap[e_data["end_socket"]]
+                     ).deserialize(e_data, hashmap)
+            return True
+        except Exception as e:
+            self.logger.error("Error while serializing the scene! {}".format(e))
+            return False

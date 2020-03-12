@@ -36,6 +36,9 @@ class Edge(Serializable, Observable):
     def __str__(self):
         return "<Edge id {}..{}>".format((hex(id(self))[2:5]), (hex(id(self))[-3:]))
 
+    def update_path(self):
+        self.graphics_edge.update_path()
+
     def update_positions(self):
         # in case the edge has no starting point, return
         if self.start_socket is None:
@@ -43,14 +46,14 @@ class Edge(Serializable, Observable):
 
         s_pos = self.start_socket.get_socket_position()
         # add pos x and y
-        s_pos[0] += self.start_socket.block.graphics_block.pos().x()
-        s_pos[1] += self.start_socket.block.graphics_block.pos().y()
+        s_pos[0] += self.start_socket.block.get_pos().x()
+        s_pos[1] += self.start_socket.block.get_pos().y()
         self.graphics_edge.set_source(*s_pos)
 
         if self.end_socket is not None:
             d_pos = self.end_socket.get_socket_position()
-            d_pos[0] += self.end_socket.block.graphics_block.pos().x()
-            d_pos[1] += self.end_socket.block.graphics_block.pos().y()
+            d_pos[0] += self.end_socket.block.get_pos().x()
+            d_pos[1] += self.end_socket.block.get_pos().y()
             self.graphics_edge.set_destination(*d_pos)
         else:
             self.graphics_edge.set_destination(*s_pos)
