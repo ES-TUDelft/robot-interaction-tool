@@ -28,7 +28,7 @@ class InteractionBlock(Serializable):
         self.logger = logging.getLogger("Interaction Block")
 
         self.name = "Start" if name is None else name
-        self.pattern = pattern if pattern is not None else self.title
+        self.pattern = pattern if pattern is not None else self.name
         self.topic_tag = TopicTag() if topic_tag is None else topic_tag
         self.tablet_page = TabletPage() if tablet_page is None else tablet_page
 

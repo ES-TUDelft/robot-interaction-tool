@@ -33,7 +33,7 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.block_controller = block_controller
         self.interaction_block = interaction_block
 
-        self.pattern = self.interaction_block.block.title.lower()
+        self.pattern = self.interaction_block.pattern.lower()
         self.pattern_settings = config_helper.get_patterns()[self.pattern]
 
         # init UI elements
@@ -58,7 +58,7 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         # block properties
         self.ui.patternLineEdit.setText(self.pattern)
-        self.ui.blockDescriptionLineEdit.setText(self.interaction_block.block.description)
+        self.ui.blockDescriptionLineEdit.setText(self.interaction_block.description)
 
         # Message
         speech_act = self.interaction_block.speech_act
@@ -113,6 +113,7 @@ class UIEditBlockController(QtWidgets.QDialog):
         if self.pattern_settings["topic"] == "":
             self.ui.tabWidget.setTabEnabled(topic_index, False)  # self.ui.topicTab.setEnabled(False)
             self._set_topic_tab(reset=True)
+            self.ui.tabWidget.removeTab(topic_index)
         else:
             self.ui.topicTab.setEnabled(True)
             self._set_topic_tab(reset=False)
