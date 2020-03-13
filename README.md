@@ -15,13 +15,15 @@ The tool was tested on MAC and Linux.
 ## Linux: Installation guide
 After installing [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html), proceed with installing the following:
 
-### 1. Install PIP
+### 1. Install PIP and other dependencies
 
 * Open a terminal
 
 `$ sudo apt-get update`
 
-`$ sudo apt-get install python-pip`
+`$ sudo apt-get install -y python-pip python-dev`
+
+`$ pip install enum34`
 
 ### 2. Install PyYAML
 
