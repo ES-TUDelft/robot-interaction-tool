@@ -33,13 +33,11 @@ class Scene(Serializable, Observable):
     def add_block(self, block):
         self.blocks.append(block)
         self.graphics_scene.addItem(block.graphics_block)
-        self.notify_all("Added block")
         self.logger.debug("Added block '{}': {}".format(block.title, block))
 
     def remove_block(self, block):
         self.graphics_scene.removeItem(block.graphics_block)
         self.blocks.remove(block)
-        self.notify_all("Removed block")
         self.logger.debug("Removed block '{}: {}".format(block.title, block))
 
     # Edges
@@ -54,8 +52,9 @@ class Scene(Serializable, Observable):
         self.logger.debug("Removed edge from scene '{}: {} | {}".format(edge, edge.start_socket, edge.end_socket))
 
     def store(self, description):
-        self.history.store(description)
-        self.notify_all("Stored scene")
+        success = self.history.store(description)
+        if success is True:
+            self.notify_all("Stored scene")
 
     def save_scene(self, filename):
         try:
@@ -71,7 +70,6 @@ class Scene(Serializable, Observable):
     def load_scene_data(self, data):
         try:
             self.deserialize(data)
-            self.notify_all("Loaded Scene")
             return True
         except Exception as e:
             self.logger.error("Error while loading scene data: {} | {}".format(data, e))
@@ -89,7 +87,6 @@ class Scene(Serializable, Observable):
 
         self.edges = []
         self.blocks = []
-        self.notify_all("Cleared Scene")
 
     def undo(self):
         self.history.undo()

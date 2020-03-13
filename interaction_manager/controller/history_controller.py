@@ -29,22 +29,32 @@ class HistoryController(object):
         Stores current state in stack
         :param description: string description of stamp
         """
-        next_step = self.current_step + 1
+        success = False
+        try:
+            h_stamp = self.create_stamp(description)
+            if h_stamp is None:
+                self.logger.error("Couldn't create a snapshot of the scene!")
+            else:
+                next_step = self.current_step + 1
 
-        # if current step is not at the end of the history
-        if next_step < len(self.history_stack):
-            # shrink stack
-            self.history_stack = self.history_stack[0:next_step]
-        elif next_step >= self.step_limit:  # next step is off limits
-            # remove first element
-            self.history_stack = self.history_stack[1:]
-            self.current_step -= 1
+                # if current step is not at the end of the history
+                if next_step < len(self.history_stack):
+                    # shrink stack
+                    self.history_stack = self.history_stack[0:next_step]
+                elif next_step >= self.step_limit:  # next step is off limits
+                    # remove first element
+                    self.history_stack = self.history_stack[1:]
+                    self.current_step -= 1
 
-        h_stamp = self.create_stamp(description)
-        self.history_stack.append(h_stamp)
-        self.current_step += 1
+                self.history_stack.append(h_stamp)
+                self.current_step += 1
 
-        self.logger.debug("Storing at {}".format(self.current_step))
+                self.logger.debug("Storing at {}".format(self.current_step))
+                success = True
+        except Exception as e:
+            self.logger.error("Error while storing the scene! {}".format(e))
+        finally:
+            return success
 
     def restore(self):
         """

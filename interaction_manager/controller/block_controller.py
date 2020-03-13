@@ -214,9 +214,11 @@ class BlockController(object):
 
     def load_blocks(self, filename):
         self.scene.load_scene(filename=filename)
+        self.store("Loaded scene file")
 
     def load_blocks_data(self, data):
         self.scene.load_scene_data(data=data)
+        self.store("Loaded scene data")
 
     def get_serialized_scene(self):
         return self.scene.serialize()

@@ -386,8 +386,6 @@ class UIController(QtWidgets.QMainWindow):
 
     def on_block_selected(self, block):
         self.selected_block = block
-        # connected_blocks = self.selected_block.get_connected_blocks()
-
         self.update_parameters_widget()
 
     def on_no_block_selected(self, event):
@@ -402,8 +400,10 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.behavioralParametersDockWidget.setHidden(True)
 
     def block_editing(self, block):
-        self.selected_block = block
+        if block is None:
+            return
 
+        self.selected_block = block
         try:
             # Open edit dialog
             edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
@@ -420,16 +420,17 @@ class UIController(QtWidgets.QMainWindow):
 
                 self.block_controller.store("Edited block")
 
-            # backup
-            self.backup_blocks()
         except Exception as e:
             self._display_message(error="Error while attempting to edit the block! {}".format(e))
             self.repaint()
 
     def block_settings(self, block):
-        # Enable behavioral parameters widget
-        self.ui.behavioralParametersDockWidget.setHidden(False)
+        if block is None:
+            return
 
+        self.selected_block = block
+        # Enable behavioral parameters widget and update the values
+        self.ui.behavioralParametersDockWidget.setHidden(False)
         self.update_parameters_widget()
 
     def update_parameters_widget(self):
@@ -505,8 +506,6 @@ class UIController(QtWidgets.QMainWindow):
                 self._display_message(message="The '{}' parameters are updated.".format(self.selected_block.title))
                 self.block_controller.store("Updated parameters for {}".format(self.selected_block.title))
 
-        # backup
-        self.backup_blocks()
         # reset warning
         self._set_warning_label_color(reset=True)
 
@@ -531,8 +530,7 @@ class UIController(QtWidgets.QMainWindow):
                 p_name="{}".format(self.ui.behavioralParametersApplyComboBox.currentText()),
                 behavioral_parameters=self.copied_behavioral_parameters)
 
-            # backup
-            self.backup_blocks()
+            self.block_controller.store("Updated parameters")
 
             self.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
             self._set_behavioral_parameters_elements(self.behavioral_parameters)
@@ -657,8 +655,6 @@ class UIController(QtWidgets.QMainWindow):
             # Disable widget
             self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
                                 btns=[], enable=False)
-            # backup
-            self.backup_blocks()
 
             self.repaint()
 
@@ -705,8 +701,6 @@ class UIController(QtWidgets.QMainWindow):
             # Disable behavioral parameters widget
             self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
                                 btns=[], enable=False)
-            # backup
-            self.backup_blocks()
             self._display_message(message="New blocks are imported.")
             self.repaint()
 
