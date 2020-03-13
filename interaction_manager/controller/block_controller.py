@@ -238,6 +238,9 @@ class BlockController(object):
     def get_edges(self):
         return self.scene.edges
 
+    def zoom_scene(self, val):
+        self._block_widget.zoom_scene(val=val)
+
     def clear_scene(self):
         self.scene.clear()
         self.store("Cleared scene.")
@@ -250,6 +253,9 @@ class BlockController(object):
 
     def redo(self):
         self.scene.redo()
+
+    def delete_selected(self):
+        self._block_widget.delete_selected()
 
     def get_block_by_id(self, block_id=0):
         blocks = self.get_blocks()

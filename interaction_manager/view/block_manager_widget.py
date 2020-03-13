@@ -50,8 +50,14 @@ class BlockManagerWidget(QWidget):
         except Exception as e:
             self.logger.error("Error while mapping mouse position to scene! {}".format(e))
 
+    def zoom_scene(self, val):
+        self.blocks_view.zoom_scene(delta_y=val)
+
     def get_item_at(self, pos):
         return self.blocks_view.itemAt(pos)
+
+    def delete_selected(self):
+        self.blocks_view.delete_selected()
 
     def clean_up(self):
         # called on exit

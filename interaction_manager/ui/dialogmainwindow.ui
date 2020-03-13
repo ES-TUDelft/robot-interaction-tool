@@ -137,10 +137,21 @@
     <addaction name="actionMenuDatabaseConnect"/>
     <addaction name="actionMenuDatabaseDisconnect"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionMenuBlockList"/>
+    <addaction name="actionMenuLogs"/>
+    <addaction name="separator"/>
+    <addaction name="actionMenuZoomIn"/>
+    <addaction name="actionMenuZoomOut"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuRobot"/>
    <addaction name="menuDatabase"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="enabled">
@@ -1276,7 +1287,7 @@
   </action>
   <action name="actionMenuUndo">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -1287,7 +1298,7 @@
   </action>
   <action name="actionMenuRedo">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -1343,7 +1354,7 @@
   </action>
   <action name="actionMenuDelete">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="hre_resources/resources.qrc">
@@ -1555,6 +1566,43 @@
    </property>
    <property name="text">
     <string>Disconnect</string>
+   </property>
+  </action>
+  <action name="actionMenuZoomIn">
+   <property name="icon">
+    <iconset resource="hre_resources/resources.qrc">
+     <normaloff>:/hreresources/icons/zoomin.png</normaloff>:/hreresources/icons/zoomin.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionMenuZoomOut">
+   <property name="icon">
+    <iconset resource="hre_resources/resources.qrc">
+     <normaloff>:/hreresources/icons/zoomout.png</normaloff>:/hreresources/icons/zoomout.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionMenuBlockList">
+   <property name="text">
+    <string>Block List</string>
+   </property>
+  </action>
+  <action name="actionMenuLogs">
+   <property name="text">
+    <string>Logs</string>
    </property>
   </action>
  </widget>

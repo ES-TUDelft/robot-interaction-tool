@@ -51,5 +51,7 @@
         <file>icons/delete-blue.png</file>
         <file>icons/erase.png</file>
         <file>icons/pause.png</file>
+        <file>icons/zoomin.png</file>
+        <file>icons/zoomout.png</file>
     </qresource>
 </RCC>

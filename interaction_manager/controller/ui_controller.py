@@ -105,14 +105,17 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionReload.triggered.connect(self.reset_behavioral_parameters)
         # UNDO/REDO
         # ---------
-        self.ui.actionMenuUndo.setEnabled(True)
-        self.ui.actionMenuRedo.setEnabled(True)
         self.ui.actionMenuUndo.triggered.connect(self.on_undo)
         self.ui.actionMenuRedo.triggered.connect(self.on_redo)
         # CLEAR/DELETE
         # ============
         self.ui.actionMenuClear.triggered.connect(self.clear_blocks)
-
+        self.ui.actionMenuDelete.triggered.connect(self.on_delete)
+        # ZOOM
+        # ============
+        # self.ui.actionMenuZoomIn.setShortcut("Ctrl+-")
+        self.ui.actionMenuZoomIn.triggered.connect(lambda: self.on_zoom(1))
+        self.ui.actionMenuZoomOut.triggered.connect(lambda: self.on_zoom(-1))
         # COPY/PASTE
         # ----------
         # TODO: Copy block not parameters
@@ -188,6 +191,10 @@ class UIController(QtWidgets.QMainWindow):
         self.tabifyDockWidget(self.ui.blocksDockWidget, self.block_dock_widget)
         self.removeDockWidget(self.ui.blocksDockWidget)
 
+        # action listeners
+        self.ui.actionMenuLogs.triggered.connect(lambda: self.ui.logsDockWidget.setHidden(False))
+        self.ui.actionMenuBlockList.triggered.connect(lambda: self.block_dock_widget.setHidden(False))
+
         # observe selected blocks
         self.block_controller.on_block_selected_observable.add_observer(self.on_block_selected)
         self.block_controller.on_no_block_selected_observable.add_observer(self.on_no_block_selected)
@@ -197,6 +204,9 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.block_settings_observable.add_observer(self.block_settings)
         self.block_controller.block_editing_observable.add_observer(self.block_editing)
         self.block_controller.add_right_click_block_observer(self.create_popup_menu)
+
+    def add_dock_widget(self, widget, area=QtCore.Qt.LeftDockWidgetArea):
+        self.addDockWidget(area, widget)
 
     # ---------- #
     # Connection
@@ -546,6 +556,12 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.redo()
         self.on_no_block_selected(None)
         # self.repaint()
+
+    def on_delete(self):
+        self.block_controller.delete_selected()
+
+    def on_zoom(self, val):
+        self.block_controller.zoom_scene(val=val)
 
     # -------------------- #
     # Interaction Block Lists

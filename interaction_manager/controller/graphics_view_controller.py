@@ -207,29 +207,32 @@ class ESGraphicsViewController(QGraphicsView):
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()
         if modifiers == Qt.ControlModifier:
-            # zoom factor
-            zoom_out_factor = 1 / self.zoom_in_factor
-
-            # compute zoom
-            if event.angleDelta().y() > 0:
-                zoom_factor = self.zoom_in_factor
-                self.zoom += self.zoom_step
-            else:
-                zoom_factor = zoom_out_factor
-                self.zoom -= self.zoom_step
-
-            clamped = False
-            if self.zoom < self.zoom_range[0]:
-                self.zoom, clamped = self.zoom_range[0], True
-            if self.zoom > self.zoom_range[1]:
-                self.zoom, clamped = self.zoom_range[1], True
-
-            # scene scale
-            if not clamped or self.zoom_clamp is False:
-                self.scale(zoom_factor, zoom_factor)
-
+            delta_y = event.angleDelta().y()
+            self.zoom_scene(delta_y=event.angleDelta().y())
         else:
             super(ESGraphicsViewController, self).wheelEvent(event)
+
+    def zoom_scene(self, delta_y):
+        # zoom factor
+        zoom_out_factor = 1 / self.zoom_in_factor
+
+        # compute zoom
+        if delta_y > 0:
+            zoom_factor = self.zoom_in_factor
+            self.zoom += self.zoom_step
+        else:
+            zoom_factor = zoom_out_factor
+            self.zoom -= self.zoom_step
+
+        clamped = False
+        if self.zoom < self.zoom_range[0]:
+            self.zoom, clamped = self.zoom_range[0], True
+        if self.zoom > self.zoom_range[1]:
+            self.zoom, clamped = self.zoom_range[1], True
+
+        # scene scale
+        if not clamped or self.zoom_clamp is False:
+            self.scale(zoom_factor, zoom_factor)
 
     ###
     # Helper Methods
