@@ -120,3 +120,15 @@ The user interface should run now, good luck!
 <div align="center">
   <img src="interaction_manager/ui/ui_view.png" width="500px" />
 </div>
+
+### 9. Known installation issues: Qt not found!
+If you experience issues related to Qt, try the following:
+
+* Download Qt 5.13.2 for linux from: https://download.qt.io/official_releases/qt/5.13/5.13.2/ 
+* Open a terminal:
+
+`$ cd ~/Downloads`
+
+`$ chmod +x qt-opensource-linux-x64-5.13.2.run`
+
+`$ ./qt-opensource-linux-x64-5.13.2.run`
