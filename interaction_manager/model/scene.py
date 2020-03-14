@@ -112,13 +112,17 @@ class Scene(Serializable, Observable):
                 ("blocks", []),
                 ("edges", [])
             ])
+
+            # serialize the blocks
+            to_return["blocks"] = [b.serialize() for b in self.blocks]
+
+            # serialize the edges
             serialized_edges = []
             for e in self.edges:
                 if e.start_socket is not None and e.end_socket is not None:
                     serialized_edges.append(e.serialize())
-
-            to_return["blocks"] = [b.serialize() for b in self.blocks]
             to_return["edges"] = serialized_edges
+
         except Exception as e:
             self.logger.error("Error while serializing the scene! {}".format(e))
         finally:

@@ -22,7 +22,7 @@ class HistoryController(object):
         self.history_stack = []
 
         self.current_step = -1
-        self.step_limit = config_helper.sys_config["history"]["step_limit"]
+        self.step_limit = config_helper.get_history_limit()
 
     def store(self, description):
         """

@@ -13,9 +13,6 @@
 import json
 from collections import OrderedDict
 
-with open('interaction_manager/properties/dialogblocks.json') as blocks_file:
-    dialogblocks_data = (json.load(blocks_file))
-
 with open('interaction_manager/properties/gestures.json') as blocks_file:
     gestures_names = (json.load(blocks_file))
 

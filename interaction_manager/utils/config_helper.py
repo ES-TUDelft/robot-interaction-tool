@@ -14,7 +14,6 @@ import logging
 import sys
 import yaml
 
-
 ####
 # Logger
 ###
@@ -109,6 +108,10 @@ def get_block_mimetype():
     return block_props["block_mimetype"]
 
 
+def get_history_limit():
+    return block_props["history_limit"]
+
+
 def get_block_size_settings():
     return block_props["size"]["block"]
 
@@ -123,7 +126,6 @@ def get_socket_size_settings():
 def _get_patterns_properties():
     patt = None
     try:
-        # on Linux use: block-linux.yaml
         with open("interaction_manager/properties/patterns.yaml", 'r') as yaml_file:
             patt = yaml.load(yaml_file, Loader=yaml.SafeLoader)
     except Exception as e:

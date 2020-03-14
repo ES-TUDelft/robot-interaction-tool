@@ -13,6 +13,7 @@
 import logging
 
 import es_common.hre_config as pconfig
+from es_common.enums.command_enums import ActionCommand
 from robot_manager.pepper.enums.engagement_enums import DialogTopic
 from es_common.enums.voice_enums import VoiceTag, VoiceName
 from naoqi import ALProxy
@@ -92,6 +93,11 @@ class SpeechHandler:
         to_say = "\\{}={}\\ {}".format(
             VoiceTag.PROSODY.value, "S" if robot_voice.prosody.value is 1 else "W",
             behavioral_parameters.speech_act.message)
+
+        # check for additional actions
+        action_command = interaction_block.action_command
+        if action_command is not None and action_command.command_type is ActionCommand.DRAW_NUMBER:
+            to_say = "{} {}".format(to_say, action_command.execute())
         self.logger.info("Message = {}".format(to_say))
 
         gestures = interaction_block.gestures

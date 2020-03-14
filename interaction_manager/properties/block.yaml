@@ -38,3 +38,5 @@ icons:
     edit: interaction_manager/icons/white/edit.png
 
 block_mimetype: application/x-item
+
+history_limit: 50

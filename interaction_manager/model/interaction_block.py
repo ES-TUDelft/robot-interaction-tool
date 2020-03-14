@@ -17,6 +17,8 @@ from es_common.datasource.serializable import Serializable
 from es_common.model.tablet_page import TabletPage
 from es_common.model.topic_tag import TopicTag
 from interaction_manager.enums.block_enums import SocketType
+from es_common.enums.command_enums import ActionCommand
+from interaction_manager.factory.command_factory import CommandFactory
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
 
 
@@ -37,6 +39,9 @@ class InteractionBlock(Serializable):
 
         self.behavioral_parameters = BehavioralParameters() if behavioral_parameters is None else behavioral_parameters
         self.block = block
+
+        # action command
+        self.action_command = None  # ESCommand()
 
         self.interaction_start_time = 0
         self.interaction_end_time = 0
@@ -149,7 +154,15 @@ class InteractionBlock(Serializable):
 
     @gestures.setter
     def gestures(self, value):
+        """
+        Dict of gestures: {"open": "the open gesture", "close", "the close gesture"}
+        :param value:
+        :return:
+        """
         self.behavioral_parameters.gesture.gestures = value
+
+    def set_gestures(self, open_gesture, close_gesture):
+        self.behavioral_parameters.gesture.set_gestures(open_gesture, close_gesture)
 
     @property
     def gestures_type(self):
@@ -182,6 +195,7 @@ class InteractionBlock(Serializable):
             ("tablet_page", self.tablet_page.to_dict),
             ("icon_path", self.icon_path),
             ("behavioral_parameters", self.behavioral_parameters.to_dict),
+            ("action_command", self.action_command.serialize() if self.action_command is not None else {}),
             ("block", self.block.id),
             ("interaction_start_time", self.interaction_start_time),
             ("interaction_end_time", self.interaction_end_time)
@@ -221,5 +235,11 @@ class InteractionBlock(Serializable):
         hashmap[data["id"]] = self
 
         self.block = hashmap[data["block"]]
+
+        if "action_command" in data.keys():
+            action_data = data["action_command"]
+            if len(action_data) > 0:
+                self.action_command = CommandFactory.create_command(ActionCommand[action_data["command_type"]])
+                self.action_command.deserialize(action_data, hashmap)
 
         return True

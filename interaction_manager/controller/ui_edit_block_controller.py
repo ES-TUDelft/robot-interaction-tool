@@ -15,6 +15,8 @@ import logging
 from PyQt5 import QtCore, QtWidgets
 
 from interaction_manager.enums.block_enums import SocketType
+from es_common.enums.command_enums import ActionCommand
+from interaction_manager.factory.command_factory import CommandFactory
 from interaction_manager.utils import config_helper
 import es_common.hre_config as pconfig
 from interaction_manager.model.interaction_block import InteractionBlock
@@ -65,6 +67,9 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.ui.messageTextEdit.setText(speech_act.message)
         self.ui.messageTypeComboBox.setCurrentIndex(
             self.ui.messageTypeComboBox.findText(speech_act.message_type.name.title(), QtCore.Qt.MatchFixedString))
+
+        # Actions
+        self.set_actions()
 
         # gestures
         self.ui.openGestureLineEdit.setText(
@@ -117,6 +122,52 @@ class UIEditBlockController(QtWidgets.QDialog):
         else:
             self.ui.topicTab.setEnabled(True)
             self._set_topic_tab(reset=False)
+
+    def set_actions(self):
+
+        if "action" in self.pattern:
+            actions = [a for a in ActionCommand.keys()]
+            self.ui.actionGroupBox.setHidden(False)
+            self.ui.rangeGroupBox.setHidden(True)
+            self.ui.actionComboBox.addItems([pconfig.SELECT_OPTION])
+            self.ui.actionComboBox.addItems(actions)
+
+            # listeners
+            self.ui.actionComboBox.currentIndexChanged.connect(self.on_action_change)
+
+            # if we're changing the min range and the value > max ==> update max with min value
+            self.ui.rangeMinSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=True))
+            # if we're changing the max range and the value < min ==> update min with max value
+            self.ui.rangeMaxSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=False))
+
+            # check if the block contains an action
+            if self.interaction_block.action_command is not None:
+                comm_type = self.interaction_block.action_command.command_type
+                # update action name
+                self.ui.actionComboBox.setCurrentIndex(
+                    self.ui.actionComboBox.findText(comm_type.name, QtCore.Qt.MatchFixedString))
+                # update range
+                if comm_type is ActionCommand.DRAW_NUMBER:
+                    self.ui.rangeMinSpinBox.setValue(self.interaction_block.action_command.range_min)
+                    self.ui.rangeMaxSpinBox.setValue(self.interaction_block.action_command.range_max)
+
+        else:  # otherwise: hide the actions
+            self.ui.actionGroupBox.setHidden(True)
+
+    def on_action_change(self):
+        enable = False
+        if self.ui.actionComboBox.currentText() in ActionCommand.DRAW_NUMBER.name:
+            enable = True
+
+        self.ui.rangeMinSpinBox.setEnabled(enable)
+        self.ui.rangeMaxSpinBox.setEnabled(enable)
+        self.ui.rangeGroupBox.setHidden(not enable)
+
+    def verify_range(self, update_max):
+        if self.ui.rangeMinSpinBox.value() >= self.ui.rangeMaxSpinBox.value():
+            # set the max val to min+1 if update_max is True; else set the min val to max-1
+            self.ui.rangeMaxSpinBox.setValue(self.ui.rangeMinSpinBox.value() + 1) if update_max is True \
+                else self.ui.rangeMinSpinBox.setValue(self.ui.rangeMaxSpinBox.value() - 1)
 
     def update_tags(self):
         # tags
@@ -272,6 +323,20 @@ class UIEditBlockController(QtWidgets.QDialog):
                           image="{}".format(self.ui.tabletImageComboBox.currentText()),
                           )
 
+    def get_command(self):
+        if self.ui.actionGroupBox.isHidden():
+            return None
+
+        comm_name = "{}".format(self.ui.actionComboBox.currentText())
+        if comm_name in ActionCommand.keys():
+            if comm_name == ActionCommand.DRAW_NUMBER.name:
+                args = [self.ui.rangeMinSpinBox.value(), self.ui.rangeMaxSpinBox.value()]
+                return CommandFactory.create_command(ActionCommand[comm_name], *args)
+            # no args
+            return CommandFactory.create_command(ActionCommand[comm_name])
+
+        return None
+
     def get_interaction_block(self):
         d_block = self.interaction_block.clone()
         d_block.name = "{}".format(self.ui.patternLineEdit.text().strip())
@@ -279,12 +344,25 @@ class UIEditBlockController(QtWidgets.QDialog):
         d_block.speech_act = self.get_speech_act()
         d_block.topic_tag = self.get_topic_tag()
         d_block.tablet_page = self.get_tablet_page()
+        d_block.action_command = self.get_command()
         # gestures
         d_block.behavioral_parameters.gesture.set_gestures(open_gesture="{}".format(self.ui.openGestureLineEdit.text()),
                                                            close_gesture="{}".format(
                                                                self.ui.closeGestureLineEdit.text()))
 
-        return d_block
+    def update_interaction_block(self, int_block):
+        if int_block is None:
+            return
+
+        int_block.name = "{}".format(self.ui.patternLineEdit.text().strip())
+        int_block.description = "{}".format(self.ui.blockDescriptionLineEdit.text().strip())
+        int_block.speech_act = self.get_speech_act()
+        int_block.topic_tag = self.get_topic_tag()
+        int_block.tablet_page = self.get_tablet_page()
+        int_block.action_command = self.get_command()
+        # gestures
+        int_block.set_gestures(open_gesture="{}".format(self.ui.openGestureLineEdit.text()),
+                               close_gesture="{}".format(self.ui.closeGestureLineEdit.text()))
 
     def _is_valid_option(self, option):
         if option is not None and option != "" and option != pconfig.SELECT_OPTION:

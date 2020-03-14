@@ -410,13 +410,7 @@ class UIController(QtWidgets.QMainWindow):
                                                 block_controller=self.block_controller)
 
             if edit_dialog.exec_():
-                d_block = edit_dialog.get_interaction_block()
-                self.selected_block.parent.name = d_block.name
-                self.selected_block.parent.description = d_block.description
-                self.selected_block.parent.speech_act = d_block.speech_act
-                self.selected_block.parent.gestures = d_block.gestures
-                self.selected_block.parent.topic_tag = d_block.topic_tag
-                self.selected_block.parent.tablet_page = d_block.tablet_page
+                edit_dialog.update_interaction_block(self.selected_block.parent)
 
                 self.block_controller.store("Edited block")
 
