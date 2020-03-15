@@ -36,8 +36,8 @@ class InteractionController(object):
 
         self.engagement_counter = 0
         self.is_ready_to_interact = False
-        self.current_block = None
-        self.previous_block = None
+        self.current_interaction_block = None
+        self.previous_interaction_block = None
         self.interaction_blocks = None
         self.interaction_design = None
 
@@ -148,8 +148,8 @@ class InteractionController(object):
             return False
 
         self.stop_playing = False
-        self.previous_block = None
-        self.current_block = int_block
+        self.previous_interaction_block = None
+        self.current_interaction_block = int_block
         self.logger.debug("Started playing the blocks")
 
         # set the engagement counter
@@ -176,29 +176,29 @@ class InteractionController(object):
     def on_simulation_mode(self):
         self.block_controller.clear_selection()
 
-        if self.previous_block is not None:  # playing is in progress
+        if self.previous_interaction_block is not None:  # playing is in progress
             # get the next block to say
-            self.current_block = self.get_next_interaction_block()
+            self.current_interaction_block = self.get_next_interaction_block()
 
-        if self.current_block is not None:
-            self.logger.debug("Executing: {}".format(self.current_block.name))
-            self.current_block.set_selected(True)
+        if self.current_interaction_block is not None:
+            self.logger.debug("Executing: {}".format(self.current_interaction_block.name))
+            self.current_interaction_block.set_selected(True)
             time.sleep(5)
-            self.previous_block = self.current_block
+            self.previous_interaction_block = self.current_interaction_block
             self.on_simulation_mode()
 
     def get_next_interaction_block(self):
         self.logger.debug("Getting the next interaction block...")
-        if self.current_block is None:
+        if self.current_interaction_block is None:
             return None
         execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
         self.logger.debug("Execution Result: {}".format(execution_result))
 
-        next_block = self.current_block.get_next_interaction_block(execution_result=execution_result)
-        # next_block = self.current_block.get_next_interaction_block_totest(previous_interaction_block=self.previous_block,
-        #                                                                  execution_result=execution_result)
+        next_block, connecting_edge = self.current_interaction_block.get_next_interaction_block(
+            execution_result=execution_result)
+
         # update previous block
-        self.previous_block = self.current_block
+        self.previous_interaction_block = self.current_interaction_block
 
         return next_block
 
@@ -258,14 +258,14 @@ class InteractionController(object):
 
         self.block_controller.clear_selection()
 
-        if self.previous_block is None:  # interaction has just started
-            self.previous_block = self.current_block
+        if self.previous_interaction_block is None:  # interaction has just started
+            self.previous_interaction_block = self.current_interaction_block
         else: # playing is in progress
             # get the next block to say
-            self.current_block = self.get_next_interaction_block()
+            self.current_interaction_block = self.get_next_interaction_block()
 
         # if there are no more blocks, stop interacting
-        if self.current_block is None or self.stop_playing is True:
+        if self.current_interaction_block is None or self.stop_playing is True:
             self.animation_thread.customized_say(reset=True)
             # stop interacting
             self.interaction(start=False)
@@ -273,18 +273,18 @@ class InteractionController(object):
             self.tablet_image(hide=False)
         else:
             # execute the block
-            self.current_block.set_selected(True)
+            self.current_interaction_block.set_selected(True)
             # TODO: set the block state to 'executing'
             # set the tracker's gaze pattern
             if not self.face_tracker_thread.isRunning():
                 self.face_tracker_thread.track()
 
-            self.face_tracker_thread.gaze_pattern = self.current_block.behavioral_parameters.gaze_pattern
+            self.face_tracker_thread.gaze_pattern = self.current_interaction_block.behavioral_parameters.gaze_pattern
 
             # get the result from the execution
-            self.animation_thread.customized_say(interaction_block=self.current_block)
+            self.animation_thread.customized_say(interaction_block=self.current_interaction_block)
 
-            self.logger.debug("Robot: {}".format(self.current_block.message))
+            self.logger.debug("Robot: {}".format(self.current_interaction_block.message))
 
             # update previous block
             # self.previous_block = self.current_block

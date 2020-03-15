@@ -15,3 +15,4 @@ from es_common.enums.es_enum import ESEnum
 
 class ActionCommand(ESEnum):
     DRAW_NUMBER = "DrawNumber"
+    BINGO_SPINNER = "BingoSpinner"

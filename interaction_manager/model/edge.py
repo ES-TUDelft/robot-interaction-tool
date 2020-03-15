@@ -101,6 +101,9 @@ class Edge(Serializable, Observable):
         self.__edge_type = value
         self._update_graphics_edge()
 
+    def set_selected(self, val=False):
+        self.graphics_edge.setSelected(val)
+
     def get_connected_blocks(self):
         if self.start_socket is None:
             return []

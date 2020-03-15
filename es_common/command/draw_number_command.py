@@ -14,6 +14,7 @@ import random
 from collections import OrderedDict
 
 from es_common.command.es_command import ESCommand
+from es_common.enums.command_enums import ActionCommand
 from interaction_manager.utils import config_helper
 
 
@@ -39,7 +40,7 @@ class DrawNumberCommand(ESCommand):
     # Override Parent methods
     # =======================
     def clone(self):
-        return DrawNumberCommand(range_min=self.range_min, range_max=self.range_max)
+        return DrawNumberCommand(ActionCommand.DRAW_NUMBER, range_min=self.range_min, range_max=self.range_max)
 
     def reset(self):
         self.choices = [i for i in range(self.range_min, self.range_max)]

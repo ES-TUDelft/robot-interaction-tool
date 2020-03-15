@@ -107,6 +107,12 @@ class Block(Serializable, Observable):
 
         return False
 
+    def get_edges(self, socket_type=SocketType.OUTPUT):
+        edges = []
+        for s in (self.outputs if socket_type is SocketType.OUTPUT else self.inputs):
+            edges.extend([e for e in s.edges])
+        return edges
+
     def get_connected_blocks(self, socket_type=SocketType.OUTPUT):
         blocks = []
         # go through target sockets and get the connected blocks

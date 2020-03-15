@@ -16,7 +16,6 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import es_common.hre_config as pconfig
-import interaction_manager.utils.json_helper as json_helper
 from es_common.enums.led_enums import LedColor
 from es_common.enums.speech_enums import *
 from es_common.enums.voice_enums import *
@@ -24,13 +23,13 @@ from es_common.utils import date_helper
 from interaction_manager.controller.block_controller import BlockController
 from interaction_manager.controller.database_controller import DatabaseController
 from interaction_manager.controller.interaction_controller import InteractionController
+from interaction_manager.controller.simulation_controller import SimulationController
 from interaction_manager.controller.ui_confirmation_dialog_controller import UIConfirmationDialogController
 from interaction_manager.controller.ui_edit_block_controller import UIEditBlockController
 from interaction_manager.controller.ui_export_blocks_controller import UIExportBlocksController
 from interaction_manager.controller.ui_import_blocks_controller import UIImportBlocksController
 from interaction_manager.controller.ui_robot_connection_controller import UIRobotConnectionController
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
-from interaction_manager.model.interaction_design import InteractionDesign
 from interaction_manager.utils import config_helper
 from interaction_manager.view.ui_dialog import Ui_DialogGUI
 
@@ -50,6 +49,7 @@ class UIController(QtWidgets.QMainWindow):
         self.copied_behavioral_parameters = None
         self.interaction_blocks = []
         self.selected_block = None
+        self.is_simulation_mode = False # TODO: replace by mode enums for simulation - playing - idle
 
         self.interaction_design = None
         self.allow_duplicates = True
@@ -59,6 +59,7 @@ class UIController(QtWidgets.QMainWindow):
 
         self.block_controller = None
         self.interaction_controller = None
+        self.simulation_controller = None
 
         # load stylesheet
         config_helper.load_stylesheet()
@@ -73,6 +74,8 @@ class UIController(QtWidgets.QMainWindow):
         self._setup_block_controller()
         self.interaction_controller = InteractionController(block_controller=self.block_controller)
         self.interaction_controller.has_finished_playing_observable.add_observer(self.on_finished_playing)
+        self._setup_simulation_controller()
+
         # Attach action listeners
         # CONNECTIONS
         # ===========
@@ -92,12 +95,13 @@ class UIController(QtWidgets.QMainWindow):
         # ------
         self.ui.actionMenuShowImage.triggered.connect(self.show_image_on_tablet)
         self.ui.actionMenuHideImage.triggered.connect(self.hide_image_on_tablet)
-        # SPEECH
-        # ------
+        # INTERACTION PLAY/SIMULATION
+        # ---------------------------
         self.ui.actionMenuPlay.setEnabled(False)
         self.ui.actionMenuPlay.triggered.connect(self.play_blocks)
-        # TODO: check these listeners
+        self.ui.actionMenuSimulate.triggered.connect(self.simulate_blocks)
         self.ui.actionMenuStop.triggered.connect(self.interaction_controller.stop_engagement_callback)
+        # VOLUME
         self.ui.actionMenuVolumeUp.triggered.connect(self.volume_up)
         self.ui.actionMenuVolumeDown.triggered.connect(self.volume_down)
         # RELOAD
@@ -205,8 +209,15 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.block_editing_observable.add_observer(self.block_editing)
         self.block_controller.add_right_click_block_observer(self.create_popup_menu)
 
-    def add_dock_widget(self, widget, area=QtCore.Qt.LeftDockWidgetArea):
-        self.addDockWidget(area, widget)
+    def _setup_simulation_controller(self):
+        self.simulation_controller = SimulationController(self.block_controller, parent=self)
+        # add dock list widget
+        self.simulation_dock_widget = self.simulation_controller.simulation_dock_widget
+        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.simulation_controller.simulation_dock_widget)
+        self.tabifyDockWidget(self.ui.logsDockWidget, self.simulation_controller.simulation_dock_widget)
+
+        # observer
+        self.simulation_controller.finished_simulation_observable.add_observer(self.on_finished_simulation)
 
     # ---------- #
     # Connection
@@ -356,14 +367,38 @@ class UIController(QtWidgets.QMainWindow):
     def enable_moving(self):
         self.interaction_controller.enable_moving()
 
-    def play_blocks(self):
+    def verify_interaction_setup(self):
         # check if the scene contains a valid start block
-        # if yes, send the request to the interaction controller
         block = self.block_controller.has_block(pattern="start")
         if block is None:
             self._display_message(error="The scene doesn't contain a starting block! "
                                         "Please add a 'START' block then click on play")
         else:
+            self._display_message(message="Attempting to play the interaction!")
+        return block
+
+    def simulate_blocks(self):
+        if self.simulation_controller is None:
+            self._setup_simulation_controller()
+
+        block = self.verify_interaction_setup()
+        if block is not None:
+            self.is_simulation_mode = True
+            self._enable_buttons([self.ui.actionMenuSimulate], enabled=False)
+            self._display_message(message="Attempting to simulate the interaction!")
+            self.simulation_controller.start_simulation(int_block=block.parent)
+
+    def keyPressEvent(self, event):
+        if self.is_simulation_mode is True \
+                and event.key() == QtCore.Qt.Key_BracketRight and event.modifiers() & QtCore.Qt.ControlModifier:
+            self.simulation_controller.execute_next_interaction_block()
+
+        super(UIController, self).keyPressEvent(event)
+
+    def play_blocks(self):
+        # if yes, send the request to the interaction controller
+        block = self.verify_interaction_setup()
+        if block is not None:
             self._display_message(message="Attempting to play the interaction!")
             # self.interaction_controller.is_simulation_mode = True
             self._enable_buttons([self.ui.actionMenuPlay], enabled=False)
@@ -373,6 +408,10 @@ class UIController(QtWidgets.QMainWindow):
     def on_finished_playing(self, event):
         self._enable_buttons([self.ui.actionMenuPlay], enabled=True)
         self._enable_buttons([self.ui.actionMenuStop], enabled=False)
+
+    def on_finished_simulation(self, event):
+        self._enable_buttons([self.ui.actionMenuSimulate], enabled=True)
+        self.is_simulation_mode = False
 
     # ----------------
     # Block Listeners:

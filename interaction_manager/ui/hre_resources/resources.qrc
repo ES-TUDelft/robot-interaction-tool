@@ -53,5 +53,8 @@
         <file>icons/pause.png</file>
         <file>icons/zoomin.png</file>
         <file>icons/zoomout.png</file>
+        <file>icons/simulate-chat.png</file>
+        <file>icons/simulate.png</file>
+        <file>icons/stats.png</file>
     </qresource>
 </RCC>

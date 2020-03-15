@@ -127,6 +127,8 @@
     <addaction name="actionMenuPause"/>
     <addaction name="actionMenuStop"/>
     <addaction name="separator"/>
+    <addaction name="actionMenuSimulate"/>
+    <addaction name="separator"/>
     <addaction name="actionMenuEnableMoving"/>
     <addaction name="actionMenuDisableMoving"/>
    </widget>
@@ -177,6 +179,8 @@
    <addaction name="actionMenuCopy"/>
    <addaction name="actionMenuPasteSettings"/>
    <addaction name="separator"/>
+   <addaction name="actionMenuClear"/>
+   <addaction name="separator"/>
    <addaction name="actionMenuConnect"/>
    <addaction name="actionMenuDisconnect"/>
    <addaction name="separator"/>
@@ -189,7 +193,7 @@
    <addaction name="actionMenuPlay"/>
    <addaction name="actionMenuStop"/>
    <addaction name="separator"/>
-   <addaction name="actionMenuClear"/>
+   <addaction name="actionMenuSimulate"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="behavioralParametersDockWidget">
@@ -1160,8 +1164,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>98</width>
-     <height>150</height>
+     <width>182</width>
+     <height>177</height>
     </size>
    </property>
    <property name="floating">
@@ -1603,6 +1607,15 @@
   <action name="actionMenuLogs">
    <property name="text">
     <string>Logs</string>
+   </property>
+  </action>
+  <action name="actionMenuSimulate">
+   <property name="icon">
+    <iconset resource="hre_resources/resources.qrc">
+     <normaloff>:/hreresources/icons/simulate-chat.png</normaloff>:/hreresources/icons/simulate-chat.png</iconset>
+   </property>
+   <property name="text">
+    <string>Simulate</string>
    </property>
   </action>
  </widget>

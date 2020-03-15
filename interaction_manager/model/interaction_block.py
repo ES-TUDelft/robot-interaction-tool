@@ -82,37 +82,46 @@ class InteractionBlock(Serializable):
         return self.block.get_connected_blocks(socket_type=socket_type)
 
     def get_connected_interaction_blocks(self, socket_type=SocketType.OUTPUT):
-
-        blocks = self.get_connected_blocks(socket_type)
-        if blocks is not None:
-            return [b.parent for b in blocks]
-        return None
+        connected_b = []
+        try:
+            blocks = self.get_connected_blocks(socket_type)
+            if blocks is not None:
+                connected_b = [b.parent for b in blocks]
+        except Exception as e:
+            self.logger.error("Error while checking for connected interaction blocks! {}".format(e))
+        finally:
+            return connected_b
 
     def get_next_interaction_block(self, execution_result=None):
-        next_block = None
+        next_int_block = None
+        connecting_edge = None
+
+        int_blocks = self.get_connected_interaction_blocks(socket_type=SocketType.OUTPUT)
+
+        if int_blocks is None or len(int_blocks) == 0:  # no next block available!
+            return next_int_block, connecting_edge
+
         try:
-            int_blocks = self.get_connected_interaction_blocks(socket_type=SocketType.OUTPUT)
-
-            if int_blocks is None or len(int_blocks) == 0:  # no next block available!
-                return None
-
             # in the absence of a condition
             if execution_result is None or execution_result == "":
                 # select first if possible
-                next_block = int_blocks[0]  # we already verified the len to be > 0
+                next_int_block = int_blocks[0]  # we already verified the len to be > 0
             else:
                 # check the answers
                 for i in range(len(self.topic_tag.answers)):
                     # if the result is in the answers ==> go to appropriate interaction block
                     if execution_result.lower() in self.topic_tag.answers[i].lower():
-                        next_block = self._get_block_by_id(int_blocks, self.topic_tag.goto_ids[i])
+                        next_int_block = self._get_block_by_id(int_blocks, self.topic_tag.goto_ids[i])
+                        self.logger.debug("### next block: {}".format(next_int_block.pattern))
                         break
+            connecting_edge = self.get_output_connected_edge(next_int_block)
+            self.logger.debug("### Connecting edge is: {}".format(connecting_edge))
         except Exception as e:
             self.logger.error("Error while attempting to get the next block! {}".format(e))
         finally:
-            self.logger.debug("Next block is: {} | {}".format(0 if next_block is None else next_block.title,
-                                                              next_block))
-            return next_block
+            self.logger.debug("Next block is: {} | {}".format(0 if next_int_block is None else next_int_block.title,
+                                                              next_int_block))
+            return next_int_block, connecting_edge
 
     def set_selected(self, val):
         if val is not None:
@@ -122,6 +131,16 @@ class InteractionBlock(Serializable):
         for b in b_lst:
             if b.id == target_id:
                 return b
+        return None
+
+    def get_output_connected_edge(self, other_interaction_block):
+        if other_interaction_block is None:
+            return None
+
+        for e in self.block.get_edges(socket_type=SocketType.OUTPUT):
+            if e.start_socket in (self.block.outputs + other_interaction_block.block.inputs) \
+                    and e.end_socket in (self.block.outputs + other_interaction_block.block.inputs):
+                return e
         return None
 
     # ===========
@@ -142,7 +161,12 @@ class InteractionBlock(Serializable):
     @property
     def message(self):
         # uses the speech_act property above to return the message
-        return self.speech_act.message
+        if self.action_command is None:
+            return self.speech_act.message
+
+        if self.action_command.command_type in (ActionCommand.DRAW_NUMBER, ActionCommand.BINGO_SPINNER):
+            # append the drawn number to the message
+            return "{}: {}".format(self.speech_act.message, self.action_command.execute())
 
     @message.setter
     def message(self, value):
