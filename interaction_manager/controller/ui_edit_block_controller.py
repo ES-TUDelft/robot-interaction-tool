@@ -16,7 +16,7 @@ from PyQt5 import QtCore, QtWidgets
 
 from interaction_manager.enums.block_enums import SocketType
 from es_common.enums.command_enums import ActionCommand
-from interaction_manager.factory.command_factory import CommandFactory
+from es_common.factory.command_factory import CommandFactory
 from interaction_manager.utils import config_helper
 import es_common.hre_config as pconfig
 from interaction_manager.model.interaction_block import InteractionBlock
@@ -27,13 +27,14 @@ from es_common.model.topic_tag import TopicTag
 
 
 class UIEditBlockController(QtWidgets.QDialog):
-    def __init__(self, interaction_block, block_controller, parent=None):
+    def __init__(self, interaction_block, block_controller, music_controller=None, parent=None):
         super(UIEditBlockController, self).__init__(parent)
 
         self.logger = logging.getLogger("EditBlockController")
 
         self.block_controller = block_controller
         self.interaction_block = interaction_block
+        self.music_controller = music_controller
 
         self.pattern = self.interaction_block.pattern.lower()
         self.pattern_settings = config_helper.get_patterns()[self.pattern]
@@ -124,16 +125,18 @@ class UIEditBlockController(QtWidgets.QDialog):
             self._set_topic_tab(reset=False)
 
     def set_actions(self):
-
         if "action" in self.pattern:
             actions = [a for a in ActionCommand.keys()]
             self.ui.actionGroupBox.setHidden(False)
             self.ui.rangeGroupBox.setHidden(True)
+            self.ui.musicGroupBox.setHidden(True)
+
             self.ui.actionComboBox.addItems([pconfig.SELECT_OPTION])
             self.ui.actionComboBox.addItems(actions)
 
             # listeners
             self.ui.actionComboBox.currentIndexChanged.connect(self.on_action_change)
+            self.ui.playlistComboBox.currentIndexChanged.connect(self.update_tracks_combo)
 
             # if we're changing the min range and the value > max ==> update max with min value
             self.ui.rangeMinSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=True))
@@ -150,24 +153,54 @@ class UIEditBlockController(QtWidgets.QDialog):
                 if comm_type is ActionCommand.DRAW_NUMBER:
                     self.ui.rangeMinSpinBox.setValue(self.interaction_block.action_command.range_min)
                     self.ui.rangeMaxSpinBox.setValue(self.interaction_block.action_command.range_max)
+                elif comm_type is ActionCommand.PLAY_MUSIC:
+                    self.ui.playlistComboBox.setCurrentIndex(
+                        self.ui.playlistComboBox.findText(self.interaction_block.action_command.playlist,
+                                                          QtCore.Qt.MatchFixedString))
+                    self.ui.tracksComboBox.setCurrentIndex(
+                        self.ui.tracksComboBox.findText(self.interaction_block.action_command.track,
+                                                        QtCore.Qt.MatchFixedString))
+                    self.ui.playTimeSpinBox.setValue(self.interaction_block.action_command.play_time)
 
         else:  # otherwise: hide the actions
             self.ui.actionGroupBox.setHidden(True)
 
     def on_action_change(self):
-        enable = False
+        enable_range, enable_music = True, True
         if self.ui.actionComboBox.currentText() in ActionCommand.DRAW_NUMBER.name:
-            enable = True
+            enable_range, enable_music = False, True
+        elif self.ui.actionComboBox.currentText() in ActionCommand.PLAY_MUSIC.name:
+            enable_range, enable_music = True, False
+            self.update_playlist_combo()
 
-        self.ui.rangeMinSpinBox.setEnabled(enable)
-        self.ui.rangeMaxSpinBox.setEnabled(enable)
-        self.ui.rangeGroupBox.setHidden(not enable)
+        self.ui.rangeGroupBox.setHidden(enable_range)
+        self.ui.musicGroupBox.setHidden(enable_music)
 
     def verify_range(self, update_max):
         if self.ui.rangeMinSpinBox.value() >= self.ui.rangeMaxSpinBox.value():
             # set the max val to min+1 if update_max is True; else set the min val to max-1
             self.ui.rangeMaxSpinBox.setValue(self.ui.rangeMinSpinBox.value() + 1) if update_max is True \
                 else self.ui.rangeMinSpinBox.setValue(self.ui.rangeMaxSpinBox.value() - 1)
+
+    def update_playlist_combo(self):
+        self.ui.playlistComboBox.clear()
+        if self.music_controller is None:
+            return
+
+        if self.music_controller.playlists is None or len(self.music_controller.playlists) == 0:
+            return
+        self.ui.playlistComboBox.addItems([pconfig.SELECT_OPTION])
+        self.ui.playlistComboBox.addItems([p for p in self.music_controller.playlists.keys()])
+
+    def update_tracks_combo(self):
+        self.ui.tracksComboBox.clear()
+        if self.music_controller is None:
+            return
+
+        playlist = self.ui.playlistComboBox.currentText()
+        if playlist != pconfig.SELECT_OPTION:
+            self.ui.tracksComboBox.addItems([pconfig.SELECT_OPTION])
+            self.ui.tracksComboBox.addItems([t for t in self.music_controller.playlists[playlist]["tracks"]])
 
     def update_tags(self):
         # tags
@@ -329,12 +362,33 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         comm_name = "{}".format(self.ui.actionComboBox.currentText())
         if comm_name in ActionCommand.keys():
-            if comm_name == ActionCommand.DRAW_NUMBER.name:
-                args = [self.ui.rangeMinSpinBox.value(), self.ui.rangeMaxSpinBox.value()]
+            args = self.get_command_arguments(comm_name=comm_name)
+            if args is None:
+                return CommandFactory.create_command(ActionCommand[comm_name])
+            else:
                 return CommandFactory.create_command(ActionCommand[comm_name], *args)
-            # no args
-            return CommandFactory.create_command(ActionCommand[comm_name])
 
+        return None
+
+    def get_command_arguments(self, comm_name):
+        args = None
+        if comm_name == ActionCommand.DRAW_NUMBER.name:
+            args = [self.ui.rangeMinSpinBox.value(), self.ui.rangeMaxSpinBox.value()]
+        elif comm_name == ActionCommand.PLAY_MUSIC.name:
+            args = self.get_music_arguments()
+
+        return args
+
+    def get_music_arguments(self):
+        playlist = self.ui.playlistComboBox.currentText()
+        if playlist is None or playlist == "":
+            return None
+        track = self.ui.tracksComboBox.currentText()
+        if track is None or track == "":
+            return None
+
+        if playlist not in pconfig.SELECT_OPTION and track not in pconfig.SELECT_OPTION:
+            return [playlist, track, int(self.ui.playTimeSpinBox.value())]
         return None
 
     def get_interaction_block(self):

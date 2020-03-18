@@ -1,18 +1,18 @@
-import time
-
-from PyQt5 import QtWidgets, QtCore, QtGui
 import logging
 
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QTimer
 
+from es_common.enums.command_enums import ActionCommand
 from es_common.model.observable import Observable
 
 
 class SimulationController(object):
-    def __init__(self, block_controller, parent=None):
+    def __init__(self, block_controller, music_controller=None, parent=None):
 
         self.logger = logging.getLogger("SimulationController")
         self.block_controller = block_controller
+        self.music_controller = music_controller
         self.user_input = None
         self.interaction_log = None
         self.simulation_dock_widget = None
@@ -58,7 +58,7 @@ class SimulationController(object):
         # user input
         self.user_input = QtWidgets.QLineEdit(widget_content)
         self.user_input.setPlaceholderText("User Input")
-        self.user_input.returnPressed.connect(lambda: self.update_interaction_log(user_message=self.user_input.text()))
+        self.user_input.returnPressed.connect(self.check_user_input)
         self.user_input.setObjectName("simulationLineEdit")
         grid_layout.addWidget(self.user_input, 1, 0, 1, 1)
 
@@ -80,12 +80,14 @@ class SimulationController(object):
             return
 
         self.reset()
-
+        self.simulation_dock_widget.setFocus()
+        self.simulation_dock_widget.raise_()
         self.current_interaction_block = int_block
         self.execute_next_interaction_block()
 
     def execute_next_interaction_block(self):
         self.logger.debug("Getting the next interaction block...")
+
         if self.current_interaction_block is None \
                 or self.user_turn is True:
             return
@@ -123,21 +125,71 @@ class SimulationController(object):
 
             if self.current_interaction_block.topic_tag.topic != "":
                 self.user_turn = True
+            elif self.current_interaction_block.action_command is not None \
+                    and self.current_interaction_block.action_command.command_type is ActionCommand.PLAY_MUSIC:
+                self.on_music_mode()
             else:
-                QTimer.singleShot(1000, self.execute_next_interaction_block)
+                QTimer.singleShot(1500, self.execute_next_interaction_block)
 
     def check_robot_feedback(self):
         if self.current_interaction_block is None or self.execution_result is None:
             return self.execute_next_interaction_block()
         try:
-            for i in range(len(self.current_interaction_block.topic_tag.answers)):
-                # if the result is in the answers ==> go to appropriate interaction block
-                if self.execution_result.lower() in self.current_interaction_block.topic_tag.answers[i].lower():
-                    self.update_interaction_log(robot_message=self.current_interaction_block.topic_tag.feedbacks[i])
+            robot_feedback = self.current_interaction_block.get_robot_feedback(user_input=self.execution_result)
+            if robot_feedback is not None:
+                self.update_interaction_log(robot_message=robot_feedback)
         except Exception as e:
             self.logger.error("Error while logging the feedback! {}".format(e))
         finally:
-            QTimer.singleShot(1500, self.execute_next_interaction_block)
+            QTimer.singleShot(1000, self.execute_next_interaction_block)
+
+    def check_user_input(self):
+        user_input = self.user_input.text()
+        self.update_interaction_log(user_message=user_input)
+        # clear input
+        self.user_input.clear()
+
+        try:
+            # validate user input
+            if user_input.lower() == "exit":
+                # exit the interaction
+                self.user_turn = False
+                self.execution_result = user_input
+                self.update_interaction_log(robot_message="Ok, i'm exiting!")
+                QTimer.singleShot(1000, self.execute_next_interaction_block)
+            elif self.current_interaction_block.is_valid_user_input(user_input=user_input) is True:
+                self.user_turn = False
+                self.execution_result = user_input
+                self.check_robot_feedback()
+            else:
+                self.update_interaction_log(robot_message="Sorry, I didn't get your answer. Please try again!")
+        except Exception as e:
+            self.logger.error("Error while verifying user input! {}".format(e))
+
+    def on_music_mode(self):
+        if self.music_controller is None or self.current_interaction_block.action_command is None:
+            QTimer.singleShot(1000, self.execute_next_interaction_block)
+        else:
+            self.current_interaction_block.action_command.music_controller = self.music_controller
+            success = self.current_interaction_block.action_command.execute()
+            if success is True:
+                message = "Playing now: {}".format(self.current_interaction_block.action_command.track)
+                self.update_interaction_log(robot_message=message)
+                # TODO: specify wait time as track time when play_time is < 0
+                # use action play time
+                wait_time = self.current_interaction_block.action_command.play_time * 1000
+                if wait_time <= 0:
+                    wait_time = 10000  # wait for 10s then continue
+                QTimer.singleShot(wait_time, self.on_music_stop)
+            else:
+                warning = "Unable to play music! {}".format(self.music_controller.warning_message)
+                self.update_interaction_log(robot_message=warning)
+                QTimer.singleShot(2000, self.execute_next_interaction_block)
+
+    def on_music_stop(self):
+        self.update_interaction_log(robot_message="Let' continue!")
+        self.music_controller.pause()
+        self.execute_next_interaction_block()
 
     def update_interaction_log(self, robot_message=None, user_message=None):
         if robot_message is not None:
@@ -145,12 +197,6 @@ class SimulationController(object):
         elif self.user_turn is True:  # user_input is not None
             # to prevent logging users' entered input when it's not their turn
             self._append_interaction_text(name="User", color_name="maroon", message=user_message)
-
-            # clear input and continue
-            self.user_input.clear()
-            self.user_turn = False
-            self.execution_result = user_message
-            self.check_robot_feedback()
 
     def _append_interaction_text(self, name, color_name, message):
         self.interaction_log.setTextColor(QtGui.QColor(color_name))

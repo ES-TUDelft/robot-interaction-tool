@@ -128,3 +128,4 @@ blocks/
 robot_manager/pepper/hre_chat/credentials*.json
 .idea/
 logs/*.json
+.cache-*

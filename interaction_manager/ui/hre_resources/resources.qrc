@@ -56,5 +56,6 @@
         <file>icons/simulate-chat.png</file>
         <file>icons/simulate.png</file>
         <file>icons/stats.png</file>
+        <file>icons/music.png</file>
     </qresource>
 </RCC>

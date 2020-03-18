@@ -24,11 +24,13 @@ from interaction_manager.controller.block_controller import BlockController
 from interaction_manager.controller.database_controller import DatabaseController
 from interaction_manager.controller.interaction_controller import InteractionController
 from interaction_manager.controller.simulation_controller import SimulationController
+from interaction_manager.controller.music_controller import MusicController
 from interaction_manager.controller.ui_confirmation_dialog_controller import UIConfirmationDialogController
 from interaction_manager.controller.ui_edit_block_controller import UIEditBlockController
 from interaction_manager.controller.ui_export_blocks_controller import UIExportBlocksController
 from interaction_manager.controller.ui_import_blocks_controller import UIImportBlocksController
 from interaction_manager.controller.ui_robot_connection_controller import UIRobotConnectionController
+from interaction_manager.controller.ui_spotify_connection_controller import UISpotifyConnectionController
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
 from interaction_manager.utils import config_helper
 from interaction_manager.view.ui_dialog import Ui_DialogGUI
@@ -49,7 +51,7 @@ class UIController(QtWidgets.QMainWindow):
         self.copied_behavioral_parameters = None
         self.interaction_blocks = []
         self.selected_block = None
-        self.is_simulation_mode = False # TODO: replace by mode enums for simulation - playing - idle
+        self.is_simulation_mode = False  # TODO: replace by mode enums for simulation - playing - idle
 
         self.interaction_design = None
         self.allow_duplicates = True
@@ -60,6 +62,7 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller = None
         self.interaction_controller = None
         self.simulation_controller = None
+        self.music_controller = None
 
         # load stylesheet
         config_helper.load_stylesheet()
@@ -101,6 +104,14 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionMenuPlay.triggered.connect(self.play_blocks)
         self.ui.actionMenuSimulate.triggered.connect(self.simulate_blocks)
         self.ui.actionMenuStop.triggered.connect(self.interaction_controller.stop_engagement_callback)
+        # MUSIC
+        # --------
+        self.ui.actionMenuMusic.triggered.connect(self.spotify_connect)
+        self.ui.musicPlaylistComboBox.currentIndexChanged.connect(self.update_tracks_combo)
+        self.ui.musicTracksComboBox.currentIndexChanged.connect(self.enable_music_buttons)
+        self.ui.musicPlayButton.clicked.connect(self.play_music)
+        self.ui.musicPauseButton.clicked.connect(self.pause_music)
+        self.ui.musicVolumeButton.clicked.connect(self.music_volume)
         # VOLUME
         self.ui.actionMenuVolumeUp.triggered.connect(self.volume_up)
         self.ui.actionMenuVolumeDown.triggered.connect(self.volume_down)
@@ -198,6 +209,8 @@ class UIController(QtWidgets.QMainWindow):
         # action listeners
         self.ui.actionMenuLogs.triggered.connect(lambda: self.ui.logsDockWidget.setHidden(False))
         self.ui.actionMenuBlockList.triggered.connect(lambda: self.block_dock_widget.setHidden(False))
+        self.ui.actionMenuSimulationDockView.triggered.connect(lambda: self.simulation_dock_widget.setHidden(False))
+        self.ui.actionMenuMusicDockView.triggered.connect(lambda: self.ui.musicDockWidget.setHidden(False))
 
         # observe selected blocks
         self.block_controller.on_block_selected_observable.add_observer(self.on_block_selected)
@@ -213,8 +226,9 @@ class UIController(QtWidgets.QMainWindow):
         self.simulation_controller = SimulationController(self.block_controller, parent=self)
         # add dock list widget
         self.simulation_dock_widget = self.simulation_controller.simulation_dock_widget
-        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.simulation_controller.simulation_dock_widget)
-        self.tabifyDockWidget(self.ui.logsDockWidget, self.simulation_controller.simulation_dock_widget)
+        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.simulation_dock_widget)
+        self.tabifyDockWidget(self.simulation_dock_widget, self.ui.musicDockWidget)
+        self.tabifyDockWidget(self.simulation_dock_widget, self.ui.logsDockWidget)
 
         # observer
         self.simulation_controller.finished_simulation_observable.add_observer(self.on_finished_simulation)
@@ -301,6 +315,112 @@ class UIController(QtWidgets.QMainWindow):
 
         self.repaint()
 
+    ####
+    # SPOTIFY
+    ###
+    def spotify_connect(self):
+        try:
+            if self.music_controller is None:
+                self.music_controller = MusicController()
+
+            spotify_dialog = UISpotifyConnectionController()
+
+            if spotify_dialog.exec_():
+                if spotify_dialog.success is True:
+                    self._display_message(message="Successfully connected to spotify.")
+                    self.music_controller.username = spotify_dialog.username
+                    self.music_controller.spotify = spotify_dialog.spotify
+                    self.music_controller.playlists = spotify_dialog.playlists
+                    self.ui.musicVolumeButton.setEnabled(True)
+                    self.update_playlist_combo()
+                    # set focus on the music widget
+                    self.ui.musicDockWidget.setFocus()
+                    self.ui.musicDockWidget.raise_()
+                else:
+                    self._display_message(warning="Spotify is not connected!")
+                    self._enable_buttons([self.ui.musicVolumeButton, self.ui.musicPlayButton,
+                                          self.ui.musicPauseButton], enabled=False)
+                    self.ui.musicPlaylistComboBox.clear()
+                    self.ui.musicTracksComboBox.clear()
+
+            self.repaint()
+        except Exception as e:
+            self._display_message(error="Error while connecting to spotify! {}".format(e))
+            self.repaint()
+
+    def update_playlist_combo(self):
+        self.ui.musicPlaylistComboBox.clear()
+        if self.music_controller.playlists is None or len(self.music_controller.playlists) == 0:
+            return
+        try:
+            self.ui.musicPlaylistComboBox.addItems([pconfig.SELECT_OPTION])
+            self.ui.musicPlaylistComboBox.addItems([p for p in self.music_controller.playlists.keys()])
+        except Exception as e:
+            self._display_message(warning="Unable to load the playlists! {}".format(e))
+
+    def update_tracks_combo(self):
+        try:
+            self.ui.musicTracksComboBox.clear()
+            playlist = self.ui.musicPlaylistComboBox.currentText()
+            if playlist == "" or playlist == pconfig.SELECT_OPTION:
+                return
+
+            self.ui.musicTracksComboBox.addItems([pconfig.SELECT_OPTION])
+            self.ui.musicTracksComboBox.addItems([t for t in self.music_controller.playlists[playlist]["tracks"]])
+
+            self.ui.musicPlayButton.setEnabled(False)
+            self.ui.musicDockWidget.repaint()
+        except Exception as e:
+            self._display_message(warning="Unable to load tracks! {}".format(e))
+
+    def enable_music_buttons(self):
+        if self.ui.musicTracksComboBox.currentText() != pconfig.SELECT_OPTION:
+            # enable play button
+            self._enable_buttons([self.ui.musicPlayButton], enabled=True)
+        else:
+            # disable
+            self._enable_buttons([self.ui.musicPlayButton], enabled=False)
+        self.ui.musicDockWidget.repaint()
+
+    def play_music(self):
+        try:
+            self.music_volume()
+            success = self.music_controller.play(playlist=self.ui.musicPlaylistComboBox.currentText(),
+                                                 track=self.ui.musicTracksComboBox.currentText())
+            if success:
+                self.ui.musicMessageLineEdit.setText("Currently playing: {}".format(
+                    self.ui.musicTracksComboBox.currentText()
+                ))
+                self.ui.musicPauseButton.setEnabled(True)
+                self.ui.musicPlayButton.setEnabled(False)
+            else:
+                warning_msg = self.music_controller.warning_message
+                self.ui.musicMessageLineEdit.setText("Unable to play!" if warning_msg is None else warning_msg)
+                self._display_message("Error while playing {} | {}".format(self.ui.musicTracksComboBox.currentText(),
+                                                                           self.music_controller.error_message))
+            self.ui.musicDockWidget.repaint()
+        except Exception as e:
+            warning_msg = self.music_controller.warning_message
+            self.ui.musicMessageLineEdit.setText("Unable to play!" if warning_msg is None else warning_msg)
+            self._display_message("Error while playing {} | {}".format(self.ui.musicTracksComboBox.currentText(), e))
+
+    def pause_music(self):
+        try:
+            success = self.music_controller.pause()
+            if success:
+                self.ui.musicMessageLineEdit.setText("Paused: {}".format(
+                    self.ui.musicTracksComboBox.currentText()
+                ))
+            self.ui.musicPauseButton.setEnabled(False)
+            self.ui.musicPlayButton.setEnabled(True)
+            self.ui.musicDockWidget.repaint()
+        except Exception as e:
+            self._display_message("Error while playing {} | {}".format(self.ui.musicTracksComboBox, e))
+
+    def music_volume(self):
+        val = int(self.ui.musicVolumeSpinBox.value())
+        self.music_controller.volume(val)
+
     # ----------- #
     # Robot Start
     # ----------- #
@@ -381,6 +501,9 @@ class UIController(QtWidgets.QMainWindow):
         if self.simulation_controller is None:
             self._setup_simulation_controller()
 
+        # set simulation music_controller
+        self.simulation_controller.music_controller = self.music_controller
+
         block = self.verify_interaction_setup()
         if block is not None:
             self.is_simulation_mode = True
@@ -400,7 +523,6 @@ class UIController(QtWidgets.QMainWindow):
         block = self.verify_interaction_setup()
         if block is not None:
             self._display_message(message="Attempting to play the interaction!")
-            # self.interaction_controller.is_simulation_mode = True
             self._enable_buttons([self.ui.actionMenuPlay], enabled=False)
             self._enable_buttons([self.ui.actionMenuStop], enabled=True)
             self.interaction_controller.start_playing(int_block=block.parent)
@@ -446,7 +568,8 @@ class UIController(QtWidgets.QMainWindow):
         try:
             # Open edit dialog
             edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
-                                                block_controller=self.block_controller)
+                                                block_controller=self.block_controller,
+                                                music_controller=self.music_controller)
 
             if edit_dialog.exec_():
                 edit_dialog.update_interaction_block(self.selected_block.parent)
@@ -641,7 +764,8 @@ class UIController(QtWidgets.QMainWindow):
             self.right_click_menu.addAction("Duplicate")
 
             # TODO:
-            action = self.right_click_menu.exec_(self.block_controller.get_block_widget().mapToGlobal(event.pos())) #self.block_controller.get_block_widget(), event.pos()))
+            action = self.right_click_menu.exec_(self.block_controller.get_block_widget().mapToGlobal(
+                event.pos()))  # self.block_controller.get_block_widget(), event.pos()))
             if action:
                 self.execute_right_click_action(action, block)
 

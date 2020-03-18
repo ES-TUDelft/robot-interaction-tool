@@ -43,7 +43,6 @@ class InteractionController(object):
 
         self.stop_playing = False
         self.execution_result = None
-        self.is_simulation_mode = False
         self.has_finished_playing_observable = Observable()
 
     def connect_to_robot(self, robot_ip, port):
@@ -158,12 +157,6 @@ class InteractionController(object):
         # ready to interact
         self.is_ready_to_interact = True
 
-        if self.is_simulation_mode:
-            self.on_simulation_mode()
-            self.is_simulation_mode = False
-            self.has_finished_playing_observable.notify_all(True)
-            return True
-
         # self.animation_thread.robot_controller.posture(reset = True)
         if self.animation_thread.dialog_thread is None or (not self.animation_thread.dialog_thread.isRunning()):
             self.animation_thread.dialog(start=True)
@@ -173,34 +166,25 @@ class InteractionController(object):
         self.engagement(start=True)
         return True
 
-    def on_simulation_mode(self):
-        self.block_controller.clear_selection()
-
-        if self.previous_interaction_block is not None:  # playing is in progress
-            # get the next block to say
-            self.current_interaction_block = self.get_next_interaction_block()
-
-        if self.current_interaction_block is not None:
-            self.logger.debug("Executing: {}".format(self.current_interaction_block.name))
-            self.current_interaction_block.set_selected(True)
-            time.sleep(5)
-            self.previous_interaction_block = self.current_interaction_block
-            self.on_simulation_mode()
-
     def get_next_interaction_block(self):
-        self.logger.debug("Getting the next interaction block...")
         if self.current_interaction_block is None:
             return None
-        execution_result = None if self.is_simulation_mode else self.animation_thread.execution_result
-        self.logger.debug("Execution Result: {}".format(execution_result))
 
-        next_block, connecting_edge = self.current_interaction_block.get_next_interaction_block(
-            execution_result=execution_result)
+        next_block = None
+        connecting_edge = None
+        self.logger.debug("Getting the next interaction block...")
+        try:
+            self.logger.debug("Execution Result: {}".format(self.animation_thread.execution_result))
 
-        # update previous block
-        self.previous_interaction_block = self.current_interaction_block
+            next_block, connecting_edge = self.current_interaction_block.get_next_interaction_block(
+                execution_result=self.animation_thread.execution_result)
 
-        return next_block
+            # update previous block
+            self.previous_interaction_block = self.current_interaction_block
+        except Exception as e:
+            self.logger.error("Error while getting the next block! {}".format(e))
+        finally:
+            return next_block, connecting_edge
 
     def interaction(self, start):
         self.logger.info("Interaction called with start = {}".format(start))
@@ -258,11 +242,12 @@ class InteractionController(object):
 
         self.block_controller.clear_selection()
 
+        connecting_edge = None
         if self.previous_interaction_block is None:  # interaction has just started
             self.previous_interaction_block = self.current_interaction_block
-        else: # playing is in progress
+        else:  # playing is in progress
             # get the next block to say
-            self.current_interaction_block = self.get_next_interaction_block()
+            self.current_interaction_block, connecting_edge = self.get_next_interaction_block()
 
         # if there are no more blocks, stop interacting
         if self.current_interaction_block is None or self.stop_playing is True:
@@ -274,6 +259,9 @@ class InteractionController(object):
         else:
             # execute the block
             self.current_interaction_block.set_selected(True)
+            if connecting_edge is not None:
+                connecting_edge.set_selected(True)
+
             # TODO: set the block state to 'executing'
             # set the tracker's gaze pattern
             if not self.face_tracker_thread.isRunning():

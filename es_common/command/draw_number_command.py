@@ -15,16 +15,16 @@ from collections import OrderedDict
 
 from es_common.command.es_command import ESCommand
 from es_common.enums.command_enums import ActionCommand
-from interaction_manager.utils import config_helper
 
 
 class DrawNumberCommand(ESCommand):
     def __init__(self, command_type, range_min=None, range_max=None):
-        super(DrawNumberCommand, self).__init__(command_type)
+        super(DrawNumberCommand, self).__init__(command_type, is_speech_related=True)
 
         self.range_min = int(range_min) if range_min is not None else 0
         self.range_max = int(range_max) if range_max is not None else 10
         self._verify_range()
+        self.draw = 0
 
         self.choices = []
         self.prev_choices = []
@@ -45,6 +45,7 @@ class DrawNumberCommand(ESCommand):
     def reset(self):
         self.choices = [i for i in range(self.range_min, self.range_max)]
         self.prev_choices = []
+        self.draw = 0
 
     def execute(self):
         if len(self.choices) == 0:
@@ -65,6 +66,7 @@ class DrawNumberCommand(ESCommand):
             ("command_type", self.command_type.name),
             ("range_min", self.range_min),
             ("range_max", self.range_max),
+            ("draw", self.draw),
             ("choices", self.choices),
             ("prev_choices", self.prev_choices)
         ])
@@ -78,5 +80,6 @@ class DrawNumberCommand(ESCommand):
 
         self.choices = data["choices"]
         self.prev_choices = data["prev_choices"]
+        self.draw = data["draw"] if "draw" in data.keys() else self.prev_choices[len(self.prev_choices)-1]
 
         return True

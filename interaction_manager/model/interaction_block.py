@@ -18,7 +18,7 @@ from es_common.model.tablet_page import TabletPage
 from es_common.model.topic_tag import TopicTag
 from interaction_manager.enums.block_enums import SocketType
 from es_common.enums.command_enums import ActionCommand
-from interaction_manager.factory.command_factory import CommandFactory
+from es_common.factory.command_factory import CommandFactory
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
 
 
@@ -92,6 +92,32 @@ class InteractionBlock(Serializable):
         finally:
             return connected_b
 
+    def is_valid_user_input(self, user_input):
+        """
+        For the simulator
+        :param user_input: input to verify
+        :return: True  if the input is in the list of valid answers; False otherwise.
+        """
+        if user_input is None:
+            return False
+
+        # check the answers
+        for i in range(len(self.topic_tag.answers)):
+            # if the result is in the answers
+            if user_input.lower() in self.topic_tag.answers[i].lower():
+                return True
+        return False
+
+    def get_robot_feedback(self, user_input):
+        if user_input is None:
+            return None
+
+        for i in range(len(self.topic_tag.answers)):
+            # if the result is in the answers ==> return the appropriate feedback
+            if user_input.lower() in self.topic_tag.answers[i].lower():
+                return self.topic_tag.feedbacks[i]
+        return None
+
     def get_next_interaction_block(self, execution_result=None):
         next_int_block = None
         connecting_edge = None
@@ -101,6 +127,9 @@ class InteractionBlock(Serializable):
         if int_blocks is None or len(int_blocks) == 0:  # no next block available!
             return next_int_block, connecting_edge
 
+        # TODO: verify the returned user input from Pepper
+        #   ==> Issue: sometimes it returns something not in the list of answers
+        #   ==> Sol: replace input by the answer number (e.g., answer1 vs answer2)
         try:
             # in the absence of a condition
             if execution_result is None or execution_result == "":
@@ -160,13 +189,14 @@ class InteractionBlock(Serializable):
 
     @property
     def message(self):
+        # if there is an action, execute it to adapt the message, if needed
         # uses the speech_act property above to return the message
-        if self.action_command is None:
+        if self.action_command is None or self.action_command.is_speech_related is False:
             return self.speech_act.message
 
-        if self.action_command.command_type in (ActionCommand.DRAW_NUMBER, ActionCommand.BINGO_SPINNER):
-            # append the drawn number to the message
-            return "{}: {}".format(self.speech_act.message, self.action_command.execute())
+        # the action has an effect on the speech act
+        # append the execution result to the message
+        return "{}: {}".format(self.speech_act.message, self.action_command.execute())
 
     @message.setter
     def message(self, value):

@@ -186,6 +186,8 @@ def _get_config():
 
 sys_config = _get_config()
 
+def get_spotify_settings():
+    return sys_config["spotify"]
 
 ###
 # STYLESHEET
