@@ -2,7 +2,7 @@
 
 This project provides a prototyping tool for designing communicative (expressive) behaviors for social robots. The current version is compatible with the [Pepper Robot](https://www.ald.softbankrobotics.com/en/robots/pepper).
 
-The tool was tested on MAC and Linux.
+The tool was successfully tested on ***MAC*** and ***Linux***.
 
 ## Requirements
 [![Ubuntu 18.04](https://img.shields.io/badge/Ubuntu-18.04%20LTS-orange)](https://www.ubuntu.com/download/desktop)
@@ -59,9 +59,11 @@ Then, proceed with installing the following:
     
 `$ python`
     
-`>> import PyQt5`
+`>>> import PyQt5`
     
 *If the import is successful (i.e., no errors), go to **Step 5**; otherwise, continue.*
+
+***
 
 ### 2. Install qt513
 
@@ -204,5 +206,7 @@ If you experience issues related to Qt, try the following:
 `$ pip uninstall spotipy`
 
 `$ git clone https://github.com/plamere/spotipy.git`
+
+`$ cd spotipy`
 
 `$ python setup.py install`
