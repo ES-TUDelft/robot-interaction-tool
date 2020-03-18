@@ -12,7 +12,7 @@ The tool was tested on MAC and Linux.
 [![PyQt 5.13.x](https://img.shields.io/badge/PyQt-5.x.x-brightgreen.svg)](https://pypi.org/project/PyQt5/5.9.2/)
 [![PyYAML 5.x](https://img.shields.io/badge/PyYAML-5.x-blue)](https://github.com/yaml/pyyaml)
 
-## Linux: Installation guide
+## I. Linux: Installation guide
 After installing [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html), proceed with installing the following:
 
 ### 1. Install PIP and other dependencies
@@ -39,6 +39,24 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 
 `$ pip install qi`
 
+### 5. Spotify integration
+
+* Install SpotiPy: a python library for the Spotify web api.
+
+`$ pip install spotipy`
+
+* For setting up spotify client id (and secret) see Sec. II.
+    
+* ***If you experience issues with this library***, uninstall the pip version then install it from the source as follows:
+
+`$ pip uninstall spotipy`
+
+`$ git clone https://github.com/plamere/spotipy.git`
+
+`$ python setup.py install`
+
+***
+
 ### ***Note***: 
 *Before proceeding with the next steps, check if you already have **PyQt5** installed on your system.* 
 *For example, try these commands in a terminal:*
@@ -47,9 +65,9 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
     
 `>> import PyQt5`
     
-*If the import is successful (i.e., no errors), go to **Step 8**; otherwise, continue.*
+*If the import is successful (i.e., no errors), go to **Step 9**; otherwise, continue.*
 
-### 5. Install qt513
+### 6. Install qt513
 
 * Open a terminal:
 
@@ -62,7 +80,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 ==> Qt should be now in: /opt/qt513
 
 
-### 6. Install SIP 4.19.x
+### 7. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
@@ -85,7 +103,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 ==> you should see PyQt5-sip in the list
 
 
-### 7. Install PyQt5
+### 8. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
@@ -107,7 +125,7 @@ After installing [Python 2.7](https://www.python.org/downloads/release/python-27
 
 ==> you should see PyQt5 in the results
 
-### 8. Launch the Interaction Tool
+### 9. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
 
@@ -123,7 +141,15 @@ The user interface should run now, good luck!
   <img src="interaction_manager/ui/ui_view.png" width="500px" />
 </div>
 
-### 9. Known installation issues: Qt not found!
+---
+
+## II. Setting up Spotify
+
+TODO!
+
+---
+
+## III. Known installation issues: Qt not found!
 If you experience issues related to Qt, try the following:
 
 * Download Qt 5.13.2 for linux from: https://download.qt.io/official_releases/qt/5.13/5.13.2/ 
