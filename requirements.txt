@@ -1,0 +1,5 @@
+enum34==1.1.10
+pyyaml==5.3
+spotipy==2.9.0
+pymongo==3.10.1
+qi==1.7.2
