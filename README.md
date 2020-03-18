@@ -13,7 +13,19 @@ The tool was tested on MAC and Linux.
 [![PyYAML 5.x](https://img.shields.io/badge/PyYAML-5.x-blue)](https://github.com/yaml/pyyaml)
 
 ## I. Linux: Installation guide
-After installing [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html), proceed with installing the following:
+First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
+
+* Tip: append NAOqi to the PYTHONPATH:
+
+`$ vim ~/.bashrc`
+
+==> go the end of the file and add this line (change naoqi path to where you stored *naoqi-sdk-2.5.5.5-linux64*):
+
+`export PYTHONPATH=${PYTHONPATH}:/path_to_naoqi-sdk-2.5.5.5-linux64/lib/python2.7/site-packages`
+
+`$ source ~/.bashrc`
+
+Then, proceed with installing the following:
 
 ### 1. Install PIP and other dependencies
 
