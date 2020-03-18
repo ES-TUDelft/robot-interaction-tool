@@ -11,6 +11,7 @@
 # **
 
 import logging
+import os
 import sys
 import yaml
 
@@ -22,7 +23,7 @@ from PyQt5.QtWidgets import QApplication
 
 def _setup_logger():
     logging.basicConfig(level=logging.DEBUG)
-    return logging.getLogger('app_logger')
+    return logging.getLogger('Config Logger')
 
 
 logger = _setup_logger()
@@ -186,8 +187,35 @@ def _get_config():
 
 sys_config = _get_config()
 
+
+####
+# SPOTIFY
+###
+def _get_spotify_config():
+    config = None
+    try:
+        # check if there is a config file for spotify, otherwise use default config
+        file_path = "interaction_manager/properties/spotify.yaml"
+        if os.path.isfile(file_path) is True:
+            logger.debug("Found spotify config file")
+            with open(file_path, 'r') as yaml_file:
+                config = yaml.load(yaml_file, Loader=yaml.SafeLoader)
+        else:
+            logger.debug("Couldn't find a spotify config file! Using default config instead.")
+            config = sys_config
+    except Exception as e:
+        logger.error("Error while opening spotify config! {}".format(e))
+        config = sys_config
+    finally:
+        return config
+
+
+spotify_config = _get_spotify_config()
+
+
 def get_spotify_settings():
-    return sys_config["spotify"]
+    return spotify_config["spotify"]
+
 
 ###
 # STYLESHEET

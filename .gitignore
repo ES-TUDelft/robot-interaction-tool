@@ -130,3 +130,4 @@ robot_manager/pepper/hre_chat/credentials*.json
 logs/*.json
 .cache-*
 # interaction_manager/properties/config.yaml
+interaction_manager/properties/spotify.yaml
