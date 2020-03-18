@@ -12,6 +12,18 @@ The tool was tested on MAC and Linux.
 [![PyQt 5.13.x](https://img.shields.io/badge/PyQt-5.x.x-brightgreen.svg)](https://pypi.org/project/PyQt5/5.9.2/)
 [![PyYAML 5.x](https://img.shields.io/badge/PyYAML-5.x-blue)](https://github.com/yaml/pyyaml)
 
+To use the tool, clone the repository (e.g., in the Documents folder) and, if you have all the requirements installed, launch the interface:
+
+`cd ~/Documents`
+
+`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+`cd ~/Documents/robot-interaction-tool`
+
+`$ python main.py`
+
+***Note***: This repository is being updated on a regular basis. Use ***git pull*** to integrate the latest changes.
+
 ## I. Linux: Installation guide
 First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
 
