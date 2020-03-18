@@ -27,13 +27,9 @@ To use the tool, clone the repository (e.g., in the Documents folder) and, if yo
 ## I. Linux Installation guide
 First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
 
-* Tip: append NAOqi to the PYTHONPATH as follows:
+* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **naoqi-sdk-2.5.5.5-linux64**)*
 
 `$ vim ~/.bashrc`
-
-*MAC:* open *~/.bashrc_profile*
-
-==> go the end of the file and add this line (change naoqi path to where you stored *naoqi-sdk-2.5.5.5-linux64*):
 
 `export PYTHONPATH=${PYTHONPATH}:/path_to_naoqi-sdk-2.5.5.5-linux64/lib/python2.7/site-packages`
 
