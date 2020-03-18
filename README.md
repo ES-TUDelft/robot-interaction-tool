@@ -24,12 +24,14 @@ To use the tool, clone the repository (e.g., in the Documents folder) and, if yo
 
 ***Note***: This repository is being updated on a regular basis. Use ***git pull*** to integrate the latest changes.
 
-## I. Linux: Installation guide
+## I. Linux Installation guide
 First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
 
-* Tip: append NAOqi to the PYTHONPATH:
+* Tip: append NAOqi to the PYTHONPATH as follows:
 
 `$ vim ~/.bashrc`
+
+*MAC:* open *~/.bashrc_profile*
 
 ==> go the end of the file and add this line (change naoqi path to where you stored *naoqi-sdk-2.5.5.5-linux64*):
 
@@ -47,37 +49,11 @@ Then, proceed with installing the following:
 
 `$ sudo apt-get install -y python-pip python-dev`
 
-`$ pip install enum34`
+* Now use pip to install the project requirements:
 
-### 2. Install PyYAML
+`$ pip install -r requirements.txt`
 
-`$ pip install PyYAML`
-
-### 3. Install MONGO DB
-
-`$ pip install pymongo`
-
-### 4. Install qi
-
-* LibQi Python bindings for NAOqi
-
-`$ pip install qi`
-
-### 5. Spotify integration
-
-* Install SpotiPy: a python library for the Spotify web api.
-
-`$ pip install spotipy`
-
-* For setting up spotify client id (and secret) see Sec. II.
-    
-* ***If you experience issues with this library***, uninstall the pip version then install it from the source as follows:
-
-`$ pip uninstall spotipy`
-
-`$ git clone https://github.com/plamere/spotipy.git`
-
-`$ python setup.py install`
+    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
 
 ***
 
@@ -89,9 +65,9 @@ Then, proceed with installing the following:
     
 `>> import PyQt5`
     
-*If the import is successful (i.e., no errors), go to **Step 9**; otherwise, continue.*
+*If the import is successful (i.e., no errors), go to **Step 5**; otherwise, continue.*
 
-### 6. Install qt513
+### 2. Install qt513
 
 * Open a terminal:
 
@@ -104,7 +80,7 @@ Then, proceed with installing the following:
 ==> Qt should be now in: /opt/qt513
 
 
-### 7. Install SIP 4.19.x
+### 3. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
@@ -127,7 +103,7 @@ Then, proceed with installing the following:
 ==> you should see PyQt5-sip in the list
 
 
-### 8. Install PyQt5
+### 4. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
@@ -149,7 +125,7 @@ Then, proceed with installing the following:
 
 ==> you should see PyQt5 in the results
 
-### 9. Launch the Interaction Tool
+### 5. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
 
@@ -210,7 +186,10 @@ The user interface should run now, good luck!
 
 ---
 
-## III. Known installation issues: Qt not found!
+## III. Known installation issues: 
+
+### a. Qt not found!
+
 If you experience issues related to Qt, try the following:
 
 * Download Qt 5.13.2 for linux from: https://download.qt.io/official_releases/qt/5.13/5.13.2/ 
@@ -221,3 +200,13 @@ If you experience issues related to Qt, try the following:
 `$ chmod +x qt-opensource-linux-x64-5.13.2.run`
 
 `$ ./qt-opensource-linux-x64-5.13.2.run`
+
+### b. Spotify integration
+
+* ***If you experience issues with Spotipy*** (python library for the Spotify web api), uninstall the pip version then install it from the source as follows:
+
+`$ pip uninstall spotipy`
+
+`$ git clone https://github.com/plamere/spotipy.git`
+
+`$ python setup.py install`
