@@ -12,11 +12,17 @@ The tool was successfully tested on ***MAC*** and ***Linux***.
 [![PyQt 5.13.x](https://img.shields.io/badge/PyQt-5.x.x-brightgreen.svg)](https://pypi.org/project/PyQt5/5.9.2/)
 [![PyYAML 5.x](https://img.shields.io/badge/PyYAML-5.x-blue)](https://github.com/yaml/pyyaml)
 
-To use the tool, clone the repository (e.g., in the Documents folder) and, if you have all the requirements installed, launch the interface:
+To use the tool you need to do the following:
+
+**a.** Install the requirements as described in [Section I](#i-linux-installation-guide).
+
+**b.** Clone the repository (e.g., in the Documents folder)
 
 `cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+**c.** Launch the interface as follows:
 
 `cd ~/Documents/robot-interaction-tool`
 
@@ -30,7 +36,7 @@ To use the tool, clone the repository (e.g., in the Documents folder) and, if yo
 
 ---
 
-## I. Linux Installation guide
+## I. Linux Installation Guide
 
 Refer to the [installation document](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md) found in [docs/INSTALLATION.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md)
 
