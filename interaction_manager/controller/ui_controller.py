@@ -51,6 +51,7 @@ class UIController(QtWidgets.QMainWindow):
         self.copied_behavioral_parameters = None
         self.interaction_blocks = []
         self.selected_block = None
+        self.copied_block = None
         self.is_simulation_mode = False  # TODO: replace by mode enums for simulation - playing - idle
 
         self.interaction_design = None
@@ -134,9 +135,8 @@ class UIController(QtWidgets.QMainWindow):
         # COPY/PASTE
         # ----------
         # TODO: Copy block not parameters
-        self.ui.actionMenuCopy.setEnabled(True)
-        self.ui.actionMenuCopy.triggered.connect(self.copy_behavioral_parameters)
-        self.ui.actionMenuPasteSettings.triggered.connect(self.paste_behavioral_parameters)
+        self.ui.actionMenuCopy.triggered.connect(self.copy_block)
+        self.ui.actionMenuPasteParameters.triggered.connect(self.paste_behavioral_parameters)
 
         # COMMUNICATION & BEHAVIORAL PARAMETERS
         # --------------------------------------
@@ -170,8 +170,7 @@ class UIController(QtWidgets.QMainWindow):
         self._enable_buttons([self.ui.actionMenuNew, self.ui.actionMenuSaveAs],
                              enabled=False)  # disabled for now!
         self.ui.actionMenuSave.triggered.connect(self.save_blocks)
-        self.ui.actionMenuImportBlocks.setEnabled(True)
-        self.ui.actionMenuExportBlocks.setEnabled(True)
+
         self.ui.actionMenuImportBlocks.triggered.connect(self.import_blocks)
         self.ui.actionMenuExportBlocks.triggered.connect(self.export_blocks)
 
@@ -227,8 +226,12 @@ class UIController(QtWidgets.QMainWindow):
         # add dock list widget
         self.simulation_dock_widget = self.simulation_controller.simulation_dock_widget
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.simulation_dock_widget)
+        self.tabifyDockWidget(self.ui.logsDockWidget, self.simulation_dock_widget)
         self.tabifyDockWidget(self.simulation_dock_widget, self.ui.musicDockWidget)
-        self.tabifyDockWidget(self.simulation_dock_widget, self.ui.logsDockWidget)
+
+        # activate logs panel
+        self.ui.logsDockWidget.setFocus()
+        self.ui.logsDockWidget.raise_()
 
         # observer
         self.simulation_controller.finished_simulation_observable.add_observer(self.on_finished_simulation)
@@ -547,11 +550,19 @@ class UIController(QtWidgets.QMainWindow):
 
     def on_block_selected(self, block):
         self.selected_block = block
+        # enable/disable copy/paste
+        self.ui.actionMenuCopy.setEnabled(True)
+        self.enable_paste_buttons()
+
         self.update_parameters_widget()
 
     def on_no_block_selected(self, event):
         self.selected_block = None
         self._set_warning_label_color(reset=True)
+
+        # disable copy/paste
+        self._enable_buttons([self.ui.actionMenuCopy, self.ui.actionMenuPaste, self.ui.actionMenuPasteParameters],
+                             enabled=False)
 
         # Disable behavioral parameters widget
         self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
@@ -676,15 +687,20 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.behavioralParametersDockWidget.repaint()
         self.ui.logsDockWidget.repaint()
 
+    def copy_block(self):
+        if self.selected_block is not None:
+            self.copied_block = self.selected_block
+            self.enable_paste_buttons()
+
     def copy_behavioral_parameters(self):
         self.copied_behavioral_parameters = self.behavioral_parameters.clone()
-        self._enable_buttons(buttons=[self.ui.actionMenuPasteSettings], enabled=True)
+        self._enable_buttons(buttons=[self.ui.actionMenuPasteParameters], enabled=True)
 
     def paste_behavioral_parameters(self):
-        if self.selected_block is not None:
+        if self.selected_block is not None and self.copied_block is not None:
             self.selected_block.parent.set_behavioral_parameters(
                 p_name="{}".format(self.ui.behavioralParametersApplyComboBox.currentText()),
-                behavioral_parameters=self.copied_behavioral_parameters)
+                behavioral_parameters=self.copied_block.parent.behavioral_parameters)
 
             self.block_controller.store("Updated parameters")
 
@@ -694,6 +710,11 @@ class UIController(QtWidgets.QMainWindow):
             self._display_message(message="Successfully pasted the parameters.")
 
             self.ui.behavioralParametersDockWidget.repaint()
+
+    def enable_paste_buttons(self):
+        # TODO: activate paste block!
+        self._enable_buttons([self.ui.actionMenuPasteParameters],
+                             enabled=False if self.copied_block is None else True)
 
     #
     # MENU ACTIONS

@@ -101,7 +101,7 @@
     <addaction name="separator"/>
     <addaction name="actionMenuCopy"/>
     <addaction name="actionMenuPaste"/>
-    <addaction name="actionMenuPasteSettings"/>
+    <addaction name="actionMenuPasteParameters"/>
     <addaction name="separator"/>
     <addaction name="actionMenuDelete"/>
     <addaction name="actionMenuClear"/>
@@ -181,7 +181,7 @@
    <addaction name="actionMenuSave"/>
    <addaction name="separator"/>
    <addaction name="actionMenuCopy"/>
-   <addaction name="actionMenuPasteSettings"/>
+   <addaction name="actionMenuPasteParameters"/>
    <addaction name="separator"/>
    <addaction name="actionMenuClear"/>
    <addaction name="separator"/>
@@ -197,9 +197,11 @@
    <addaction name="actionMenuPlay"/>
    <addaction name="actionMenuStop"/>
    <addaction name="separator"/>
+   <addaction name="actionMenuMusic"/>
+   <addaction name="separator"/>
    <addaction name="actionMenuSimulate"/>
    <addaction name="separator"/>
-   <addaction name="actionMenuMusic"/>
+   <addaction name="actionMenuImportBlocks"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="behavioralParametersDockWidget">
@@ -1217,6 +1219,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="musicDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle">
     <string>Music Player</string>
    </property>
@@ -1400,26 +1408,32 @@
   </action>
   <action name="actionMenuImportBlocks">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="hre_resources/resources.qrc">
      <normaloff>:/hreresources/icons/import.png</normaloff>:/hreresources/icons/import.png</iconset>
    </property>
    <property name="text">
-    <string>Import Blocks</string>
+    <string>Import Design</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Design</string>
    </property>
   </action>
   <action name="actionMenuExportBlocks">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="hre_resources/resources.qrc">
      <normaloff>:/hreresources/icons/export.png</normaloff>:/hreresources/icons/export.png</iconset>
    </property>
    <property name="text">
-    <string>Export Blocks</string>
+    <string>Export Design</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Design</string>
    </property>
   </action>
   <action name="actionMenuSave">
@@ -1506,7 +1520,7 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="actionMenuPasteSettings">
+  <action name="actionMenuPasteParameters">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -1515,7 +1529,10 @@
      <normaloff>:/hreresources/icons/paste.png</normaloff>:/hreresources/icons/paste.png</iconset>
    </property>
    <property name="text">
-    <string>Paste Settings</string>
+    <string>Paste Parameters</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste Parameters</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+V</string>
