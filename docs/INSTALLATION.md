@@ -111,3 +111,33 @@ The user interface should run now, good luck!
 <div align="center">
   <img src="user-manual/resources/fig_mainUI.png" width="500px" />
 </div>
+
+
+---
+
+# II. Known installation issues: 
+
+## a. Qt not found!
+
+If you experience issues related to Qt, try the following:
+
+* Download Qt 5.13.2 for linux from: https://download.qt.io/official_releases/qt/5.13/5.13.2/ 
+* Open a terminal:
+
+`$ cd ~/Downloads`
+
+`$ chmod +x qt-opensource-linux-x64-5.13.2.run`
+
+`$ ./qt-opensource-linux-x64-5.13.2.run`
+
+## b. Spotify integration
+
+* ***If you experience issues with Spotipy*** (python library for the Spotify web api), uninstall the pip version then install it from the source as follows:
+
+`$ pip uninstall spotipy`
+
+`$ git clone https://github.com/plamere/spotipy.git`
+
+`$ cd spotipy`
+
+`$ python setup.py install`
