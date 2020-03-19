@@ -1,3 +1,16 @@
+In this document we go over the installation of the required libraries and setting up Spotify for successfully running the prototyping tool.
+
+---
+
+## Content
+**I.** [Linux Installation Guide](#i-linux-installation-guide)
+
+**II.** [Setting up Spotify](#ii-setting-up-spotify)
+
+**III.** [Known Installation Issues](#iii-known-installation-issues)
+
+---
+
 # I. Linux Installation guide
 First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
 
@@ -112,10 +125,52 @@ The user interface should run now, good luck!
   <img src="user-manual/resources/fig_mainUI.png" width="500px" />
 </div>
 
+---
+
+## II. Setting up Spotify
+
+* Go to https://developer.spotify.com/dashboard/login (create an account or login to yours)
+
+* Click on "Create a Client ID" and fill in the required fields (e.g., RobotInteractionTool for the app name)
+
+* Click on the app you just created and go to "Edit Settings". In the ***Redirect URIs*** field add http://localhost:8080/callback/ and click on ***SAVE*** (bottom left).
+
+* Copy the app's the ***Client ID*** and ***Client Secret*** to the ***config.yaml*** file in "robot-interaction-tool/interaction_manager/properties" OR in this properties directory, create a new file named ***spotify.yaml*** and add the following:
+
+        spotify:
+            username: YOUR_USER_NAME
+            client_id: YOUR_CLIENT_ID
+            client_secret: YOUR_CLIENT_SECRET
+            redirect_uri: http://localhost:8080/callback/
+            
+* The ***username*** from the previous step is your personal **Spotify** username (found in your profile: https://www.spotify.com/).
+
+* To connect to the spotify web api for the first time, you'll need a running server listening to 8080 port. You can use the server.js provided by this repository (you need to install node.js first: https://nodejs.org/en/download/) or create your own.
+
+`$ cd ~/Documents/robot-interaction-tool`
+
+`$ node es_common/server.js`
+
+* Now, launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
+
+* You'll be presented with a connection dialog. You can either use the default settings (that you previously put in the config.yam or spotify.yaml) or enter new ones.
+
+* Click on the ***Connect*** button. 
+
+        * If this is the first time you connect to Spotify (i.e., there is no cache), you will be redirected to a web browser.
+        * Just *copy the URL* shown on the webpage and *paste* it in the terminal running the tool then press Enter.
+        * The URL should be similar to this but longer (DO NOT USE IT, it is just an example):
+            - http://localhost:8080/callback/?code=BtmyiHfVlKvGtO4mgwYJQKKOUWEeNTRm22CXrAnTRp...
+
+* If it's successful, you'll see your playlists and tracks. Click "OK" to save the setup.
+
+* To play a song (e.g., using the test button or the mini-player panel in the main interface), you will need an active device (i.e., a Spotify Player) that is running on either your browser or PC/Phone.
+
+* ***NOTE:*** When the player is not able to start a song, it means the device is not active. Just refresh your Spotify Player browser or the desktop app.
 
 ---
 
-# II. Known installation issues: 
+# III. Known Installation Issues: 
 
 ## a. Qt not found!
 
