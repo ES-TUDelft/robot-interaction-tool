@@ -14,15 +14,15 @@ The tool was successfully tested on ***MAC*** and ***Linux***.
 
 To use the tool you need to do the following:
 
-**a.** Install the requirements as described in [Section I](#i-linux-installation-guide).
+**A.** Install the requirements as described in [Section I](#i-linux-installation-guide).
 
-**b.** Clone the repository (e.g., in the Documents folder)
+**B.** Clone the repository (e.g., in the Documents folder)
 
 `cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
 
-**c.** Launch the interface as follows:
+**C.** Launch the interface as follows:
 
 `cd ~/Documents/robot-interaction-tool`
 
