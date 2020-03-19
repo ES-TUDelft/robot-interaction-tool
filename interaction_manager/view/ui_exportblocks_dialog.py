@@ -91,8 +91,8 @@ class Ui_ExportBlocksDialog(object):
 
     def retranslateUi(self, ExportBlocksDialog):
         _translate = QtCore.QCoreApplication.translate
-        ExportBlocksDialog.setWindowTitle(_translate("ExportBlocksDialog", "Export Blocks Dialog"))
-        self.groupBox.setTitle(_translate("ExportBlocksDialog", "Export Blocks"))
+        ExportBlocksDialog.setWindowTitle(_translate("ExportBlocksDialog", "Export Dialog"))
+        self.groupBox.setTitle(_translate("ExportBlocksDialog", "Export Design"))
         self.fileNameLineEdit.setPlaceholderText(_translate("ExportBlocksDialog", "File Name"))
         self.exportBlocksButton.setText(_translate("ExportBlocksDialog", "Export"))
         self.groupBox_2.setTitle(_translate("ExportBlocksDialog", "Result"))

@@ -152,10 +152,8 @@ class UISpotifyConnectionController(QtWidgets.QDialog):
         self.ui.playButton.setEnabled(True if self.ui.trackComboBox.currentText() != pconfig.SELECT_OPTION else False)
 
     def enable_settings(self, val):
-        if val == 0:
-            self.ui.settingsGroupBox.setEnabled(False)
-        else:
-            self.ui.settingsGroupBox.setEnabled(True)
+        self.ui.settingsGroupBox.setEnabled(not self.ui.defaultSettingsCheckBox.isChecked())
+        self.repaint()
 
     def has_active_device(self):
         devices = self.spotify.devices()

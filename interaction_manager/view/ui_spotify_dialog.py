@@ -128,6 +128,7 @@ class Ui_SpotifyDialog(object):
         self.messageTextEdit = QtWidgets.QTextEdit(self.groupBox_2)
         self.messageTextEdit.setAutoFillBackground(True)
         self.messageTextEdit.setStyleSheet("background: rgb(76, 76, 76)")
+        self.messageTextEdit.setReadOnly(True)
         self.messageTextEdit.setObjectName("messageTextEdit")
         self.gridLayout_2.addWidget(self.messageTextEdit, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.groupBox_2, 4, 0, 1, 2)
@@ -147,6 +148,15 @@ class Ui_SpotifyDialog(object):
         self.buttonBox.accepted.connect(SpotifyDialog.accept)
         self.buttonBox.rejected.connect(SpotifyDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(SpotifyDialog)
+        SpotifyDialog.setTabOrder(self.usernameLineEdit, self.clientIDLineEdit)
+        SpotifyDialog.setTabOrder(self.clientIDLineEdit, self.clientSecretLineEdit)
+        SpotifyDialog.setTabOrder(self.clientSecretLineEdit, self.redirectURILineEdit)
+        SpotifyDialog.setTabOrder(self.redirectURILineEdit, self.defaultSettingsCheckBox)
+        SpotifyDialog.setTabOrder(self.defaultSettingsCheckBox, self.connectButton)
+        SpotifyDialog.setTabOrder(self.connectButton, self.playlistComboBox)
+        SpotifyDialog.setTabOrder(self.playlistComboBox, self.trackComboBox)
+        SpotifyDialog.setTabOrder(self.trackComboBox, self.playButton)
+        SpotifyDialog.setTabOrder(self.playButton, self.messageTextEdit)
 
     def retranslateUi(self, SpotifyDialog):
         _translate = QtCore.QCoreApplication.translate
@@ -156,7 +166,7 @@ class Ui_SpotifyDialog(object):
         self.settingsGroupBox.setTitle(_translate("SpotifyDialog", "Spotify Settings"))
         self.label_3.setText(_translate("SpotifyDialog", "Client ID"))
         self.label_4.setText(_translate("SpotifyDialog", "Username"))
-        self.redirectURILineEdit.setPlaceholderText(_translate("SpotifyDialog", "http://localhost/"))
+        self.redirectURILineEdit.setPlaceholderText(_translate("SpotifyDialog", "http://localhost/8080/"))
         self.label_2.setText(_translate("SpotifyDialog", "Client Secret"))
         self.label.setText(_translate("SpotifyDialog", "Redirect URI"))
         self.playButton.setText(_translate("SpotifyDialog", "Test"))

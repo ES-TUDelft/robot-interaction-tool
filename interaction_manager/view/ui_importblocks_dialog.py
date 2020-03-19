@@ -83,8 +83,8 @@ class Ui_ImportBlocksDialog(object):
 
     def retranslateUi(self, ImportBlocksDialog):
         _translate = QtCore.QCoreApplication.translate
-        ImportBlocksDialog.setWindowTitle(_translate("ImportBlocksDialog", "Import Blocks Dialog"))
-        self.groupBox.setTitle(_translate("ImportBlocksDialog", "Import Blocks"))
+        ImportBlocksDialog.setWindowTitle(_translate("ImportBlocksDialog", "Import Dialog"))
+        self.groupBox.setTitle(_translate("ImportBlocksDialog", "Import Design"))
         self.portLabel.setText(_translate("ImportBlocksDialog", "Select file:"))
         self.groupBox_2.setTitle(_translate("ImportBlocksDialog", "Result"))
         self.selectFileToolButton.setText(_translate("ImportBlocksDialog", "..."))

@@ -86,7 +86,7 @@ class Ui_DialogGUI(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.behavioralParametersDockWidget.sizePolicy().hasHeightForWidth())
         self.behavioralParametersDockWidget.setSizePolicy(sizePolicy)
-        self.behavioralParametersDockWidget.setMinimumSize(QtCore.QSize(400, 600))
+        self.behavioralParametersDockWidget.setMinimumSize(QtCore.QSize(400, 550))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
