@@ -8,10 +8,10 @@ The tool was successfully tested on ***MAC*** and ***Linux***.
 [![Python 2.7](https://img.shields.io/badge/Python-2.7.14-yellow.svg)](https://www.python.org/downloads/)
 [![NAOqi 2.5](https://img.shields.io/badge/NAOqi-2.5-blue.svg)](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
 [![PyNAOqi 2.5](https://img.shields.io/badge/PyNaoqi-2.5.5.5-green.svg)](http://doc.aldebaran.com/2-5/dev/community_software.html#retrieving-software)
-[![qi 1.7.2](https://pypi.org/project/qi/)](https://img.shields.io/badge/qi-1.7.2-orange)
+[![qi 1.7.2](https://img.shields.io/badge/qi-1.7.2-orange)](https://pypi.org/project/qi/)
 [![PyQt 5.13.x](https://img.shields.io/badge/PyQt-5.x.x-brightgreen.svg)](https://pypi.org/project/PyQt5/5.9.2/)
 [![PyYAML 5.x](https://img.shields.io/badge/PyYAML-5.x-blue)](https://github.com/yaml/pyyaml)
-[![Spotipy 2.9.x](https://pypi.org/project/spotipy/)](https://img.shields.io/badge/Spotipy-2.9.0-blue)
+[![Spotipy 2.9.x](https://img.shields.io/badge/Spotipy-2.9.0-blue)](https://pypi.org/project/spotipy/)
 
 To use the tool you need to do the following:
 
