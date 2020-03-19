@@ -54,9 +54,9 @@ Refer to the [installation document](https://github.com/ES-TUDelft/robot-interac
 
 ---
 
-## III. Known installation issues: 
+## III. User Manual: 
 
-In the [installation guide](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md) there is a list of issues related to installing the requirements along with potential solutions.
+A [user manual](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/user-manual/MANUAL.md) describing the main features of the UI can be found in [docs/user-manual/MANUAL.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/user-manual/MANUAL.md).
 
 ---
 
