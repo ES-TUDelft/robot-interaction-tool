@@ -7,6 +7,7 @@ In this document we will go through each part of the prototyping tool’s main u
 
 <div align="center">
   <img src="resources/fig_mainUIAnnotated.png" width="500px" />
+  
   <em>Figure 1: Preview of the user Interface for prototyping interactive dialogues with social robots. (A) the top menu bar; (B) list of available dialogue blocks; (C) design panel for building the dialogue flow; (E) panel for displaying the logs, the simulation progress and the music player controls.</em>
 </div>
 
@@ -31,11 +32,13 @@ The top menu bar (Fig. 1.A) contains the following buttons, from left-to-right:
 
 <div align="center">
   <img src="resources/fig_connect.png" width="500px" />
+  
   <em>Figure 2: Dialog GUI for managing the connection to the robot (left) and the connection to Spotify web service (right).</em>
 </div>
 
 <div align="center">
   <img src="resources/fig_importExport.png" width="500px" />
+  
   <em>Figure 3: Dialog GUIs for importing (left) and exporting (right) designs.</em>
 </div>
 
@@ -61,6 +64,7 @@ The design panel (Fig. 1.C) is the space for designing the whole interaction. Th
 
 <div align="center">
   <img src="resources/fig_mainUIWithBlocks.png" width="500px" />
+  
   <em>Figure 4: Design space with connected interaction blocks.</em>
 </div>
 
@@ -70,6 +74,7 @@ When the user clicks on a block’s edit icon (Fig. 5), an dialogue GUI appears 
 
 <div align="center">
   <img src="resources/fig_editDialog.png" width="500px" />
+  
   <em>Figure 5: Dialog GUI for editing the properties of the selected block. From left to right: tab for setting the robot message (i.e., speech act) and action (if any); tab for setting the robot’s gestures; tab for setting the dialogue topic (if the block pattern contains one, e.g., question pattern); tab for setting the robot tablet (i.e., screen) properties.</em>
 </div>
 
@@ -78,6 +83,7 @@ When the user clicks on a block’s parameter icon (Fig. 6), an dialogue GUI app
 
 <div align="center">
   <img src="resources/fig_parameters.png" width="500px" />
+  
   <em>Figure 6: Dialog GUI for modifying the parameters of the selected block. From left to right: tab for setting the type of the robot’s gestures, gaze, and proxemics; tab for setting the robot’s voice (i.e., pitch, speed and prosody); and tab for setting the robot’s eye color.</em>
 </div>
 
@@ -86,5 +92,6 @@ The bottom left panel (Fig. 1-D) of the user interface is composed of three tabs
 
 <div align="center">
   <img src="resources/fig_logs.png" width="500px" />
+  
   <em>Figure 7: Panel for displaying the system logs (left); the simulator (middle); and the music player (right).</em>
 </div>
