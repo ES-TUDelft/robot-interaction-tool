@@ -13,18 +13,23 @@
 import logging
 import time
 
+from PyQt5.QtCore import QTimer
+
 import es_common.hre_config as pconfig
+from es_common.enums.command_enums import ActionCommand
 from es_common.model.observable import Observable
+from interaction_manager.enums.block_enums import ExecutionMode
 from robot_manager.pepper.controller.robot_controller import RobotController
 from thread_manager.robot_animation_threads import WakeUpRobotThread, AnimateRobotThread
 from thread_manager.robot_engagement_threads import EngagementThread, FaceTrackerThread
 
 
 class InteractionController(object):
-    def __init__(self, block_controller):
+    def __init__(self, block_controller, music_controller=None):
         self.logger = logging.getLogger("Interaction Controller")
 
         self.block_controller = block_controller
+        self.music_controller = music_controller
         self.robot_controller = None
         self.wakeup_thread = None
         self.animation_thread = None
@@ -149,6 +154,7 @@ class InteractionController(object):
         self.stop_playing = False
         self.previous_interaction_block = None
         self.current_interaction_block = int_block
+        self.current_interaction_block.execution_mode = ExecutionMode.NEW
         self.logger.debug("Started playing the blocks")
 
         # set the engagement counter
@@ -245,7 +251,12 @@ class InteractionController(object):
         connecting_edge = None
         if self.previous_interaction_block is None:  # interaction has just started
             self.previous_interaction_block = self.current_interaction_block
-        else:  # playing is in progress
+        elif self.current_interaction_block.execution_mode is ExecutionMode.EXECUTING \
+                and self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
+            self.on_music_mode()
+        else:
+            # complete the block
+            self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
             # get the next block to say
             self.current_interaction_block, connecting_edge = self.get_next_interaction_block()
 
@@ -258,6 +269,7 @@ class InteractionController(object):
             self.tablet_image(hide=False)
         else:
             # execute the block
+            self.current_interaction_block.execution_mode = ExecutionMode.EXECUTING
             self.current_interaction_block.set_selected(True)
             if connecting_edge is not None:
                 connecting_edge.set_selected(True)
@@ -274,8 +286,32 @@ class InteractionController(object):
 
             self.logger.debug("Robot: {}".format(self.current_interaction_block.message))
 
-            # update previous block
-            # self.previous_block = self.current_block
+    def on_music_mode(self):
+        if self.music_controller is None:
+            self.logger.debug("Music player is not connected! Will skip playing music.")
+            self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+            self.customized_say()
+        else:
+            self.current_interaction_block.action_command.music_controller = self.music_controller
+            success = self.current_interaction_block.action_command.execute()
+            if success is True:
+                self.logger.debug("Playing now: {}".format(self.current_interaction_block.action_command.track))
+                # TODO: specify wait time as track time when play_time is < 0
+                # use action play time
+                wait_time = self.current_interaction_block.action_command.play_time * 1000
+                if wait_time <= 0:
+                    wait_time = 30000  # wait for 30s then continue
+                QTimer.singleShot(wait_time, self.on_music_stop)
+            else:
+                self.logger.warning("Unable to play music! {}".format(self.music_controller.warning_message))
+                self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+                self.customized_say()
+
+    def on_music_stop(self):
+        self.logger.debug("Finished playing music.")
+        self.music_controller.pause()
+        self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+        self.customized_say()
 
     def test_behavioral_parameters(self, interaction_block, behavioral_parameters, volume):
         message, error = (None,) * 2

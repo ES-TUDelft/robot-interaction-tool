@@ -122,11 +122,10 @@ class SimulationController(object):
                 self.connecting_edge.set_selected(True)
 
             self.update_interaction_log(robot_message=self.current_interaction_block.message)
-
+            self.logger.debug("**** Has music action: {}".format(self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC)))
             if self.current_interaction_block.topic_tag.topic != "":
                 self.user_turn = True
-            elif self.current_interaction_block.action_command is not None \
-                    and self.current_interaction_block.action_command.command_type is ActionCommand.PLAY_MUSIC:
+            elif self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
                 self.on_music_mode()
             else:
                 QTimer.singleShot(1500, self.execute_next_interaction_block)
@@ -167,7 +166,7 @@ class SimulationController(object):
             self.logger.error("Error while verifying user input! {}".format(e))
 
     def on_music_mode(self):
-        if self.music_controller is None or self.current_interaction_block.action_command is None:
+        if self.music_controller is None:
             QTimer.singleShot(1000, self.execute_next_interaction_block)
         else:
             self.current_interaction_block.action_command.music_controller = self.music_controller
@@ -192,7 +191,7 @@ class SimulationController(object):
         self.execute_next_interaction_block()
 
     def update_interaction_log(self, robot_message=None, user_message=None):
-        if robot_message is not None:
+        if robot_message is not None and robot_message != "":
             self._append_interaction_text(name="Robot", color_name="green", message=robot_message)
         elif self.user_turn is True:  # user_input is not None
             # to prevent logging users' entered input when it's not their turn

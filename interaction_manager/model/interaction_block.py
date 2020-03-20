@@ -16,7 +16,7 @@ from collections import OrderedDict
 from es_common.datasource.serializable import Serializable
 from es_common.model.tablet_page import TabletPage
 from es_common.model.topic_tag import TopicTag
-from interaction_manager.enums.block_enums import SocketType
+from interaction_manager.enums.block_enums import SocketType, ExecutionMode
 from es_common.enums.command_enums import ActionCommand
 from es_common.factory.command_factory import CommandFactory
 from interaction_manager.model.behavioral_parameters import BehavioralParameters
@@ -42,6 +42,8 @@ class InteractionBlock(Serializable):
 
         # action command
         self.action_command = None  # ESCommand()
+
+        self.execution_mode = ExecutionMode.NEW  # by default
 
         self.interaction_start_time = 0
         self.interaction_end_time = 0
@@ -166,11 +168,14 @@ class InteractionBlock(Serializable):
         if other_interaction_block is None:
             return None
 
-        for e in self.block.get_edges(socket_type=SocketType.OUTPUT):
-            if e.start_socket in (self.block.outputs + other_interaction_block.block.inputs) \
-                    and e.end_socket in (self.block.outputs + other_interaction_block.block.inputs):
-                return e
+        for edge in self.block.get_edges(socket_type=SocketType.OUTPUT):
+            if edge.start_socket in (self.block.outputs + other_interaction_block.block.inputs) \
+                    and edge.end_socket in (self.block.outputs + other_interaction_block.block.inputs):
+                return edge
         return None
+
+    def has_action(self, action_type):
+        return self.action_command is not None and self.action_command.command_type is action_type
 
     # ===========
     # PROPERTIES

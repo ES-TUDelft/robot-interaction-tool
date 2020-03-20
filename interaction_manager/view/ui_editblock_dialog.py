@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_EditBlockDialog(object):
     def setupUi(self, EditBlockDialog):
         EditBlockDialog.setObjectName("EditBlockDialog")
-        EditBlockDialog.resize(449, 642)
+        EditBlockDialog.resize(449, 670)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -123,6 +123,7 @@ class Ui_EditBlockDialog(object):
         self.playTimeSpinBox.setMinimum(-1)
         self.playTimeSpinBox.setMaximum(500)
         self.playTimeSpinBox.setSingleStep(5)
+        self.playTimeSpinBox.setProperty("value", 30)
         self.playTimeSpinBox.setObjectName("playTimeSpinBox")
         self.gridLayout_18.addWidget(self.playTimeSpinBox, 2, 2, 1, 1)
         self.label_16 = QtWidgets.QLabel(self.musicGroupBox)

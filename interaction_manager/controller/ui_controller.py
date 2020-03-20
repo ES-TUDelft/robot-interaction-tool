@@ -19,6 +19,7 @@ import es_common.hre_config as pconfig
 from es_common.enums.led_enums import LedColor
 from es_common.enums.speech_enums import *
 from es_common.enums.voice_enums import *
+from es_common.model.observable import Observable
 from es_common.utils import date_helper
 from interaction_manager.controller.block_controller import BlockController
 from interaction_manager.controller.database_controller import DatabaseController
@@ -76,8 +77,7 @@ class UIController(QtWidgets.QMainWindow):
 
         # init controllers
         self._setup_block_controller()
-        self.interaction_controller = InteractionController(block_controller=self.block_controller)
-        self.interaction_controller.has_finished_playing_observable.add_observer(self.on_finished_playing)
+        self._setup_interaction_controller()
         self._setup_simulation_controller()
 
         # Attach action listeners
@@ -221,6 +221,10 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.block_editing_observable.add_observer(self.block_editing)
         self.block_controller.add_right_click_block_observer(self.create_popup_menu)
 
+    def _setup_interaction_controller(self):
+        self.interaction_controller = InteractionController(block_controller=self.block_controller)
+        self.interaction_controller.has_finished_playing_observable.add_observer(self.on_finished_playing)
+
     def _setup_simulation_controller(self):
         self.simulation_controller = SimulationController(self.block_controller, parent=self)
         # add dock list widget
@@ -324,7 +328,7 @@ class UIController(QtWidgets.QMainWindow):
     def spotify_connect(self):
         try:
             if self.music_controller is None:
-                self.music_controller = MusicController()
+                self.set_music_controller(MusicController())
 
             spotify_dialog = UISpotifyConnectionController()
 
@@ -334,6 +338,7 @@ class UIController(QtWidgets.QMainWindow):
                     self.music_controller.username = spotify_dialog.username
                     self.music_controller.spotify = spotify_dialog.spotify
                     self.music_controller.playlists = spotify_dialog.playlists
+
                     self.ui.musicVolumeButton.setEnabled(True)
                     self.update_playlist_combo()
                     # set focus on the music widget
@@ -341,15 +346,28 @@ class UIController(QtWidgets.QMainWindow):
                     self.ui.musicDockWidget.raise_()
                 else:
                     self._display_message(warning="Spotify is not connected!")
-                    self._enable_buttons([self.ui.musicVolumeButton, self.ui.musicPlayButton,
-                                          self.ui.musicPauseButton], enabled=False)
-                    self.ui.musicPlaylistComboBox.clear()
-                    self.ui.musicTracksComboBox.clear()
+                    self.reset_music_player()
+            else:
+                self.reset_music_player()
 
             self.repaint()
         except Exception as e:
             self._display_message(error="Error while connecting to spotify! {}".format(e))
+            self.reset_music_player()
             self.repaint()
+
+    def reset_music_player(self):
+        self._enable_buttons([self.ui.musicVolumeButton, self.ui.musicPlayButton,
+                              self.ui.musicPauseButton], enabled=False)
+        self.ui.musicPlaylistComboBox.clear()
+        self.ui.musicTracksComboBox.clear()
+        self.set_music_controller(None)
+
+    def set_music_controller(self, music_controller):
+        self.music_controller = music_controller
+        # update observers
+        self.interaction_controller.music_controller = self.music_controller
+        self.simulation_controller.music_controller = self.music_controller
 
     def update_playlist_combo(self):
         self.ui.musicPlaylistComboBox.clear()

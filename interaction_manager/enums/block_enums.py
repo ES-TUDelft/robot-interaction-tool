@@ -35,3 +35,9 @@ class EdgeType(ESEnum):
 class SocketType(ESEnum):
     INPUT = 0
     OUTPUT = 1
+
+
+class ExecutionMode(ESEnum):
+    NEW = 0
+    EXECUTING = 1
+    COMPLETED = 2
