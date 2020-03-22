@@ -12,19 +12,45 @@ In this document we go over the installation of the required libraries and setti
 ---
 
 # I. Linux Installation guide
-First install [Python 2.7](https://www.python.org/downloads/release/python-2717/) and [NAOqi 2.5](http://doc.aldebaran.com/2-5/dev/python/install_guide.html).
 
-* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **naoqi-sdk-2.5.5.5-linux64**)*
+## 1. Python 2.7
+
+* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/) 
+
+## 2. NAOqi for Python
+
+* Install [NAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
+   
+   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
+   * Open an account, if you don't have one
+   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Linux 64** (or go to [https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255](https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255) and click on the download link)
+
+* Open a terminal and do the following:
+
+`$ cd ~/Downloads`
+
+`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-linux64.tar`
+
+`$ mv pynaoqi-python2.7-2.5.5.5-linux64 ~/Documents`
+
+* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.5.5-linux64**)*
 
 `$ vim ~/.bashrc`
 
-`export PYTHONPATH=${PYTHONPATH}:/path_to_naoqi-sdk-2.5.5.5-linux64/lib/python2.7/site-packages`
+`export PYTHONPATH=${PYTHONPATH}:/path_to_pynaoqi-sdk-2.5.5.5-linux64/lib/python2.7/site-packages`
 
 `$ source ~/.bashrc`
 
-Then, proceed with installing the following:
+* Test that NAOqi is imported correctly:
 
-## 1. Install PIP and other dependencies
+`$ python`
+
+`>>> import naoqi`
+
+* In case of errors, verify your PYTHONPAH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
+
+
+## 3. Install PIP and other dependencies
 
 * Open a terminal
 
@@ -48,11 +74,11 @@ Then, proceed with installing the following:
     
 `>>> import PyQt5`
     
-*If the import is successful (i.e., no errors), go to **Step 5**; otherwise, continue.*
+*If the import is successful (i.e., no errors), go to **Step 7**; otherwise, continue.*
 
 ***
 
-## 2. Install qt513
+## 4. Install qt513
 
 * Open a terminal:
 
@@ -65,7 +91,7 @@ Then, proceed with installing the following:
 ==> Qt should be now in: /opt/qt513
 
 
-## 3. Install SIP 4.19.x
+## 5. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
@@ -87,7 +113,7 @@ Then, proceed with installing the following:
 
 ==> you should see PyQt5-sip in the list
 
-## 4. Install PyQt5
+## 6. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
@@ -109,7 +135,7 @@ Then, proceed with installing the following:
 
 ==> you should see PyQt5 in the results
 
-## 5. Launch the Interaction Tool
+## 7. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
 
