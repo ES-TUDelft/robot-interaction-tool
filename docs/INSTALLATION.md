@@ -240,7 +240,7 @@ You have to do it manually by adding two lines to local.conf as such (note that 
 
 `>>> import PyQt5`
 
-==> This should not return any errors. If it does, try the step III.b!
+==> This should not return any errors. If it does, try step III.b!
 
 
 ## b. Qt not found!
