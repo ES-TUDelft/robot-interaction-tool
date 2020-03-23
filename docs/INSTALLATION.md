@@ -131,9 +131,19 @@ In this document we go over the installation of the required libraries and setti
 
 `$ sudo make install`
 
+* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step).
+
 `$ pip list | grep 'PyQt5'`
 
 ==> you should see PyQt5 in the results
+
+* To make sure that PyQt5 is installed correctly, try the following:
+
+`$ python`
+
+`>>> import PyQt5`
+
+===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
 
 ## 7. Launch the Interaction Tool
 
