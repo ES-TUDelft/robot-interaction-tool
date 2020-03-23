@@ -208,7 +208,42 @@ The user interface should run now, good luck!
 
 # III. Known Installation Issues: 
 
-## a. Qt not found!
+## a. ImportError: libQt5Widgets.so.5 not found!
+
+This means that your newly installed library is not in the system path (i.e., it may be in the local usr path). 
+
+You have to do it manually by adding two lines to local.conf as such (note that adding the path to local lib should suffice, but you can add path to qt513 to be sure):
+
+==> I’m assuming you installed qt513 at: /opt/qt513:
+
+* OPTION A): do it using echo
+
+`$ echo “/usr/local/lib\n/opt/qt513/lib” > /etc/ld.so.conf.d/local.conf`
+
+`$ sudo ldconfig`
+   
+* OPTION B): create a new file and add two lines to it as such:
+
+`$ sudo vim /etc/ld.so.conf.d/local.conf`
+
+`/usr/local/lib`
+
+`/opt/qt513/lib`
+
+*(P.S.: to exit vim and save the changes do: ESC :wq!)*
+
+`$ sudo ldconfig`
+
+* Now that you added the path to the newly created library, try to import PyQt5 again:
+
+`$ python`
+
+`>>> import PyQt5`
+
+==> This should not return any errors. If it does, try the step III.b!
+
+
+## b. Qt not found!
 
 If you experience issues related to Qt, try the following:
 
@@ -221,7 +256,7 @@ If you experience issues related to Qt, try the following:
 
 `$ ./qt-opensource-linux-x64-5.13.2.run`
 
-## b. Spotify integration
+## c. Spotify integration
 
 * ***If you experience issues with Spotipy*** (python library for the Spotify web api), uninstall the pip version then install it from the source as follows:
 
