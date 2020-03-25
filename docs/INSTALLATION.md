@@ -5,19 +5,21 @@ In this document we go over the installation of the required libraries and setti
 ## Content
 **I.** [Linux Installation Guide](#i-linux-installation-guide)
 
-**II.** [Setting up Spotify](#ii-setting-up-spotify)
+**II.** [Windows Installation Guide](#ii-windows-installation-guide)
 
-**III.** [Known Installation Issues](#iii-known-installation-issues)
+**III.** [Setting up Spotify](#iii-setting-up-spotify)
+
+**IV.** [Known Installation Issues](#iv-known-installation-issues)
 
 ---
 
 # I. Linux Installation guide
 
-## 1. Python 2.7
+## I.1. Python 2.7
 
 * Install [Python 2.7](https://www.python.org/downloads/release/python-2717/) 
 
-## 2. NAOqi for Python
+## I.2. NAOqi for Python
 
 * Install [NAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
    
@@ -50,7 +52,7 @@ In this document we go over the installation of the required libraries and setti
 * In case of errors, verify your PYTHONPAH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
 
 
-## 3. Install PIP and other dependencies
+## I.3. Install PIP and other dependencies
 
 * Open a terminal
 
@@ -78,7 +80,7 @@ In this document we go over the installation of the required libraries and setti
 
 ***
 
-## 4. Install qt513
+## I.4. Install qt513
 
 * Open a terminal:
 
@@ -91,7 +93,7 @@ In this document we go over the installation of the required libraries and setti
 ==> Qt should be now in: /opt/qt513
 
 
-## 5. Install SIP 4.19.x
+## I.5. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
@@ -113,7 +115,7 @@ In this document we go over the installation of the required libraries and setti
 
 ==> you should see PyQt5-sip in the list
 
-## 6. Install PyQt5
+## I.6. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
@@ -145,7 +147,7 @@ In this document we go over the installation of the required libraries and setti
 
 ===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
 
-## 7. Launch the Interaction Tool
+## I.7. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
 
@@ -163,7 +165,101 @@ The user interface should run now, good luck!
 
 ---
 
-## II. Setting up Spotify
+# II. Windows Installation guide
+
+*These steps are to guide throught the installation process. If you encounter some errors, try to modify the default paths to fit what you have on your machine!*
+
+## II.1. Visual Studio
+
+* Install [Visual Studio](https://visualstudio.microsoft.com/vs/express/) (i.e., to obtain MSVC and nmake)
+
+## II.2. Python 2.7
+
+* Install [Python 2.7 32-bits](https://www.python.org/downloads/release/python-2717/) (select "Windows x86 MSI installer")
+
+## II.3. NAOqi for Python
+
+* Download Pynaoqi (pynaoqi-python2.7-2.5.5.5-win32-vs2013) for Windows from https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255 
+
+* Follow the installation instructions (for Windows) from SoftbankRobotics http://doc.aldebaran.com/2-5/dev/python/install_guide.html#python-install-guide
+
+## II.4. Install PIP and other dependencies
+
+* Open a terminal
+
+* Use pip to install the project requirements:
+
+`$ pip install -r requirements.txt`
+
+    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
+
+## II.5. Qt 5.13
+
+* Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: msvc2015+ 32-bits) from https://download.qt.io/official_releases/online_installers/ 
+
+## II.6. SIP 4.19
+
+* Download SIP-4.19.21 from https://www.riverbankcomputing.com/software/sip/download 
+
+* Unzip the file
+
+* Open a terminal (i.e., command line) and cd to where you downloaded SIP (verify the Python path on your machine):
+
+`$ cd ..\sip-4.19.8`
+
+`$ set LIB=%LIB%;C:\Python27\libs;`
+
+`$ python configure.py --platform=win32-msvc2015`
+
+`$ set CL=/MP`
+
+`$ nmake`
+
+`$ nmake install`
+
+## II.7. PyQt5-5.13.2
+* Download PyQt5-5.13.2 from https://www.riverbankcomputing.com/software/pyqt/download5 
+
+* unzip the file
+
+* Open a terminal and do the following (cd to where you unzipped PyQt5 folder):
+`$ cd ..\PyQt5-5.13.2`
+
+`$ set _QTVERSION=5.13.2`
+
+`$ set LIB=%LIB%;C:\Qt\%_QTVERSION%\msvc2015\lib;`
+
+`$ set PATH=%PATH%;C:\Qt\%_QTVERSION%\msvc2015\bin;`
+
+`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\%_QTVERSION%\msvc2015\bin\qmake.exe --sip=%VIRTUAL_ENV%\Scripts\sip.exe`
+
+`$ nmake`
+
+`$ nmake install`
+ 
+ * To make sure that PyQt5 is installed correctly, try the following:
+
+`$ python`
+
+`>>> import PyQt5`
+
+===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
+
+## II.8. Launch the Interaction Tool
+
+Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
+
+`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+`$ cd robot-interaction-tool`
+
+`$ python main.py`
+
+The user interface should run now, good luck!
+
+---
+
+## III. Setting up Spotify
 
 * Go to https://developer.spotify.com/dashboard/login (create an account or login to yours)
 
@@ -206,7 +302,7 @@ The user interface should run now, good luck!
 
 ---
 
-# III. Known Installation Issues: 
+# IV. Known Installation Issues: 
 
 ## a. ImportError: libQt5Widgets.so.5 not found!
 
