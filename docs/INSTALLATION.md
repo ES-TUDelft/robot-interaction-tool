@@ -315,8 +315,7 @@ The user interface should run now, good luck!
 `$ pip install -r requirements.txt`
 
     * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
-
-***
+    
 
 ## III.4. Install qt513
 
