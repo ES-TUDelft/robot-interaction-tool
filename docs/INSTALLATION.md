@@ -205,7 +205,7 @@ The user interface should run now, good luck!
 
 * Open a terminal (i.e., command line) and cd to where you downloaded SIP (verify the Python path on your machine):
 
-`$ cd ..\sip-4.19.8`
+`$ cd ..\sip-4.19.21`
 
 `$ set LIB=%LIB%;C:\Python27\libs;`
 
