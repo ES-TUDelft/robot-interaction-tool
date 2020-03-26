@@ -39,7 +39,7 @@ To use the tool you need to do the following:
 
 ## I. Installation Guide
 
-To use the tool on Linux, Mac or Windows platforms, refer to the [installation document](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md) found in [docs/INSTALLATION.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md)
+To use the tool on [Linux](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#i-linux-installation-guide), [Mac](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#iii-mac-installation-guide) or [Windows](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#ii-windows-installation-guide) platforms, refer to the [installation document](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md) found in [docs/INSTALLATION.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md)
 
 ---
 
