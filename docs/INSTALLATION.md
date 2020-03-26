@@ -7,9 +7,11 @@ In this document we go over the installation of the required libraries and setti
 
 **II.** [Windows Installation Guide](#ii-windows-installation-guide)
 
-**III.** [Setting up Spotify](#iii-setting-up-spotify)
+**III.** [MAC Installation Guide](#iii-mac-installation-guide)
 
-**IV.** [Known Installation Issues](#iv-known-installation-issues)
+**IV.** [Setting up Spotify](#iv-setting-up-spotify)
+
+**V.** [Known Installation Issues](#v-known-installation-issues)
 
 ---
 
@@ -21,7 +23,7 @@ In this document we go over the installation of the required libraries and setti
 
 ## I.2. NAOqi for Python
 
-* Install [NAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
+* Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
    
    * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
    * Open an account, if you don't have one
@@ -259,7 +261,122 @@ The user interface should run now, good luck!
 
 ---
 
-## III. Setting up Spotify
+## III. MAC Installation Guide
+
+## III.1. Python 2.7
+
+* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/) 
+
+## III.2. NAOqi for Python
+
+* Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
+   
+   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
+   * Open an account, if you don't have one
+   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Mac 64** (or go to https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255 and click on the download link for Mac)
+
+* Open a terminal and do the following:
+
+`$ cd ~/Downloads`
+
+`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-mac64.tar`
+
+`$ mv pynaoqi-python2.7-2.5.5.5-mac64 ~/Documents`
+
+* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bash_profile* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.5.5-mac64**)*
+
+`$ vim ~/.bash_profile`
+
+`export PYTHONPATH=${PYTHONPATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib/python2.7/site-packages`
+
+`$ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib`
+
+`$ source ~/.bash_profile`
+
+* Test that NAOqi is imported correctly:
+
+`$ python`
+
+`>>> import naoqi`
+
+* In case of errors, verify that you're not using the default python (e.g., try: $ which python) and set it in your PYTHONPAH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
+
+
+## III.3. Install PIP and other dependencies
+
+* Open a terminal
+
+`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
+
+`$ python get-pip.py`
+
+* Now use pip to install the project requirements:
+
+`$ pip install -r requirements.txt`
+
+    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
+
+***
+
+## III.4. Install qt513
+
+* Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: qt-unified-mac-x64-online.dmg) from https://download.qt.io/official_releases/online_installers/
+
+
+## III.5. Install SIP 4.19.21
+
+* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
+
+* Open a terminal and cd to the downloads folder (or to where you dowloaded sip)
+
+`$ cd Downloads`
+
+`$ tar -xvzf sip-4.19.21.tar.gz`
+
+`$ cd sip-4.19.21`
+
+`$ python configure.py -d /usr/local/lib/python2.7/site-packages/`
+
+`$ make`
+
+`$ sudo make install`
+
+
+## III.6. Install PyQt5
+
+* Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
+
+* Open a terminal and cd to the downloads folder (or to where you dowloaded PyQt)
+
+`$ cd Downloads`
+
+`$ tar -xvzf PyQt5-5.13.2.tar.gz`
+
+`$ cd PyQt5-5.13.2`
+
+`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/usr/local/Cellar/qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.21/siplib`
+
+`$ make`
+
+`$ sudo make install`
+
+* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step).
+
+`$ pip list | grep 'PyQt5'`
+
+==> you should see PyQt5 in the results
+
+* To make sure that PyQt5 is installed correctly, try the following:
+
+`$ python`
+
+`>>> import PyQt5`
+
+===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
+
+---
+
+## IV. Setting up Spotify
 
 * Go to https://developer.spotify.com/dashboard/login (create an account or login to yours)
 
@@ -302,7 +419,7 @@ The user interface should run now, good luck!
 
 ---
 
-# IV. Known Installation Issues: 
+# V. Known Installation Issues: 
 
 ## a. ImportError: libQt5Widgets.so.5 not found!
 
