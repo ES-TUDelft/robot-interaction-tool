@@ -86,7 +86,7 @@ class RobotController(object):
     def animate(self, animation=Animation.WAVE):
         self.logger.info("At {} - Robot animation: {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())),
                                                               animation.name))
-        self.pepper_robot.animate(animation=animation)
+        self.pepper_robot.animate(animation_name=animation)
 
     def execute_animation(self, animation_name):
         self.logger.info("At {} - Robot animation: {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())),
@@ -162,7 +162,7 @@ class RobotController(object):
             "At {} - Robot says: {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())), message))
 
     def animated_say(self, message=None, animation=None):
-        self.pepper_robot.animated_say(message=message, animation=animation)
+        self.pepper_robot.animated_say(message=message, animation_name=animation)
         self.logger.info(
             "At {} - Robot says (with gesture): {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())),
                                                            message))

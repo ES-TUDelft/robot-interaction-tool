@@ -99,7 +99,7 @@ class AnimateRobotThread(QThread):
         self.connect_to_robot(robot_ip, port)
 
         self.logger = logging.getLogger("AnimateRobot Thread")
-        self.animation = None
+        self.animation_name = None
         self.message = None
         self.interaction_block = None
         self.behavioral_parameters = None
@@ -119,14 +119,14 @@ class AnimateRobotThread(QThread):
     def __del__(self):
         self.wait()
 
-    def animate(self, animation):
-        self.animation = animation
+    def animate(self, animation_name):
+        self.animation_name = animation_name
         if not self.isRunning():
             self.start()
 
-    def animated_say(self, message=None, animation=None):
+    def animated_say(self, message=None, animation_name=None):
         self.message = message
-        self.animation = animation
+        self.animation_name = animation_name
         if not self.isRunning():
             self.start()
 
@@ -145,7 +145,7 @@ class AnimateRobotThread(QThread):
     def _reset(self):
         self.robot_controller.posture(reset=True)
         self.move = False
-        self.animation = None
+        self.animation_name = None
         self.message = None
         self.interaction_block = None
         self.is_first_block = True
@@ -153,47 +153,52 @@ class AnimateRobotThread(QThread):
 
     def run(self):
         try:
-            if self.interaction_block is None:
-                return False
-
-            self.interaction_block.interaction_start_time = time.time()
-
-            # change eye colors
-            self.robot_controller.set_leds(led_color=self.interaction_block.behavioral_parameters.eye_color,
-                                           duration=0.5)
-
-            # move robot to desired distance
-            if self.moving_enabled is True:
-                # proxemics
-                delta_d = self.robot_controller.proxemics(value=self.interaction_block.behavioral_parameters.proxemics)
-                if abs(delta_d) > 0:
-                    # adjust the robot position
-                    self.robot_controller.move_to(x=round(delta_d, 2))
-                    self.logger.info("The robot is being asked to move for {}m.".format(round(delta_d, 2)))
-                    # self.sleep(1)
-
-            if self.test_mode is True:
-                self.robot_controller.customized_say(interaction_block=self.interaction_block)
-                self.customized_say(reset=True)
+            if self.animation_name is not None:
+                self.robot_controller.execute_animation(animation_name=self.animation_name)
+                self.animation_name = None
+                self.animation_completed.emit(True)
             else:
-                # load the web application if it's the first block
-                # TODO: use the "start" pattern as a trigger
-                if self.is_first_block is True:
-                    self.robot_controller.load_application(pconfig.app_name)
-                    self.is_first_block = False
+                if self.interaction_block is None:
+                    return False
 
-                # if a topic exists, active it; otherwise, say the message.
-                if self.interaction_block.topic_tag.topic == "":
+                self.interaction_block.interaction_start_time = time.time()
+
+                # change eye colors
+                self.robot_controller.set_leds(led_color=self.interaction_block.behavioral_parameters.eye_color,
+                                               duration=0.5)
+
+                # move robot to desired distance
+                if self.moving_enabled is True:
+                    # proxemics
+                    delta_d = self.robot_controller.proxemics(value=self.interaction_block.behavioral_parameters.proxemics)
+                    if abs(delta_d) > 0:
+                        # adjust the robot position
+                        self.robot_controller.move_to(x=round(delta_d, 2))
+                        self.logger.info("The robot is being asked to move for {}m.".format(round(delta_d, 2)))
+                        # self.sleep(1)
+
+                if self.test_mode is True:
                     self.robot_controller.customized_say(interaction_block=self.interaction_block)
-                    # update the time and emit the finished signal
-                    self.interaction_block.interaction_end_time = time.time()
-                    self.customized_say_completed.emit(True)
+                    self.customized_say(reset=True)
                 else:
-                    # start dialog thread if it's not running
-                    if self.dialog_thread is None or (not self.dialog_thread.isRunning()):
-                        self.dialog(start=True)  # if needed add: self.sleep(5)
-                    # activate the topic
-                    self.dialog_thread.activate_topic(self.interaction_block)
+                    # load the web application if it's the first block
+                    # TODO: use the "start" pattern as a trigger
+                    if self.is_first_block is True:
+                        self.robot_controller.load_application(pconfig.app_name)
+                        self.is_first_block = False
+
+                    # if a topic exists, active it; otherwise, say the message.
+                    if self.interaction_block.topic_tag.topic == "":
+                        self.robot_controller.customized_say(interaction_block=self.interaction_block)
+                        # update the time and emit the finished signal
+                        self.interaction_block.interaction_end_time = time.time()
+                        self.customized_say_completed.emit(True)
+                    else:
+                        # start dialog thread if it's not running
+                        if self.dialog_thread is None or (not self.dialog_thread.isRunning()):
+                            self.dialog(start=True)  # if needed add: self.sleep(5)
+                        # activate the topic
+                        self.dialog_thread.activate_topic(self.interaction_block)
         except Exception as e:
             self.logger.error("Error: {}".format(e))
             self.dialog(start=False)

@@ -199,9 +199,10 @@ class SimulationController(object):
             QTimer.singleShot(1000, self.on_music_stop)
 
         anim_lst = config_helper.get_animations()[music_command.animations_key]
-        if counter < len(anim_lst) and self.timer_helper.elapsed_time() < animation_time:
-            self.update_interaction_log(robot_message="Doing animation: {}".format(anim_lst[counter]))
-            QTimer.singleShot(4000, lambda: self.on_animation_mode(music_command, animation_time, counter + 1))
+        if self.timer_helper.elapsed_time() <= animation_time - 4:  # 4s threshold
+            anim_index = 0 if counter >= len(anim_lst) else counter
+            self.update_interaction_log(robot_message="Doing animation: {}".format(anim_lst[anim_index]))
+            QTimer.singleShot(4000, lambda: self.on_animation_mode(music_command, animation_time, anim_index + 1))
         else:
             remaining_time = animation_time - self.timer_helper.elapsed_time()
             QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)

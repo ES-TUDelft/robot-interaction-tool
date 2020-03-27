@@ -18,7 +18,9 @@ from PyQt5.QtCore import QTimer
 import es_common.hre_config as pconfig
 from es_common.enums.command_enums import ActionCommand
 from es_common.model.observable import Observable
+from es_common.utils.timer_helper import TimerHelper
 from interaction_manager.enums.block_enums import ExecutionMode
+from interaction_manager.utils import config_helper
 from robot_manager.pepper.controller.robot_controller import RobotController
 from thread_manager.robot_animation_threads import WakeUpRobotThread, AnimateRobotThread
 from thread_manager.robot_engagement_threads import EngagementThread, FaceTrackerThread
@@ -35,6 +37,11 @@ class InteractionController(object):
         self.animation_thread = None
         self.engagement_thread = None
         self.face_tracker_thread = None
+        self.timer_helper = TimerHelper()
+        self.music_command = None
+        self.animation_lst = []
+        self.animation_time = 0
+        self.animation_counter = -1
 
         self.robot_ip = None
         self.port = None
@@ -84,6 +91,7 @@ class InteractionController(object):
             self.animation_thread = AnimateRobotThread(robot_ip=self.robot_ip, port=self.port)
             self.animation_thread.dialog_started.connect(self.engagement)
             self.animation_thread.customized_say_completed.connect(self.customized_say)
+            self.animation_thread.animation_completed.connect(self.execute_next_animation)
 
             # TODO: check enable moving from the ui, e.g., self.ui.enableMovingCheckBox.isChecked()
             self.animation_thread.moving_enabled = enable_moving
@@ -133,11 +141,11 @@ class InteractionController(object):
 
     # BEHAVIORS
     # ---------
-    def animate(self, animation=None):
-        self.animation_thread.animate(animation=animation)
+    def animate(self, animation_name=None):
+        self.animation_thread.animate(animation_name=animation_name)
 
-    def animated_say(self, message=None, animation=None):
-        self.animation_thread.animated_say(message=message, animation=animation)
+    def animated_say(self, message=None, animation_name=None):
+        self.animation_thread.animated_say(message=message, animation_name=animation_name)
 
     # SPEECH
     # ------
@@ -242,12 +250,11 @@ class InteractionController(object):
                 self.is_ready_to_interact = True
 
     def customized_say(self):
-        while self.animation_thread.isRunning():
+        if self.animation_thread.isRunning():
             self.logger.debug("*** Animation Thread is still running!")
-            time.sleep(1)  # wait for the thread to finish
+            return QTimer.singleShot(1000, self.customized_say)  # wait for the thread to finish
 
         self.block_controller.clear_selection()
-
         connecting_edge = None
         if self.previous_interaction_block is None:  # interaction has just started
             self.previous_interaction_block = self.current_interaction_block
@@ -278,7 +285,6 @@ class InteractionController(object):
             # set the tracker's gaze pattern
             if not self.face_tracker_thread.isRunning():
                 self.face_tracker_thread.track()
-
             self.face_tracker_thread.gaze_pattern = self.current_interaction_block.behavioral_parameters.gaze_pattern
 
             # get the result from the execution
@@ -298,17 +304,48 @@ class InteractionController(object):
                 self.logger.debug("Playing now: {}".format(self.current_interaction_block.action_command.track))
                 # TODO: specify wait time as track time when play_time is < 0
                 # use action play time
-                wait_time = self.current_interaction_block.action_command.play_time * 1000
+                wait_time = self.current_interaction_block.action_command.play_time
                 if wait_time <= 0:
-                    wait_time = 30000  # wait for 30s then continue
-                QTimer.singleShot(wait_time, self.on_music_stop)
+                    wait_time = 30  # wait for 30s then continue
+                anim_key = self.current_interaction_block.action_command.animations_key
+                if anim_key is None or anim_key == "":
+                    QTimer.singleShot(wait_time * 1000, self.on_music_stop)
+                else:
+                    self.on_animation_mode(music_command=self.current_interaction_block.action_command,
+                                           animation_time=wait_time)
+                # QTimer.singleShot(wait_time * 1000, self.on_music_stop)
             else:
                 self.logger.warning("Unable to play music! {}".format(self.music_controller.warning_message))
                 self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
                 self.customized_say()
 
-    def on_animation_mode(self):
-        pass
+    def on_animation_mode(self, music_command, animation_time=0):
+        self.music_command = music_command
+        self.animation_lst = config_helper.get_animations()[music_command.animations_key]
+        self.animation_time = animation_time
+        self.animation_counter = -1
+
+        self.timer_helper.start()
+        self.execute_next_animation()
+
+    def execute_next_animation(self):
+        if self.music_command is None or len(self.animation_lst) == 0:
+            return QTimer.singleShot(1000, self.on_music_stop)
+
+        if self.animation_thread.isRunning():
+            self.logger.debug("*** Animation Thread is still running!")
+            return QTimer.singleShot(1000, self.execute_next_animation)  # wait for the thread to finish
+
+        if self.timer_helper.elapsed_time() <= self.animation_time - 4:  # use 4s threshold
+            # repeat the animations if the counter reached the end of the lst
+            self.animation_counter += 1
+            if self.animation_counter >= len(self.animation_lst):
+                self.animation_counter = 0
+
+            self.animation_thread.animate(animation_name=self.animation_lst[self.animation_counter])
+        else:
+            remaining_time = self.animation_time - self.timer_helper.elapsed_time()
+            QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)
 
     def on_music_stop(self):
         self.logger.debug("Finished playing music.")

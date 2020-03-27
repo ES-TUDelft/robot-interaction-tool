@@ -266,7 +266,7 @@ class PepperRobot(object):
             self.posture(reset=True)
 
     def animate(self, animation=Animation.WAVE):
-        self.animation_handler.animate(animation=animation)
+        self.animation_handler.animate(animation_name=animation)
 
     def execute_animation(self, animation_name):
         self.animation_handler.execute_animation(animation_name=animation_name)
@@ -298,7 +298,7 @@ class PepperRobot(object):
         self.speech_handler.say(message=message)
 
     def animated_say(self, message=None, animation=None):
-        self.speech_handler.animated_say(message=message, animation=animation)
+        self.speech_handler.animated_say(message=message, animation_name=animation)
 
     def complain(self, message="Hey"):
         self.animated_say(message=message)
