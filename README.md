@@ -15,25 +15,39 @@ The tool was successfully tested on ***MAC*** and ***Linux***.
 
 To use the tool you need to do the following:
 
-**A.** Install the requirements as described in [Section I](#i-linux-installation-guide).
+  * **A.** Install the requirements as described in [Section I](#i-installation-guide).
 
-**B.** Clone the repository (e.g., in the Documents folder)
+  * **B.** Clone the repository (e.g., in the Documents folder)
 
 `cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
 
-**C.** Launch the interface as follows:
+  * **C.** Launch the interface as follows:
 
 `cd ~/Documents/robot-interaction-tool`
 
 `$ python main.py`
 
-***Note***: This repository is being updated on a regular basis. Use ***git pull*** to integrate the latest changes.
+  * ***Note***: This repository is being updated on a regular basis. Use ***git pull*** to integrate the latest changes.
 
 <div align="center">
   <img src="interaction_manager/ui/ui_view.png" width="500px" />
 </div>
+
+---
+
+## Content
+
+**I.** [Installation Guide](#i-installation-guide)
+
+**II.** [Setting up Spotify](#ii-setting-up-spotify)
+
+**III.** [User Manual](#iii-user-manual)
+
+**IV.** [Quick Start](#iv-quick-start)
+
+**V.** [Citation](#v-citation)
 
 ---
 
@@ -52,6 +66,14 @@ To use the tool on [Linux](https://github.com/ES-TUDelft/robot-interaction-tool/
 * To play a song (e.g., using the test button or the mini-player panel in the main interface), you will need an active device (i.e., a Spotify Player) that is running on either your browser or PC/Phone.
 
 * ***NOTE:*** When the player is not able to start a song, it means the device is not active. Just refresh your Spotify Player browser or the desktop app. 
+
+* When playing music, you can set the robot to do some animations as follows:
+  
+  * Make one (or more) list of animations using the default ones available for the [Pepper robot](http://doc.aldebaran.com/2-5/naoqi/motion/alanimationplayer-advanced.html#pepp-pepper-list-of-animations-available-by-default).
+  
+  * Add your list of animations to [/interaction_manager/properties/animations.json](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/interaction_manager/properties/animations.json).
+  
+  * Create a music action (i.e., using the Action block) and enable the "animation" check box in the edit panel. 
 
 ---
 
