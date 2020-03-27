@@ -11,7 +11,27 @@ In this document we will go through each part of the prototyping tool’s main u
   <em>Figure 1: Preview of the user Interface for prototyping interactive dialogues with social robots. (A) the top menu bar; (B) list of available dialogue blocks; (C) design panel for building the dialogue flow; (E) panel for displaying the logs, the simulation progress and the music player controls.</em>
 </div>
 
-## 1. Top Menu
+---
+
+## Content
+
+**1.** [Top Menu Bar](#1-top-menu-bar)
+
+**2.** [Keyboard Shortcuts](#2-keyboard-shortcuts)
+
+**3.** [Interaction Blocks Panel](#3-interaction-blocks-panel)
+
+**4.** [Design Panel](#4-design-panel)
+  
+  * **4.1** [Block Properties](#41-block-properties)
+  
+  * **4.2** [Block Parameters](#42-block-parameters)
+
+**5.** [Simulation and Music Dock](#5-simulation-and-music-dock)
+
+---
+
+## 1. Top Menu Bar
 
 The top menu bar (Fig. 1.A) contains the following buttons, from left-to-right:
 
@@ -87,7 +107,7 @@ When the user clicks on a block’s parameter icon (Fig. 6), an dialogue GUI app
   <em>Figure 6: Dialog GUI for modifying the parameters of the selected block. From left to right: tab for setting the type of the robot’s gestures, gaze, and proxemics; tab for setting the robot’s voice (i.e., pitch, speed and prosody); and tab for setting the robot’s eye color.</em>
 </div>
 
-## 5. Bottom-Left Panel
+## 5. Simulation and Music Dock
 The bottom left panel (Fig. 1-D) of the user interface is composed of three tabs.  The first tab  displays the system logs (Fig. 7-Left). The second tab is active when the simulator is launched (Fig. 7-Middle). The third tab contains a player for manually controlling the music (Fig. 7-Right).
 
 <div align="center">
