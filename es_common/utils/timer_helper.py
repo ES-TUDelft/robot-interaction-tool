@@ -20,6 +20,9 @@ class TimerHelper(object):
         self.logger = logging.getLogger(pconfig.logger_name)
         self.start_time, self.end_time = 0, 0
 
+    def elapsed_time(self):
+        return time.time() - self.start_time
+
     def start(self):
         self.start_time = time.time()
 

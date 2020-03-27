@@ -110,7 +110,7 @@ class AnimationHandler(object):
             self.logger.error("* Error while trying to execute the animation tag: '" + str(animation) + "'")
             self.logger.error(e)
 
-    def check_animation(self, animation_name):
+    def execute_animation(self, animation_name):
         if animation_name is None:
             self.logger.error("* Animation tag was NONE...")
         try:

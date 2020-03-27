@@ -126,41 +126,54 @@ class UIEditBlockController(QtWidgets.QDialog):
 
     def set_actions(self):
         if "action" in self.pattern:
-            actions = [a for a in ActionCommand.keys()]
-            self.ui.actionGroupBox.setHidden(False)
-            self.ui.rangeGroupBox.setHidden(True)
-            self.ui.musicGroupBox.setHidden(True)
+            try:
+                actions = [a for a in ActionCommand.keys()]
+                self.ui.actionGroupBox.setHidden(False)
+                self.ui.rangeGroupBox.setHidden(True)
+                self.ui.musicGroupBox.setHidden(True)
 
-            self.ui.actionComboBox.addItems([pconfig.SELECT_OPTION])
-            self.ui.actionComboBox.addItems(actions)
+                self.ui.actionComboBox.addItems([pconfig.SELECT_OPTION])
+                self.ui.actionComboBox.addItems(actions)
 
-            # listeners
-            self.ui.actionComboBox.currentIndexChanged.connect(self.on_action_change)
-            self.ui.playlistComboBox.currentIndexChanged.connect(self.update_tracks_combo)
+                # listeners
+                self.ui.actionComboBox.currentIndexChanged.connect(self.on_action_change)
+                self.ui.playlistComboBox.currentIndexChanged.connect(self.update_tracks_combo)
+                self.ui.animationsCheckBox.stateChanged.connect(lambda: self.ui.animationsComboBox.setEnabled(
+                    self.ui.animationsCheckBox.isChecked()))
+                self.ui.animationsComboBox.addItems([a for a in config_helper.get_animations()])
 
-            # if we're changing the min range and the value > max ==> update max with min value
-            self.ui.rangeMinSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=True))
-            # if we're changing the max range and the value < min ==> update min with max value
-            self.ui.rangeMaxSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=False))
+                # if we're changing the min range and the value > max ==> update max with min value
+                self.ui.rangeMinSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=True))
+                # if we're changing the max range and the value < min ==> update min with max value
+                self.ui.rangeMaxSpinBox.valueChanged.connect(lambda: self.verify_range(update_max=False))
 
-            # check if the block contains an action
-            if self.interaction_block.action_command is not None:
-                comm_type = self.interaction_block.action_command.command_type
-                # update action name
-                self.ui.actionComboBox.setCurrentIndex(
-                    self.ui.actionComboBox.findText(comm_type.name, QtCore.Qt.MatchFixedString))
-                # update range
-                if comm_type is ActionCommand.DRAW_NUMBER:
-                    self.ui.rangeMinSpinBox.setValue(self.interaction_block.action_command.range_min)
-                    self.ui.rangeMaxSpinBox.setValue(self.interaction_block.action_command.range_max)
-                elif comm_type is ActionCommand.PLAY_MUSIC:
-                    self.ui.playlistComboBox.setCurrentIndex(
-                        self.ui.playlistComboBox.findText(self.interaction_block.action_command.playlist,
-                                                          QtCore.Qt.MatchFixedString))
-                    self.ui.tracksComboBox.setCurrentIndex(
-                        self.ui.tracksComboBox.findText(self.interaction_block.action_command.track,
-                                                        QtCore.Qt.MatchFixedString))
-                    self.ui.playTimeSpinBox.setValue(self.interaction_block.action_command.play_time)
+                # check if the block contains an action
+                if self.interaction_block.action_command is not None:
+                    comm_type = self.interaction_block.action_command.command_type
+                    # update action name
+                    self.ui.actionComboBox.setCurrentIndex(
+                        self.ui.actionComboBox.findText(comm_type.name, QtCore.Qt.MatchFixedString))
+                    # update range
+                    if comm_type is ActionCommand.DRAW_NUMBER:
+                        self.ui.rangeMinSpinBox.setValue(self.interaction_block.action_command.range_min)
+                        self.ui.rangeMaxSpinBox.setValue(self.interaction_block.action_command.range_max)
+                    elif comm_type is ActionCommand.PLAY_MUSIC:
+                        self.ui.playlistComboBox.setCurrentIndex(
+                            self.ui.playlistComboBox.findText(self.interaction_block.action_command.playlist,
+                                                              QtCore.Qt.MatchFixedString))
+                        self.ui.tracksComboBox.setCurrentIndex(
+                            self.ui.tracksComboBox.findText(self.interaction_block.action_command.track,
+                                                            QtCore.Qt.MatchFixedString))
+                        self.ui.playTimeSpinBox.setValue(self.interaction_block.action_command.play_time)
+
+                        anim = self.interaction_block.action_command.animations_key
+                        if anim is not None and anim != "":
+                            self.ui.animationsCheckBox.setChecked(True)
+                            self.ui.animationsComboBox.setCurrentIndex(
+                                self.ui.animationsComboBox.findText(anim,
+                                                                    QtCore.Qt.MatchFixedString))
+            except Exception as e:
+                self.logger.error("Error while setting actions! {}".format(e))
 
         else:  # otherwise: hide the actions
             self.ui.actionGroupBox.setHidden(True)
@@ -252,7 +265,7 @@ class UIEditBlockController(QtWidgets.QDialog):
 
         gest = config_helper.get_gestures()[gesture_type]
         if gesture_name in gest:
-            text_box.setText("{}".format(gest[gesture_name][0]))
+            text_box.setText("{}".format(gest[gesture_name]))
 
     def _set_topic_tab(self, reset=False):
         # clear the combo-boxes
@@ -363,7 +376,7 @@ class UIEditBlockController(QtWidgets.QDialog):
         comm_name = "{}".format(self.ui.actionComboBox.currentText())
         if comm_name in ActionCommand.keys():
             args = self.get_command_arguments(comm_name=comm_name)
-            if args is None:
+            if args is None and comm_name != ActionCommand.PLAY_MUSIC.name:
                 return CommandFactory.create_command(ActionCommand[comm_name])
             else:
                 return CommandFactory.create_command(ActionCommand[comm_name], *args)
@@ -380,16 +393,23 @@ class UIEditBlockController(QtWidgets.QDialog):
         return args
 
     def get_music_arguments(self):
-        playlist = self.ui.playlistComboBox.currentText()
-        if playlist is None or playlist == "":
-            return None
-        track = self.ui.tracksComboBox.currentText()
-        if track is None or track == "":
-            return None
+        args = []
+        try:
+            playlist = self.ui.playlistComboBox.currentText()
+            track = self.ui.tracksComboBox.currentText()
 
-        if playlist not in pconfig.SELECT_OPTION and track not in pconfig.SELECT_OPTION:
-            return [playlist, track, int(self.ui.playTimeSpinBox.value())]
-        return None
+            if playlist == "" or playlist in pconfig.SELECT_OPTION \
+                    or track == "" or track in pconfig.SELECT_OPTION:
+                args = None
+            else:
+                args = [playlist, track, int(self.ui.playTimeSpinBox.value())]
+                if self.ui.animationsCheckBox.isChecked():
+                    args.append("{}".format(self.ui.animationsComboBox.currentText()))
+        except Exception as e:
+            self.logger.error("Error while loading music arguments! {}".format(e))
+        finally:
+            self.logger.debug("*** ARGS: {}".format(args))
+            return args
 
     def get_interaction_block(self):
         d_block = self.interaction_block.clone()
@@ -413,7 +433,13 @@ class UIEditBlockController(QtWidgets.QDialog):
         int_block.speech_act = self.get_speech_act()
         int_block.topic_tag = self.get_topic_tag()
         int_block.tablet_page = self.get_tablet_page()
-        int_block.action_command = self.get_command()
+
+        # don't update music command if there is no connection to the music service
+        if "{}".format(self.ui.actionComboBox.currentText()) == ActionCommand.PLAY_MUSIC.name:
+            if self.music_controller is not None:
+                int_block.action_command = self.get_command()
+        else:
+            int_block.action_command = self.get_command()
         # gestures
         int_block.set_gestures(open_gesture="{}".format(self.ui.openGestureLineEdit.text()),
                                close_gesture="{}".format(self.ui.closeGestureLineEdit.text()))

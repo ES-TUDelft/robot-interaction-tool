@@ -5,6 +5,8 @@ from PyQt5.QtCore import QTimer
 
 from es_common.enums.command_enums import ActionCommand
 from es_common.model.observable import Observable
+from es_common.utils.timer_helper import TimerHelper
+from interaction_manager.utils import config_helper
 
 
 class SimulationController(object):
@@ -18,6 +20,7 @@ class SimulationController(object):
         self.simulation_dock_widget = None
         self._init_dock_widget(parent)
         self.user_turn = False
+        self.timer_helper = TimerHelper()
 
         self.current_interaction_block = None
         self.previous_interaction_block = None
@@ -122,7 +125,6 @@ class SimulationController(object):
                 self.connecting_edge.set_selected(True)
 
             self.update_interaction_log(robot_message=self.current_interaction_block.message)
-            self.logger.debug("**** Has music action: {}".format(self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC)))
             if self.current_interaction_block.topic_tag.topic != "":
                 self.user_turn = True
             elif self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
@@ -176,14 +178,33 @@ class SimulationController(object):
                 self.update_interaction_log(robot_message=message)
                 # TODO: specify wait time as track time when play_time is < 0
                 # use action play time
-                wait_time = self.current_interaction_block.action_command.play_time * 1000
+                wait_time = self.current_interaction_block.action_command.play_time
                 if wait_time <= 0:
-                    wait_time = 10000  # wait for 10s then continue
-                QTimer.singleShot(wait_time, self.on_music_stop)
+                    wait_time = 30  # wait for 30s then continue
+                anim_key = self.current_interaction_block.action_command.animations_key
+                if anim_key is None or anim_key == "":
+                    QTimer.singleShot(wait_time * 1000, self.on_music_stop)
+                else:
+                    self.timer_helper.start()
+                    self.on_animation_mode(music_command=self.current_interaction_block.action_command,
+                                           animation_time=wait_time,
+                                           counter=0)
             else:
                 warning = "Unable to play music! {}".format(self.music_controller.warning_message)
                 self.update_interaction_log(robot_message=warning)
                 QTimer.singleShot(2000, self.execute_next_interaction_block)
+
+    def on_animation_mode(self, music_command, animation_time=0, counter=0):
+        if music_command is None:
+            QTimer.singleShot(1000, self.on_music_stop)
+
+        anim_lst = config_helper.get_animations()[music_command.animations_key]
+        if counter < len(anim_lst) and self.timer_helper.elapsed_time() < animation_time:
+            self.update_interaction_log(robot_message="Doing animation: {}".format(anim_lst[counter]))
+            QTimer.singleShot(4000, lambda: self.on_animation_mode(music_command, animation_time, counter + 1))
+        else:
+            remaining_time = animation_time - self.timer_helper.elapsed_time()
+            QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)
 
     def on_music_stop(self):
         self.update_interaction_log(robot_message="Let' continue!")

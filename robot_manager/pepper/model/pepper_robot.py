@@ -268,8 +268,8 @@ class PepperRobot(object):
     def animate(self, animation=Animation.WAVE):
         self.animation_handler.animate(animation=animation)
 
-    def check_animation(self, animation_name):
-        self.animation_handler.check_animation(animation_name=animation_name)
+    def execute_animation(self, animation_name):
+        self.animation_handler.execute_animation(animation_name=animation_name)
 
     def led_animation(self, duration=1.0):
         self.sensor_handler.led_animation(duration=duration)

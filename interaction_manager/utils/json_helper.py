@@ -13,9 +13,6 @@
 import json
 from collections import OrderedDict
 
-with open('interaction_manager/properties/gestures.json') as blocks_file:
-    gestures_names = (json.load(blocks_file))
-
 
 def export_blocks(filename, foldername, interaction_design):
     message = None

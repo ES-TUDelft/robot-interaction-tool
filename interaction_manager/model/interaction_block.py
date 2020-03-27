@@ -143,10 +143,8 @@ class InteractionBlock(Serializable):
                     # if the result is in the answers ==> go to appropriate interaction block
                     if execution_result.lower() in self.topic_tag.answers[i].lower():
                         next_int_block = self._get_block_by_id(int_blocks, self.topic_tag.goto_ids[i])
-                        self.logger.debug("### next block: {}".format(next_int_block.pattern))
                         break
             connecting_edge = self.get_output_connected_edge(next_int_block)
-            self.logger.debug("### Connecting edge is: {}".format(connecting_edge))
         except Exception as e:
             self.logger.error("Error while attempting to get the next block! {}".format(e))
         finally:

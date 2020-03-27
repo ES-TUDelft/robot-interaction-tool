@@ -18,20 +18,21 @@ from es_common.enums.command_enums import ActionCommand
 
 
 class MusicCommand(ESCommand):
-    def __init__(self, command_type, playlist=None, track=None, play_time=-1):
+    def __init__(self, command_type, playlist=None, track=None, play_time=-1, animations_key=""):
         super(MusicCommand, self).__init__(command_type, is_speech_related=False)
 
         self.music_controller = None
         self.playlist = playlist
         self.track = track
         self.play_time = play_time  # -1 for playing the whole track
+        self.animations_key = animations_key
 
     # =======================
     # Override Parent methods
     # =======================
     def clone(self):
         return MusicCommand(ActionCommand.PLAY_MUSIC, playlist=self.playlist,
-                            track=self.track, play_time=self.play_time)
+                            track=self.track, play_time=self.play_time, animations_key=self.animations_key)
 
     def reset(self):
         # TODO: reset the timer
@@ -52,7 +53,8 @@ class MusicCommand(ESCommand):
             ("command_type", self.command_type.name),
             ("playlist", self.playlist),
             ("track", self.track),
-            ("play_time", self.play_time)
+            ("play_time", self.play_time),
+            ("animations_key", self.animations_key)
         ])
 
     def deserialize(self, data, hashmap={}):
@@ -63,5 +65,6 @@ class MusicCommand(ESCommand):
         self.track = data["track"]
 
         self.play_time = data["play_time"] if "play_time" in data.keys() else -1
+        self.animations_key = data["animations_key"] if "animations_key" in data.keys() else ""
 
         return True

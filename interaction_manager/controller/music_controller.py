@@ -45,7 +45,7 @@ class MusicController(object):
                 self.warning_message = "Couldn't find the track to play!"
                 self.logger.warning(self.warning_message)
             else:
-                self.logger.debug("Currently playing: {}")
+                self.logger.debug("Currently playing: {}".format(track))
                 self.spotify.start_playback(uris=[track_uri])
 
             return True

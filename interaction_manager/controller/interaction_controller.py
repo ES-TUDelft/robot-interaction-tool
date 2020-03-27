@@ -307,6 +307,9 @@ class InteractionController(object):
                 self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
                 self.customized_say()
 
+    def on_animation_mode(self):
+        pass
+
     def on_music_stop(self):
         self.logger.debug("Finished playing music.")
         self.music_controller.pause()

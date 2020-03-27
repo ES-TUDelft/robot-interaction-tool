@@ -12,12 +12,9 @@
 
 import logging
 import os
-import sys
-import yaml
 
-####
-# Logger
-###
+import yaml
+import json
 from PyQt5.QtWidgets import QApplication
 
 
@@ -32,7 +29,7 @@ logger = _setup_logger()
 ####
 # APP PROPERTIES
 ###
-def get_app_properties():
+def _get_app_properties():
     props = None
     try:
         with open("interaction_manager/properties/app.yaml", 'r') as ymlfile:
@@ -43,7 +40,7 @@ def get_app_properties():
         return props
 
 
-app_properties = get_app_properties()
+app_properties = _get_app_properties()
 
 
 def get_tags():
@@ -145,7 +142,7 @@ def get_patterns():
 ####
 # BEHAVIORS PROPERTIES
 ###
-def get_behaviors_properties():
+def _get_behaviors_properties():
     props = None
     try:
         with open("interaction_manager/properties/behaviors.yaml", 'r') as ymlfile:
@@ -156,19 +153,27 @@ def get_behaviors_properties():
         return props
 
 
-behaviors_properties = get_behaviors_properties()
-
-
-def get_actions():
-    # returns dict of gestures: 
-    # names are the keys and path are values
-    return _get_property(behaviors_properties, 'actions')
+behaviors_properties = _get_behaviors_properties()
 
 
 def get_gestures():
     # returns dict of gestures: 
     # names are the keys and path are values
     return _get_property(behaviors_properties, 'gestures')
+
+
+###
+# ANIMATIONS
+###
+def get_animations():
+    animations_dict = {}
+    try:
+        with open('interaction_manager/properties/animations.json') as anim_file:
+            animations_dict = (json.load(anim_file))
+    except Exception as e:
+        logger.error("Error while opening the behaviors properties file! {}".format(e))
+    finally:
+        return animations_dict
 
 
 ####

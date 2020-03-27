@@ -88,10 +88,10 @@ class RobotController(object):
                                                               animation.name))
         self.pepper_robot.animate(animation=animation)
 
-    def check_animation(self, animation_name):
+    def execute_animation(self, animation_name):
         self.logger.info("At {} - Robot animation: {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())),
                                                               animation_name))
-        self.pepper_robot.check_animation(animation_name=animation_name)
+        self.pepper_robot.execute_animation(animation_name=animation_name)
 
     def move_to(self, x=0, y=0, theta=0):
         self.pepper_robot.move_to(x=x, y=y, theta=theta)

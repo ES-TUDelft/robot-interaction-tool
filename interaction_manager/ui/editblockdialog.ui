@@ -207,6 +207,18 @@
                 <layout class="QGridLayout" name="gridLayout_23">
                  <item row="0" column="0">
                   <layout class="QGridLayout" name="gridLayout_18">
+                   <item row="3" column="0">
+                    <widget class="QCheckBox" name="animationsCheckBox">
+                     <property name="font">
+                      <font>
+                       <family>Courier</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Animations</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="2" column="2">
                     <widget class="QSpinBox" name="playTimeSpinBox">
                      <property name="sizePolicy">
@@ -247,6 +259,21 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="2" column="0" colspan="2">
+                    <widget class="QLabel" name="label_23">
+                     <property name="font">
+                      <font>
+                       <family>Courier</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Play for</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="1" column="0">
                     <widget class="QLabel" name="label_22">
                      <property name="font">
@@ -259,24 +286,29 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="playlistComboBox"/>
-                   </item>
-                   <item row="1" column="1" colspan="2">
-                    <widget class="QComboBox" name="tracksComboBox"/>
-                   </item>
-                   <item row="2" column="0" colspan="2">
-                    <widget class="QLabel" name="label_23">
-                     <property name="font">
-                      <font>
-                       <family>Courier</family>
-                      </font>
+                   <item row="2" column="3">
+                    <widget class="QLabel" name="label_24">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>Play for (sec)</string>
+                      <string>sec</string>
                      </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" colspan="3">
+                    <widget class="QComboBox" name="playlistComboBox"/>
+                   </item>
+                   <item row="1" column="1" colspan="3">
+                    <widget class="QComboBox" name="tracksComboBox"/>
+                   </item>
+                   <item row="3" column="1" colspan="3">
+                    <widget class="QComboBox" name="animationsComboBox">
+                     <property name="enabled">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
