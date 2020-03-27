@@ -287,9 +287,13 @@ The user interface should run now, good luck!
 
 `$ vim ~/.bash_profile`
 
+`export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python2.7/site-packages`
+
 `export PYTHONPATH=${PYTHONPATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib/python2.7/site-packages`
 
-`$ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib`
+`export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib`
+
+==> save the file using ESC:wq!
 
 `$ source ~/.bash_profile`
 
@@ -354,6 +358,8 @@ The user interface should run now, good luck!
 `$ cd PyQt5-5.13.2`
 
 `$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/usr/local/Cellar/qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.21/siplib`
+
+==> if you encounter any errors, verify the path to Qt 5.13.2 (i.e., where you installed it) and to sip (e.g., *--sip=/Library/Frameworks/Python.framework/Versions/2.7/bin/sip*)
 
 `$ make`
 
