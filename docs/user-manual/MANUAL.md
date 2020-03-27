@@ -93,7 +93,7 @@ The design panel (Fig. 1.C) is the space for designing the whole interaction. Th
 When the user clicks on a block’s edit icon (Fig. 5), an dialogue GUI appears for setting the blocks properties such as the robot’s message, action, behaviors, dialogue flow (i.e., topic) and screen display.
 
 <div align="center">
-  <img src="resources/fig_editDialog.png" width="500px" />
+  <img src="resources/fig_editDialog.png" width="100%" />
   
   <em>Figure 5: Dialog GUI for editing the properties of the selected block. From left to right: tab for setting the robot message (i.e., speech act) and action (if any); tab for setting the robot’s gestures; tab for setting the dialogue topic (if the block pattern contains one, e.g., question pattern); tab for setting the robot tablet (i.e., screen) properties.</em>
 </div>
@@ -102,7 +102,7 @@ When the user clicks on a block’s edit icon (Fig. 5), an dialogue GUI appears 
 When the user clicks on a block’s parameter icon (Fig. 6), an dialogue GUI appears for setting the blocks parameters such as the robot’s gestures, gaze, proxemics, voice and eye color. When connected to a physical robot, the user can test the parameter settings (i.e., by clicking on the ’Test’ button). The user can also apply the settings to the selected block (i.e., by clicking on the apply button) or to all blocks in the scene (i.e., by clicking on the apply all).
 
 <div align="center">
-  <img src="resources/fig_parameters.png" width="500px" />
+  <img src="resources/fig_parameters.png" width="100%" />
   
   <em>Figure 6: Dialog GUI for modifying the parameters of the selected block. From left to right: tab for setting the type of the robot’s gestures, gaze, and proxemics; tab for setting the robot’s voice (i.e., pitch, speed and prosody); and tab for setting the robot’s eye color.</em>
 </div>
