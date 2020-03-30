@@ -88,6 +88,23 @@ The design panel (Fig. 1.C) is the space for designing the whole interaction. Th
   <em>Figure 4: Design space with connected interaction blocks.</em>
 </div>
 
+This panel will be helpeful for designing expressive behaviors for social robots using a set of parameters. Each parameter can be adjusted and tuned to reflect a given trait as follows:
+
+  * Close gestures reflect a colder interaction whereas open gestures denote a warmer and more welcoming interaction (e.g., Nguyen et al. [1]);
+  
+  * A fixated gaze reflects a warmer and more attentive interaction compared to a diverted gaze, i.e., short and frequent (e.g., Kendon [2]);
+
+  * Close proxemics denote a more personalized and intimate interaction compared to far proxemics, i.e., lead to a more distant interaction (e.g., Hall [3]);
+
+  * A robot with a high pitch voice is found to be more attractive than a low-monotone voice (e.g., Niculescu et al. [4]), however, it all depends on the personal preferences and contextual factors;
+
+  * Speech rate (i.e., speed) can be slow or fast, depending on the communication pace;
+
+  * Speech acts have an effect on people's perception toward the robot (e.g., Zafari et al. [5]) and can be informal (i.e., motivational speech) or formal;
+
+  * Eye color can also be used to induce feelings of relaxation (happiness) or tension, as validated by Terada et al. [6] (i.e., anger-red, trust-green, surprise-red and sadness-blue).
+
+
 ### 4.1. Block Properties
 
 When the user clicks on a block’s edit icon (Fig. 5), an dialogue GUI appears for setting the blocks properties such as the robot’s message, action, behaviors, dialogue flow (i.e., topic) and screen display.
@@ -115,3 +132,19 @@ The bottom left panel (Fig. 1-D) of the user interface is composed of three tabs
   
   <em>Figure 7: Panel for displaying the system logs (left); the simulator (middle); and the music player (right).</em>
 </div>
+
+---
+
+## REFERENCES
+
+[1] T.-H. D. Nguyen, E. Carstensdottir, N. Ngo, M. S. El-Nasr, M. Gray, D. Isaacowitz, and D. Desteno, "Modeling warmth and competence in virtual characters". In Intelligent Virtual Agents, W.-P. Brinkman, J. Broekens, and D. Heylen, Eds. Cham: Springer International Publishing, 2015, pp. 167-180.
+
+[2] A. Kendon and M. Cook, "The consistency of gaze patterns in social inter-action," British journal of psychology (London, England : 1953), vol. 60, pp. 481-94, December 1969.
+
+[3] E. T. Hall, The Hidden Dimension. Garden City, N.Y.: Doubleday, 1966, ch. X: Distances in Man, pp. 113-129.
+
+[4] A. Niculescu, B. Van Dijk, A. Nijholt, H. Li, and S. L. See, "Making social robots more attractive: The effects of voice pitch, humor and empathy," International Journal of Social Robotics, vol. 5, no. 2, pp. 171-191, Apr 2013.
+
+[5] S. Zafari, I. Schwaninger, M. Hirschmanner, C. Schmidbauer, A. Weiss, and S. T. Koeszegi, "you are doing so great!" - the effect of a robot's interaction style on self-effcacy in hri," in 2019 28th IEEE International Conference on Robot and Human Interactive Communication (RO-MAN), Oct 2019, pp. 1-7.
+
+[6] K. Terada, A. Yamauchi, and A. Ito, "Artifcial emotion expression for a robot by dynamic color change," in 2012 IEEE RO-MAN: The 21st IEEE International Symposium on Robot and Human Interactive Communication, Sep. 2012, pp. 314-321.
