@@ -173,7 +173,7 @@ The user interface should run now, good luck!
 
 ## II.1. Visual Studio
 
-* Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/) (i.e., to obtain MSVC and nmake)
+* Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/)
 
 ## II.2. Python 2.7
 
@@ -207,7 +207,7 @@ The user interface should run now, good luck!
 
 ## II.5. Qt 5.13
 
-* Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: msvc2015+ 32-bits) from https://download.qt.io/official_releases/online_installers/ 
+* Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
 
 ## II.6. SIP 4.19
 
@@ -221,7 +221,7 @@ The user interface should run now, good luck!
 
 `$ set LIB=%LIB%;C:\Python27\libs;`
 
-`$ python configure.py --platform=win32-msvc2015`
+`$ python configure.py --platform=win32-msvc2017`
 
 `$ set CL=/MP`
 
@@ -239,11 +239,11 @@ The user interface should run now, good luck!
 
 `$ set _QTVERSION=5.13.2`
 
-`$ set LIB=%LIB%;C:\Qt\%_QTVERSION%\msvc2015\lib;`
+`$ set LIB=%LIB%;C:\Qt\%_QTVERSION%\msvc2017\lib;`
 
-`$ set PATH=%PATH%;C:\Qt\%_QTVERSION%\msvc2015\bin;`
+`$ set PATH=%PATH%;C:\Qt\%_QTVERSION%\msvc2017\bin;`
 
-`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\%_QTVERSION%\msvc2015\bin\qmake.exe --sip=%VIRTUAL_ENV%\Scripts\sip.exe`
+`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\%_QTVERSION%\msvc2017\bin\qmake.exe --sip=%VIRTUAL_ENV%\Scripts\sip.exe`
 
 `$ nmake`
 
