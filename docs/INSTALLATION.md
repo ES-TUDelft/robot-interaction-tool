@@ -173,7 +173,7 @@ The user interface should run now, good luck!
 
 ## II.1. Visual Studio
 
-* Install [Visual Studio](https://visualstudio.microsoft.com/vs/express/) (i.e., to obtain MSVC and nmake)
+* Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/) (i.e., to obtain MSVC and nmake)
 
 ## II.2. Python 2.7
 
@@ -187,13 +187,23 @@ The user interface should run now, good luck!
 
 ## II.4. Install PIP and other dependencies
 
-* Open a terminal
+* Open a command prompt and install pip:
+
+`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
+
+`$ python get-pip.py`
+
+* Note: if python is not recognized then either add it to the environment variables (i.e., PYTHONPATH) or use C:\Python27\python.exe instead.
 
 * Use pip to install the project requirements:
 
+`$ cd robot-interaction-tool`
+
 `$ pip install -r requirements.txt`
 
-    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
+   * ==> if pip is not recognized, try: `C:\Python27\python.exe -m pip install -r requirements.txt`
+
+  * If you get errors related to the "qi" library, try to install it separately (e.g., pip install qi).
 
 ## II.5. Qt 5.13
 
