@@ -154,8 +154,12 @@ class AnimateRobotThread(QThread):
     def run(self):
         try:
             if self.animation_name is not None:
-                self.robot_controller.execute_animation(animation_name=self.animation_name)
+                if self.message is None:
+                    self.robot_controller.execute_animation(animation_name=self.animation_name)
+                else:
+                    self.robot_controller.animated_say(message=self.message, animation_name=self.animation_name)
                 self.animation_name = None
+                self.message = None
                 self.animation_completed.emit(True)
             else:
                 if self.interaction_block is None:

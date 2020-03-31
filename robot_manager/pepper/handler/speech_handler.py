@@ -66,14 +66,19 @@ class SpeechHandler:
         self.logger.info("Message from say: {}".format(message))
         return False if message is None else self.tts.say(message)
 
-    def animated_say(self, message=None, animation=None):
+    def animated_say(self, message=None, animation_name=None):
         if message is None:
             return False
-        if animation is None:
-            return self.animated_speech.say(message, {"bodyLanguageMode": "random"})
-        else:
-            return self.animated_speech.say('^start({}) {} ^wait({})'.format(animation.value, message, animation.value),
-                                            {"bodyLanguageMode": "contextual"})
+        try:
+            if animation_name is None:
+                return self.animated_speech.say(message, {"bodyLanguageMode": "contextual"})  # vs random
+            else:
+                return self.animated_speech.say('^start({}) {} ^wait({})'.format(animation_name,
+                                                                                 message,
+                                                                                 animation_name),
+                                                {"bodyLanguageMode": "contextual"})
+        except Exception as e:
+            self.logger.error("Error while executing animated message! {}".format(e))
 
     def customized_say(self, interaction_block=None):
         if interaction_block is None: return
@@ -96,24 +101,13 @@ class SpeechHandler:
 
         self.logger.info("Message = {}".format(to_say))
 
-        gestures = interaction_block.gestures
-        if gestures is None:
-            success = self.animated_say(message=to_say, animation=behavioral_parameters.animation)
-        else:
-            success = self.customized_animated_say(message=to_say, animation_tag=gestures[
-                behavioral_parameters.gestures_type.name.lower()])
+        animation_name = None if interaction_block.gestures is None else interaction_block.gestures[
+                behavioral_parameters.gestures_type.name.lower()]
+
+        success = self.animated_say(message=to_say, animation_name=animation_name)
+
         self.setup_voice(reset=True)
-
         return success
-
-    def customized_animated_say(self, message=None, animation_tag=None):
-        if message is None:
-            return False
-        if animation_tag is None:
-            return self.animated_speech.say(message, {"bodyLanguageMode": "contextual"})  # vs random
-        else:
-            return self.animated_speech.say('^start({}) {} ^wait({})'.format(animation_tag, message, animation_tag),
-                                            {"bodyLanguageMode": "contextual"})
 
     # ======
     # VOICE

@@ -280,7 +280,7 @@ class PepperRobot(object):
     def move_and_animate(self, x=0, y=0, theta=0, message=None, animation=Animation.WAVE):
         self.move_to(x, y, theta)
         self.animate(animation=animation) if message is None else self.animated_say(message=message,
-                                                                                    animation=animation)
+                                                                                    animation_name=animation)
 
         # wait until move is finished, then move back to the previous position
         self.animation_handler.finish_move()
@@ -297,8 +297,8 @@ class PepperRobot(object):
     def say(self, message="Hi"):
         self.speech_handler.say(message=message)
 
-    def animated_say(self, message=None, animation=None):
-        self.speech_handler.animated_say(message=message, animation_name=animation)
+    def animated_say(self, message=None, animation_name=None):
+        self.speech_handler.animated_say(message=message, animation_name=animation_name)
 
     def complain(self, message="Hey"):
         self.animated_say(message=message)

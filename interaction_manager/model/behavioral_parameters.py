@@ -27,8 +27,8 @@ class BehavioralParameters(object):
 
         self.voice = RobotVoice()
         self.speech_act = SpeechAct()
-        self.gaze_pattern = list(GazePattern)[
-            random.randint(0, len(GazePattern.keys()) - 1)] if randomize is True else GazePattern.FIXATED
+        self.gaze_pattern = GazePattern.FIXATED
+
         self.gesture = Gesture()
         proxemics_range = [int(i * 100) for i in pconfig.proxemics_range]
         self.proxemics = (float(random.randrange(proxemics_range[0], proxemics_range[1],

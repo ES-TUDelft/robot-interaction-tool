@@ -161,8 +161,8 @@ class RobotController(object):
         self.logger.info(
             "At {} - Robot says: {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())), message))
 
-    def animated_say(self, message=None, animation=None):
-        self.pepper_robot.animated_say(message=message, animation_name=animation)
+    def animated_say(self, message=None, animation_name=None):
+        self.pepper_robot.animated_say(message=message, animation_name=animation_name)
         self.logger.info(
             "At {} - Robot says (with gesture): {}".format(time.strftime("%H:%M:%S", time.localtime(time.time())),
                                                            message))
