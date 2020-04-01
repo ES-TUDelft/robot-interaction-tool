@@ -254,11 +254,13 @@ The user interface should run now, good luck!
 
 * Unzip the file
 
-* Open a **Visual-Studio Developer Command prompt** and cd to where you downloaded SIP (verify that the Python path on your machine):
+* Open a **Visual-Studio Developer Command prompt** and cd to where you downloaded SIP (verify the path in all the following commands):
 
-`$ cd Downloads\sip-4.19.21`
+`$ "C:\Qt5.13.2\msvc2017\bin\qtenv2.bat"`
 
-`$ set LIB=%LIB%;C:\Python27\libs;`
+`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Auxiliary\Build\VC\vcvarsall.bat"`
+
+`$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
 
 `$ python configure.py --platform=win32-msvc2015`
 
@@ -271,11 +273,11 @@ The user interface should run now, good luck!
 
 * unzip the file
 
-* Open a new **Visual-Studio Developer Command prompt** and do the following:
+* In the same **Visual-Studio Developer Command prompt** as step II.6 do the following:
 
-`$ cd Downloads\PyQt5-5.13.2`
+`$ cd \Users\YOUR_USER_NAME\Downloads\PyQt5-5.13.2`
 
-`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\5.13.2\msvc2017\bin\qmake.exe --sip=C:\Python27\sip.exe`
+`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\5.13.2\msvc2017\bin\qmake.exe`
 
 `$ nmake`
 
@@ -285,7 +287,7 @@ The user interface should run now, good luck!
 
 `$ python`
 
-`>>> import PyQt5`
+`>>> from PyQt5 import QtWidgets`
 
 ===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
 
@@ -417,7 +419,7 @@ The user interface should run now, good luck!
 
 `$ python`
 
-`>>> import PyQt5`
+`>>> from PyQt5 import QtWidgets`
 
 ===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
 
