@@ -249,7 +249,7 @@ The user interface should run now, good luck!
 
 `$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
 
-`$ python configure.py`
+`$ python configure.py --sip-module PyQt5.sip`
 
 `$ nmake`
 
