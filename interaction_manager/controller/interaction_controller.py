@@ -39,7 +39,8 @@ class InteractionController(object):
         self.face_tracker_thread = None
         self.timer_helper = TimerHelper()
         self.music_command = None
-        self.animation_lst = []
+        self.animations_dict = {}
+        self.animations_lst = []
         self.animation_time = 0
         self.animation_counter = -1
 
@@ -321,7 +322,8 @@ class InteractionController(object):
 
     def on_animation_mode(self, music_command, animation_time=0):
         self.music_command = music_command
-        self.animation_lst = config_helper.get_animations()[music_command.animations_key]
+        self.animations_dict = config_helper.get_animations()[music_command.animations_key]
+        self.animations_lst = self.animations_dict.keys()
         self.animation_time = animation_time
         self.animation_counter = -1
 
@@ -329,7 +331,7 @@ class InteractionController(object):
         self.execute_next_animation()
 
     def execute_next_animation(self):
-        if self.music_command is None or len(self.animation_lst) == 0:
+        if self.music_command is None or len(self.animations_lst) == 0:
             return QTimer.singleShot(1000, self.on_music_stop)
 
         if self.animation_thread.isRunning():
@@ -339,10 +341,15 @@ class InteractionController(object):
         if self.timer_helper.elapsed_time() <= self.animation_time - 4:  # use 4s threshold
             # repeat the animations if the counter reached the end of the lst
             self.animation_counter += 1
-            if self.animation_counter >= len(self.animation_lst):
+            if self.animation_counter >= len(self.animations_lst):
                 self.animation_counter = 0
-
-            self.animation_thread.animate(animation_name=self.animation_lst[self.animation_counter])
+            animation = self.animations_lst[self.animation_counter]
+            message = self.animations_dict[animation]
+            if message is None or message == "":
+                self.animation_thread.animate(animation_name=self.animations_lst[self.animation_counter])
+            else:
+                self.animation_thread.animated_say(message=message,
+                                                   animation_name=self.animations_lst[self.animation_counter])
         else:
             remaining_time = self.animation_time - self.timer_helper.elapsed_time()
             QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)

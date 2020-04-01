@@ -168,8 +168,10 @@ def get_gestures():
 def get_animations():
     animations_dict = {}
     try:
-        with open('interaction_manager/properties/animations.json') as anim_file:
-            animations_dict = (json.load(anim_file))
+        # with open('interaction_manager/properties/animations.json') as anim_file:
+        #    animations_dict.update(json.load(anim_file))
+        with open("interaction_manager/properties/animations.yaml", 'r') as ymlfile:
+            animations_dict.update(yaml.load(ymlfile, Loader=yaml.SafeLoader))
     except Exception as e:
         logger.error("Error while opening the behaviors properties file! {}".format(e))
     finally:

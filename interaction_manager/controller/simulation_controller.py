@@ -21,6 +21,8 @@ class SimulationController(object):
         self._init_dock_widget(parent)
         self.user_turn = False
         self.timer_helper = TimerHelper()
+        self.animations_dict = {}
+        self.animations_lst = []
 
         self.current_interaction_block = None
         self.previous_interaction_block = None
@@ -172,21 +174,24 @@ class SimulationController(object):
             QTimer.singleShot(1000, self.execute_next_interaction_block)
         else:
             self.current_interaction_block.action_command.music_controller = self.music_controller
-            success = self.current_interaction_block.action_command.execute()
+            music_command = self.current_interaction_block.action_command
+            success = music_command.execute()
             if success is True:
-                message = "Playing now: {}".format(self.current_interaction_block.action_command.track)
+                message = "Playing now: {}".format(music_command.track)
                 self.update_interaction_log(robot_message=message)
                 # TODO: specify wait time as track time when play_time is < 0
                 # use action play time
-                wait_time = self.current_interaction_block.action_command.play_time
+                wait_time = music_command.play_time
                 if wait_time <= 0:
                     wait_time = 30  # wait for 30s then continue
-                anim_key = self.current_interaction_block.action_command.animations_key
+                anim_key = music_command.animations_key
                 if anim_key is None or anim_key == "":
                     QTimer.singleShot(wait_time * 1000, self.on_music_stop)
                 else:
                     self.timer_helper.start()
-                    self.on_animation_mode(music_command=self.current_interaction_block.action_command,
+                    self.animations_dict = config_helper.get_animations()[music_command.animations_key]
+                    self.animations_lst = self.animations_dict.keys()
+                    self.on_animation_mode(music_command=music_command,
                                            animation_time=wait_time,
                                            counter=0)
             else:
@@ -198,10 +203,12 @@ class SimulationController(object):
         if music_command is None:
             QTimer.singleShot(1000, self.on_music_stop)
 
-        anim_lst = config_helper.get_animations()[music_command.animations_key]
         if self.timer_helper.elapsed_time() <= animation_time - 4:  # 4s threshold
-            anim_index = 0 if counter >= len(anim_lst) else counter
-            self.update_interaction_log(robot_message="Doing animation: {}".format(anim_lst[anim_index]))
+            anim_index = 0 if counter >= len(self.animations_lst) else counter
+            animation = self.animations_lst[anim_index]
+            msg = self.animations_dict[animation]
+            robot_message = "{} - Executing {}".format("Animation time" if msg is None else msg, animation)
+            self.update_interaction_log(robot_message=robot_message)
             QTimer.singleShot(4000, lambda: self.on_animation_mode(music_command, animation_time, anim_index + 1))
         else:
             remaining_time = animation_time - self.timer_helper.elapsed_time()
