@@ -77,20 +77,7 @@ In this document we go over the installation of the required libraries and setti
 `$ pip install -r requirements.txt`
 
     * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
-
-***
-
-### ***Note***: 
-*Before proceeding with the next steps, check if you already have **PyQt5** installed on your system.* 
-*For example, try these commands in a terminal:*
     
-`$ python`
-    
-`>>> import PyQt5`
-    
-*If the import is successful (i.e., no errors), go to **Step 7**; otherwise, continue.*
-
-***
 
 ## I.4. Install qt513
 
@@ -155,7 +142,7 @@ In this document we go over the installation of the required libraries and setti
 
 `$ python`
 
-`>>> import PyQt5`
+`>>> from PyQt5 import QtWidgets`
 
 ===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
 
@@ -262,7 +249,7 @@ The user interface should run now, good luck!
 
 `$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
 
-`$ python configure.py --platform=win32-msvc2015`
+`$ python configure.py --platform=win32-msvc`
 
 `$ nmake`
 
