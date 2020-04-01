@@ -1,5 +1,15 @@
 In this document we go over the installation of the required libraries and setting up Spotify for successfully running the prototyping tool.
 
+* First, clone the repository (e.g., to your Documents):
+
+`$ cd Documents`
+
+`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+==> if you don't have git, install it from: https://git-scm.com/downloads
+
+* Then, proceed with the installation guide depending on your PC's OS.
+
 ---
 
 ## Content
@@ -175,15 +185,44 @@ The user interface should run now, good luck!
 
 * Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/)
 
+   * In the Workloads, select "Python development" and enable "Python native development tools" only
+   
+* Optional: Install [Microsoft Visual C++ Compiler for Python 2.7](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
+
+
 ## II.2. Python 2.7
 
 * Install [Python 2.7 32-bits](https://www.python.org/downloads/release/python-2717/) (select "Windows x86 MSI installer")
 
+* Verify that your system recognizes python: open a command prompt and try
+
+`$ python`
+
+==> in case of errors (or if python doesn't open), then you need to add it to the system path, try:
+
+`$ cd C:\Python27`
+
+`$ python Tools\Scripts\win_add2path.py`
+
+==> exit the cmd prompt and rerun it and test python again. If it doesn't work, then manually edit the **system path** by appending C:\Python27 to it, and add it to the environment variable PYTHONPATH.
+
 ## II.3. NAOqi for Python
 
-* Download Pynaoqi (pynaoqi-python2.7-2.5.5.5-win32-vs2013) for Windows from https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255 
+* Download Pynaoqi (pynaoqi-python2.7-2.5.5.5-win32-vs2013) for Windows:
+   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
+   * Open an account, if you don't have one
+   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Win 32 Binaries** (or go to [https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255](https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255) and click on the download link for Windows)
 
 * Follow the installation instructions (for Windows) from SoftbankRobotics http://doc.aldebaran.com/2-5/dev/python/install_guide.html#python-install-guide
+   * extract pynaoqi (downloaded in the previous step) to your Documents folder (or somewhere else)
+   * modify your environment variables by adding the following to PYTHONPATH (make sure it is at the beginning of the path): C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.5.5-win32-vs2013\lib
+   
+* Open a new command prompt and try the following:
+
+`$ python`
+
+`>>> import naoqi`
+
 
 ## II.4. Install PIP and other dependencies
 
@@ -193,7 +232,7 @@ The user interface should run now, good luck!
 
 `$ python get-pip.py`
 
-* Note: if python is not recognized then either add it to the environment variables (i.e., PYTHONPATH) or use C:\Python27\python.exe instead.
+* Note: if python is not recognized verify your PATH or use C:\Python27\python.exe instead.
 
 * Use pip to install the project requirements:
 
@@ -201,13 +240,13 @@ The user interface should run now, good luck!
 
 `$ pip install -r requirements.txt`
 
-   * ==> if pip is not recognized, try: `C:\Python27\python.exe -m pip install -r requirements.txt`
+   * ==> if pip is not recognized, try: `python -m pip install -r requirements.txt`
 
   * If you get errors related to the "qi" library, try to install it separately (e.g., pip install qi).
 
 ## II.5. Qt 5.13
 
-* Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
+* Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2015 & 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
 
 ## II.6. SIP 4.19
 
@@ -215,15 +254,13 @@ The user interface should run now, good luck!
 
 * Unzip the file
 
-* Open a Visual-Studio Command prompt and cd to where you downloaded SIP (verify the Python path on your machine):
+* Open a **Visual-Studio Developer Command prompt** and cd to where you downloaded SIP (verify that the Python path on your machine):
 
-`$ cd ..\sip-4.19.21`
+`$ cd Downloads\sip-4.19.21`
 
 `$ set LIB=%LIB%;C:\Python27\libs;`
 
-`$ python configure.py --platform=win32-msvc2017`
-
-`$ set CL=/MP`
+`$ python configure.py --platform=win32-msvc2015`
 
 `$ nmake`
 
@@ -234,16 +271,11 @@ The user interface should run now, good luck!
 
 * unzip the file
 
-* Open a terminal and do the following (cd to where you unzipped PyQt5 folder):
-`$ cd ..\PyQt5-5.13.2`
+* Open a new **Visual-Studio Developer Command prompt** and do the following:
 
-`$ set _QTVERSION=5.13.2`
+`$ cd Downloads\PyQt5-5.13.2`
 
-`$ set LIB=%LIB%;C:\Qt\%_QTVERSION%\msvc2017\lib;`
-
-`$ set PATH=%PATH%;C:\Qt\%_QTVERSION%\msvc2017\bin;`
-
-`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\%_QTVERSION%\msvc2017\bin\qmake.exe --sip=%VIRTUAL_ENV%\Scripts\sip.exe`
+`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\5.13.2\msvc2017\bin\qmake.exe --sip=C:\Python27\sip.exe`
 
 `$ nmake`
 
