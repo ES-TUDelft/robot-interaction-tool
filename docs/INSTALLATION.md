@@ -243,9 +243,9 @@ The user interface should run now, good luck!
 
 * Open a **Visual-Studio Developer Command prompt** and cd to where you downloaded SIP (verify the path in all the following commands):
 
-`$ "C:\Qt5.13.2\msvc2017\bin\qtenv2.bat"`
+`$ "C:\Qt\5.13.2\msvc2017\bin\qtenv2.bat"`
 
-`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Auxiliary\Build\VC\vcvars32.bat"`
+`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"`
 
 `$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
 
