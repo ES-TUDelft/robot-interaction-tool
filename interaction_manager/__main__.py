@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# __main__.py
+
 # -*- coding: utf-8 -*-
 # **
 #
