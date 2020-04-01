@@ -245,11 +245,11 @@ The user interface should run now, good luck!
 
 `$ "C:\Qt5.13.2\msvc2017\bin\qtenv2.bat"`
 
-`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Auxiliary\Build\VC\vcvarsall.bat"`
+`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Auxiliary\Build\VC\vcvars32.bat"`
 
 `$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
 
-`$ python configure.py --platform=win32-msvc`
+`$ python configure.py`
 
 `$ nmake`
 
