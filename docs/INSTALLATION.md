@@ -144,13 +144,11 @@ In this document we go over the installation of the required libraries and setti
 
 `>>> from PyQt5 import QtWidgets`
 
-===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
+===> If you have errors, this means that PyQt5 is not installed correctly! Check **Section V** for known issues!
 
 ## I.7. Launch the Interaction Tool
 
-Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
-
-`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+Once you finish installing all the requirements, open a terminal and cd to where you saved the tool:
 
 `$ cd robot-interaction-tool`
 
@@ -173,6 +171,8 @@ The user interface should run now, good luck!
 * Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/)
 
    * In the Workloads, select "Python development" and enable "Python native development tools" only
+   
+* Install [Microsoft Visual C++ Redistributable for Visual Studio (x86)](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
    
 * Optional: Install [Microsoft Visual C++ Compiler for Python 2.7](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
 
@@ -231,6 +231,20 @@ The user interface should run now, good luck!
 
   * If you get errors related to the "qi" library, try to install it separately (e.g., pip install qi).
 
+---
+
+* Before performing Steps 5-7, try the following:
+
+* download PyQt5 build from: https://github.com/ES-TUDelft/PyQt5-Windows.git
+
+* Copy "PyQt5" folder to C:\Python27\Lib\site-packages
+
+* Make sure that C:\Python27\Lib\site-packages is in your PATH environment variable
+
+* Try Step II.8: if it works then you're good to go; otherwise, continue with step II.5.
+
+---
+
 ## II.5. Qt 5.13
 
 * Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2015 & 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
@@ -276,13 +290,11 @@ The user interface should run now, good luck!
 
 `>>> from PyQt5 import QtWidgets`
 
-===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
+===> If you have errors, this means that PyQt5 is not installed correctly! In that case, try to address the errors or check **Section V** below!
 
 ## II.8. Launch the Interaction Tool
 
-Once you finish installing all the requirements, open a terminal and cd to where you want to save the git repository:
-
-`$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+Once you finish installing all the requirements, open a command prompt and cd to where you saved the tool:
 
 `$ cd robot-interaction-tool`
 
@@ -408,7 +420,7 @@ The user interface should run now, good luck!
 
 `>>> from PyQt5 import QtWidgets`
 
-===> If you have errors, this means that PyQt5 is not installed correctly! In that case, either redo steps 4-6 or try **Section III** below!
+===> If you have errors, this means that PyQt5 is not installed correctly! In that case, try to address the errors or check **Section V** below!
 
 ---
 
