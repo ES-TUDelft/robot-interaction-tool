@@ -191,7 +191,9 @@ The user interface should run now, good luck!
 
 `$ python Tools\Scripts\win_add2path.py`
 
-==> exit the cmd prompt and rerun it and test python again. If it doesn't work, then manually edit the **system path** by appending C:\Python27 to it, and add it to the environment variable PYTHONPATH.
+==> exit the cmd prompt and rerun it and test python again.
+
+* **Note**: if python is still not recognized, then manually add it to your **PATH** (e.g., append C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts) or use C:\Python27\python.exe instead.
 
 ## II.3. NAOqi for Python
 
@@ -219,8 +221,6 @@ The user interface should run now, good luck!
 
 `$ python get-pip.py`
 
-* Note: if python is not recognized verify your PATH or use C:\Python27\python.exe instead.
-
 * Use pip to install the project requirements:
 
 `$ cd robot-interaction-tool`
@@ -233,6 +233,7 @@ The user interface should run now, good luck!
 
 ---
 
+### **NOTE**
 * Before performing Steps 5-7, try the following:
 
 * download PyQt5 build from: https://github.com/ES-TUDelft/PyQt5-Windows.git
