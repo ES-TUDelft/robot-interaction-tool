@@ -59,7 +59,7 @@ To use the tool on [Linux](https://github.com/ES-TUDelft/robot-interaction-tool/
 
 ## II. Setting up Spotify
 
-* To [setup Spotify](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#ii-setting-up-spotify), refer to the [installation document](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md).
+* To [setup Spotify](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#ii-setting-up-spotify), refer to the [installation document](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/INSTALLATION.md#iv-setting-up-spotify).
 
 * Once you're connected to **Spotify**, you'll be able to see your playlists and tracks.
 
