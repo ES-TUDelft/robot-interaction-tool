@@ -442,13 +442,19 @@ The user interface should run now, good luck!
             
 * The ***username*** from the previous step is your personal **Spotify** username (found in your profile: https://www.spotify.com/).
 
-* To connect to the spotify web api for the first time, you'll need a running server listening to 8080 port. You can use the server.js provided by this repository (you need to install node.js first: https://nodejs.org/en/download/) or create your own.
+* To connect to the spotify web api ***for the first time***, you'll need a running server listening to 8080 port. You can use the server.js provided by this repository (you need to install node.js first: https://nodejs.org/en/download/) or create your own.
 
 `$ cd ~/Documents/robot-interaction-tool`
 
 `$ node es_common/server.js`
 
-* Now, launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
+* Now, you have two options, depending on the OS:
+
+   * **Windows** platforms: open a command prompt and do:
+   
+   `$ python \interaction_manager\utils\spotify_winconfig.py`
+   
+   * **Other** platforms (e.g., Linux and Mac): launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
 
 * You'll be presented with a connection dialog. You can either use the default settings (that you previously put in the config.yam or spotify.yaml) or enter new ones.
 
