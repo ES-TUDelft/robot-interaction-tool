@@ -185,15 +185,7 @@ The user interface should run now, good luck!
 
 `$ python`
 
-==> in case of errors (or if python doesn't open), then you need to add it to the system path, try:
-
-`$ cd C:\Python27`
-
-`$ python Tools\Scripts\win_add2path.py`
-
-==> exit the cmd prompt and rerun it and test python again.
-
-* **Note**: if python is still not recognized, then manually add it to your **PATH** (e.g., append C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts) or use C:\Python27\python.exe instead.
+==> **Note**: in case of errors (or if python doesn't open), then you need to manually add it to your **PATH** (e.g., append C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts) or use C:\Python27\python.exe instead.
 
 ## II.3. NAOqi for Python
 
