@@ -185,7 +185,7 @@ The user interface should run now, good luck!
 
 `$ python`
 
-==> **Note**: in case of errors (or if python doesn't open), then you need to manually add it to your **PATH** (e.g., append C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts) or use C:\Python27\python.exe instead.
+==> **Note**: you may need to manually add python to your system **PATH** by editing the system environment variables and appending: C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts to the Path variable.
 
 ## II.3. NAOqi for Python
 
@@ -196,7 +196,10 @@ The user interface should run now, good luck!
 
 * Follow the installation instructions (for Windows) from SoftbankRobotics http://doc.aldebaran.com/2-5/dev/python/install_guide.html#python-install-guide
    * extract pynaoqi (downloaded in the previous step) to your Documents folder (or somewhere else)
-   * modify your environment variables by adding the following to PYTHONPATH (make sure it is at the beginning of the path): C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.5.5-win32-vs2013\lib
+   * modify your user environment variables by adding the following:
+    
+         Variable name: PYTHONPATH
+         Variable value: C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.5.5-win32-vs2013\lib; C:\Python27\Lib\site-packages
    
 * Open a new command prompt and try the following:
 
@@ -230,9 +233,13 @@ The user interface should run now, good luck!
 
 * download PyQt5 build from: https://github.com/ES-TUDelft/PyQt5-Windows.git
 
-* Copy "PyQt5" folder to C:\Python27\Lib\site-packages
+* Copy **ONLY "PyQt5" folder** to C:\Python27\Lib\site-packages
 
-* Make sure that C:\Python27\Lib\site-packages is in your PATH environment variable
+* Add the following to your environment variables:
+   * Variable name: QT_QPA_PLATFORM_PLUGIN_PATH
+   * Variable value: C:\Python27\Lib\site-packages\PyQt5\plugins\platforms
+
+* Make sure that C:\Python27\Lib\site-packages AND C:\Python27\Scripts are in your PATH environment variable
 
 * Try Step II.8: if it works then you're good to go; otherwise, continue with step II.5.
 
