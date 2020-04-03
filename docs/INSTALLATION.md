@@ -454,7 +454,7 @@ The user interface should run now, good luck!
    
    `$ python interaction_manager\utils\spotify_winconfig.py`
    
-   * **Other** platforms (e.g., Linux and Mac): launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
+   * **Other** platforms (e.g., Linux and Mac): either do (in a terminal) *"$ python interaction_manager/utils/spotify_winconfig.py"* or launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
 
 * You'll be presented with a connection dialog. You can either use the default settings (that you previously put in the config.yam or spotify.yaml) or enter new ones.
 
@@ -465,7 +465,7 @@ The user interface should run now, good luck!
         * The URL should be similar to this but longer (DO NOT USE IT, it is just an example):
             - http://localhost:8080/callback/?code=BtmyiHfVlKvGtO4mgwYJQKKOUWEeNTRm22CXrAnTRp...
 
-* If it's successful, you'll see your playlists and tracks. Click "OK" to save the setup.
+* If it's successful, you'll see your playlists and tracks. Click "OK" to save the setup (if you're using the tool).
 
 * To play a song (e.g., using the test button or the mini-player panel in the main interface), you will need an active device (i.e., a Spotify Player) that is running on either your browser or PC/Phone.
 
