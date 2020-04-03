@@ -452,7 +452,7 @@ The user interface should run now, good luck!
 
    * **Windows** platforms: open a command prompt and do (only when connecting for the first time; otherwise use the Spotify button in the tool):
    
-   `$ python \interaction_manager\utils\spotify_winconfig.py`
+   `$ python interaction_manager\utils\spotify_winconfig.py`
    
    * **Other** platforms (e.g., Linux and Mac): launch the interaction tool GUI (as in Sec. I-8) and click on the "Spotify" button (in the toolbar).
 
