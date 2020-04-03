@@ -686,7 +686,8 @@ class UIController(QtWidgets.QMainWindow):
                 self._display_message(message="The parameters of all blocks are updated.")
         else:
             if self.selected_block is not None:
-                self.selected_block.parent.behavioral_parameters = self.behavioral_parameters.clone()
+                self.selected_block.parent.set_behavioral_parameters(p_name="all",
+                                                                     behavioral_parameters=self.behavioral_parameters)
 
                 self._display_message(message="The '{}' parameters are updated.".format(self.selected_block.title))
                 self.block_controller.store("Updated parameters for {}".format(self.selected_block.title))
