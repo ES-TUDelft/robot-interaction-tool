@@ -86,10 +86,8 @@ class SpeechHandler:
         # update the tablet page
         self._set_page_fields(interaction_block.tablet_page)
 
-        behavioral_parameters = interaction_block.behavioral_parameters
-
         # Set up the robot voice
-        robot_voice = behavioral_parameters.voice
+        robot_voice = interaction_block.behavioral_parameters.voice
         self.setup_voice(robot_voice=robot_voice)
 
         # to_say = "\\{}={}\\\\{}={}\\\\{}={}\\\\{}={}\\\\{}={}\\ {}".format(
@@ -97,12 +95,12 @@ class SpeechHandler:
         #            VoiceTag.PITCH.value, robot_voice.pitch, 
         to_say = "\\{}={}\\ {}".format(
             VoiceTag.PROSODY.value, "S" if robot_voice.prosody.value is 1 else "W",
-            behavioral_parameters.speech_act.message)
+            interaction_block.message)
 
         self.logger.info("Message = {}".format(to_say))
 
         animation_name = None if interaction_block.gestures is None else interaction_block.gestures[
-                behavioral_parameters.gestures_type.name.lower()]
+                interaction_block.gestures_type.name.lower()]
 
         success = self.animated_say(message=to_say, animation_name=animation_name)
 

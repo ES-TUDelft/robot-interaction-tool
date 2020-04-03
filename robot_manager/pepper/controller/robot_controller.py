@@ -197,9 +197,8 @@ class RobotController(object):
     def face_tracker(self, start=True, face_width=pconfig.default_face_width):
         self.pepper_robot.face_tracker(start=start, face_width=face_width)
 
-    def divert_face_tracker(self, indexes=pconfig.divert_look_indexes, thresh=pconfig.divert_look_threshold,
-                            gaze_pattern=None):
-        self.pepper_robot.divert_look(indexes=indexes, thresh=thresh, gaze_pattern=gaze_pattern)
+    def divert_face_tracker(self, gaze_pattern=None, thresh=pconfig.divert_look_threshold):
+        self.pepper_robot.divert_look(gaze_pattern=gaze_pattern, thresh=thresh)
 
     def subscribe_to_dialog_events(self, block_completed_signal, user_answer_signal):
         self.pepper_robot.subscribe_to_dialog_events(block_completed_signal, user_answer_signal)

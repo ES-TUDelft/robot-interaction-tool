@@ -53,8 +53,7 @@ class EngagementHandler(object):
             self.tracker.stopTracker()
             self.tracker.unregisterAllTargets()
 
-    def divert_look(self, thresh=pconfig.divert_look_threshold, gaze_pattern=None,
-                    frame=pconfig.robot_frame):
+    def divert_look(self, gaze_pattern=None, frame=pconfig.robot_frame, thresh=pconfig.divert_look_threshold):
         if not (gaze_pattern is None):
             multiplier = 1.5 if gaze_pattern.value > 1 else gaze_pattern.value
             thresh = thresh * multiplier

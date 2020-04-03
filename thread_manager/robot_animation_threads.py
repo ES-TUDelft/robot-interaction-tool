@@ -160,6 +160,7 @@ class AnimateRobotThread(QThread):
                     self.robot_controller.animated_say(message=self.message, animation_name=self.animation_name)
                 self.animation_name = None
                 self.message = None
+                self.logger.debug("Completed animation.")
                 self.animation_completed.emit(True)
             else:
                 if self.interaction_block is None:

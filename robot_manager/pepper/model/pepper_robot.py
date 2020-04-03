@@ -231,8 +231,8 @@ class PepperRobot(object):
     def face_tracker(self, start=True, face_width=pconfig.default_face_width):
         self.engagement_handler.face_tracker(start=start, face_width=face_width)
 
-    def divert_look(self, indexes=pconfig.divert_look_indexes, thresh=pconfig.divert_look_threshold, gaze_pattern=None):
-        self.engagement_handler.divert_look(indexes=indexes, thresh=thresh, gaze_pattern=gaze_pattern)
+    def divert_look(self, gaze_pattern=None, thresh=pconfig.divert_look_threshold):
+        self.engagement_handler.divert_look(gaze_pattern=gaze_pattern, thresh=thresh)
 
     """
     Animation control methods

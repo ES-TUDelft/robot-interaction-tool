@@ -92,7 +92,7 @@ class InteractionController(object):
             self.animation_thread = AnimateRobotThread(robot_ip=self.robot_ip, port=self.port)
             self.animation_thread.dialog_started.connect(self.engagement)
             self.animation_thread.customized_say_completed.connect(self.customized_say)
-            self.animation_thread.animation_completed.connect(self.execute_next_animation)
+            self.animation_thread.animation_completed.connect(self.on_animation_completed)
 
             # TODO: check enable moving from the ui, e.g., self.ui.enableMovingCheckBox.isChecked()
             self.animation_thread.moving_enabled = enable_moving
@@ -250,7 +250,21 @@ class InteractionController(object):
                 # ready to interact
                 self.is_ready_to_interact = True
 
+    def verify_current_interaction_block(self):
+        # if there are no more blocks, stop interacting
+        if self.current_interaction_block is None or self.stop_playing is True:
+            self.animation_thread.customized_say(reset=True)
+            # stop interacting
+            self.interaction(start=False)
+
+            self.tablet_image(hide=True)
+            return False
+        return True
+
     def customized_say(self):
+        if self.verify_current_interaction_block() is False:
+            return False
+
         if self.animation_thread.isRunning():
             self.logger.debug("*** Animation Thread is still running!")
             return QTimer.singleShot(1000, self.customized_say)  # wait for the thread to finish
@@ -261,43 +275,38 @@ class InteractionController(object):
             self.previous_interaction_block = self.current_interaction_block
         elif self.current_interaction_block.execution_mode is ExecutionMode.EXECUTING \
                 and self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
-            self.on_music_mode()
+            return self.on_music_mode()
         else:
             # complete the block
             self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+
             # get the next block to say
             self.current_interaction_block, connecting_edge = self.get_next_interaction_block()
+            if self.verify_current_interaction_block() is False:
+                return False
 
-        # if there are no more blocks, stop interacting
-        if self.current_interaction_block is None or self.stop_playing is True:
-            self.animation_thread.customized_say(reset=True)
-            # stop interacting
-            self.interaction(start=False)
+        # execute the block
+        self.current_interaction_block.execution_mode = ExecutionMode.EXECUTING
+        self.current_interaction_block.set_selected(True)
+        if connecting_edge is not None:
+            connecting_edge.set_selected(True)
 
-            self.tablet_image(hide=False)
-        else:
-            # execute the block
-            self.current_interaction_block.execution_mode = ExecutionMode.EXECUTING
-            self.current_interaction_block.set_selected(True)
-            if connecting_edge is not None:
-                connecting_edge.set_selected(True)
+        # TODO: set the block state to 'executing'
+        # set the tracker's gaze pattern
+        if not self.face_tracker_thread.isRunning():
+            self.face_tracker_thread.track()
+        self.face_tracker_thread.gaze_pattern = self.current_interaction_block.behavioral_parameters.gaze_pattern
 
-            # TODO: set the block state to 'executing'
-            # set the tracker's gaze pattern
-            if not self.face_tracker_thread.isRunning():
-                self.face_tracker_thread.track()
-            self.face_tracker_thread.gaze_pattern = self.current_interaction_block.behavioral_parameters.gaze_pattern
+        # get the result from the execution
+        self.animation_thread.customized_say(interaction_block=self.current_interaction_block)
 
-            # get the result from the execution
-            self.animation_thread.customized_say(interaction_block=self.current_interaction_block)
-
-            self.logger.debug("Robot: {}".format(self.current_interaction_block.message))
+        self.logger.debug("Robot: {}".format(self.current_interaction_block.message))
+        return True
 
     def on_music_mode(self):
         if self.music_controller is None:
             self.logger.debug("Music player is not connected! Will skip playing music.")
-            self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
-            self.customized_say()
+            self.on_music_stop()
         else:
             self.current_interaction_block.action_command.music_controller = self.music_controller
             success = self.current_interaction_block.action_command.execute()
@@ -310,15 +319,14 @@ class InteractionController(object):
                     wait_time = 30  # wait for 30s then continue
                 anim_key = self.current_interaction_block.action_command.animations_key
                 if anim_key is None or anim_key == "":
-                    QTimer.singleShot(wait_time * 1000, self.on_music_stop)
+                    QTimer.singleShot(int(wait_time) * 1000, self.on_music_stop)
                 else:
                     self.on_animation_mode(music_command=self.current_interaction_block.action_command,
-                                           animation_time=wait_time)
+                                           animation_time=int(wait_time))
                 # QTimer.singleShot(wait_time * 1000, self.on_music_stop)
             else:
                 self.logger.warning("Unable to play music! {}".format(self.music_controller.warning_message))
-                self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
-                self.customized_say()
+                self.on_music_stop()
 
     def on_animation_mode(self, music_command, animation_time=0):
         self.music_command = music_command
@@ -330,15 +338,17 @@ class InteractionController(object):
         self.timer_helper.start()
         self.execute_next_animation()
 
-    def execute_next_animation(self):
-        if self.music_command is None or len(self.animations_lst) == 0:
-            return QTimer.singleShot(1000, self.on_music_stop)
-
+    def on_animation_completed(self):
         if self.animation_thread.isRunning():
             self.logger.debug("*** Animation Thread is still running!")
-            return QTimer.singleShot(1000, self.execute_next_animation)  # wait for the thread to finish
+            QTimer.singleShot(2000, self.on_animation_completed)  # wait for the thread to finish
+        else:
+            QTimer.singleShot(2000, self.execute_next_animation)
 
-        if self.timer_helper.elapsed_time() <= self.animation_time - 4:  # use 4s threshold
+    def execute_next_animation(self):
+        if self.music_command is None or len(self.animations_lst) == 0:
+            QTimer.singleShot(1000, self.on_music_stop)
+        elif self.timer_helper.elapsed_time() <= self.animation_time - 4:  # use 4s threshold
             # repeat the animations if the counter reached the end of the lst
             self.animation_counter += 1
             if self.animation_counter >= len(self.animations_lst):
@@ -356,9 +366,15 @@ class InteractionController(object):
 
     def on_music_stop(self):
         self.logger.debug("Finished playing music.")
-        self.music_controller.pause()
-        self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
-        self.customized_say()
+        try:
+            if self.current_interaction_block is not None:
+                self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+            if self.music_controller is not None:
+                self.music_controller.pause()
+        except Exception as e:
+            self.logger.error("Error while stopping the music! {}".format(e))
+        finally:
+            self.customized_say()
 
     def test_behavioral_parameters(self, interaction_block, behavioral_parameters, volume):
         message, error = (None,) * 2
