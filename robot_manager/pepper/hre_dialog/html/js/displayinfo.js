@@ -27,16 +27,18 @@ function raiseEvent(name, value) {
 
 function displayPageInformation() {
     //alert("Inside display: " + localStorage.getItem("pageHeading"));
+    document.getElementById("pageImage").src = "../pics/" + localStorage.getItem("pageImage");
     document.getElementById("pageHeading").innerHTML = localStorage.getItem("pageHeading");
     document.getElementById("pageText").innerHTML  = localStorage.getItem("pageText");
 }
 
-function getAndFillPage(pageName, topSec, midSec) {
-    //alert("From index: pageName = " + pageName);
-    
-    localStorage.setItem("pageHeading", topSec);
-    localStorage.setItem("pageText", midSec);
-    
+function getAndFillPage(pageName, pageHeading, pageText, pageImage) {
+    //alert("From displayinfo: pageName = " + pageName);
+
+    localStorage.setItem("pageHeading", pageHeading);
+    localStorage.setItem("pageText", pageText);
+    localStorage.setItem("pageImage", pageImage);
+
     pageName = pageName.toLowerCase();
     
     switch(pageName) {

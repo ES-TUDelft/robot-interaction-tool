@@ -41,12 +41,13 @@ function getButtonId(n) {
     }
 }
 
-function getAndFillPage(pageName, topSec, midSec) {
-    //alert("From index: pageName = " + pageName);
-    
-    localStorage.setItem("pageHeading", topSec);
-    localStorage.setItem("pageText", midSec);
-    
+function getAndFillPage(pageName, pageHeading, pageText, pageImage) {
+    //alert("From help: pageName = " + pageName);
+
+    localStorage.setItem("pageHeading", pageHeading);
+    localStorage.setItem("pageText", pageText);
+    localStorage.setItem("pageImage", pageImage);
+
     pageName = pageName.toLowerCase();
     
     switch(pageName) {

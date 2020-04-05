@@ -21,11 +21,12 @@ $(document).ready(function () {
     });
 })
 
-function getAndFillPage(pageName, topSec, midSec) {
+function getAndFillPage(pageName, pageHeading, pageText, pageImage) {
     //alert("From index: pageName = " + pageName);
     
-    localStorage.setItem("pageHeading", topSec);
-    localStorage.setItem("pageText", midSec);
+    localStorage.setItem("pageHeading", pageHeading);
+    localStorage.setItem("pageText", pageText);
+    localStorage.setItem("pageImage", pageImage);
     
     pageName = pageName.toLowerCase();
     

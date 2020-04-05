@@ -270,8 +270,11 @@ class SpeechHandler:
     def _set_page_fields(self, page):
         # load the appropriate webpage on the tablet, if any
         if page is not None and self.is_valid_string(page.name):
-            self.logger.info(page.to_dict)
+            # self.logger.info(page.to_dict)
             self.memory.insertData("pageName", "{}".format(page.name))
+
+            self.memory.insertData("pageImage",
+                                   "pepper-standing.png" if self.is_valid_string(page.image) is False else page.image)
 
             self.memory.insertData("pageHeading", "{}".format(page.heading))
             self.memory.insertData("pageText", "{}".format(page.text))

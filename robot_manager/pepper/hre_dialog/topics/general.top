@@ -33,5 +33,5 @@ proposal: %getAndFillPageTag %script
 from naoqi import ALProxy
 ALTabletService = ALProxy("ALTabletService", "localhost", 9559)
 ALMemory = ALProxy("ALMemory", "localhost", 9559)
-ALTabletService.executeJS("getAndFillPage('" + ALMemory.getData("pageName") + "', '" + ALMemory.getData("pageHeading") + "', '" + ALMemory.getData("pageText") + "');")
+ALTabletService.executeJS("getAndFillPage('" + ALMemory.getData("pageName") + "', '" + ALMemory.getData("pageHeading") + "', '" + ALMemory.getData("pageText") + "', '" + ALMemory.getData("pageImage") + "');")
 %script

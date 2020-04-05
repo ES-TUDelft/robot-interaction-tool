@@ -202,20 +202,25 @@ class UIEditBlockController(QtWidgets.QDialog):
         if self.music_controller is None:
             return
 
-        if self.music_controller.playlists is None or len(self.music_controller.playlists) == 0:
-            return
-        self.ui.playlistComboBox.addItems([pconfig.SELECT_OPTION])
-        self.ui.playlistComboBox.addItems([p for p in self.music_controller.playlists.keys()])
+        try:
+            if self.music_controller.playlists is None or len(self.music_controller.playlists) == 0:
+                return
+            self.ui.playlistComboBox.addItems([pconfig.SELECT_OPTION])
+            self.ui.playlistComboBox.addItems([p for p in self.music_controller.playlists.keys()])
+        except Exception as e:
+            self.logger.error("Error while loading the playlists! {}".format(e))
 
     def update_tracks_combo(self):
         self.ui.tracksComboBox.clear()
         if self.music_controller is None:
             return
-
         playlist = self.ui.playlistComboBox.currentText()
-        if playlist != pconfig.SELECT_OPTION:
-            self.ui.tracksComboBox.addItems([pconfig.SELECT_OPTION])
-            self.ui.tracksComboBox.addItems([t for t in self.music_controller.playlists[playlist]["tracks"]])
+        try:
+            if playlist != pconfig.SELECT_OPTION:
+                self.ui.tracksComboBox.addItems([pconfig.SELECT_OPTION])
+                self.ui.tracksComboBox.addItems([t for t in self.music_controller.playlists[playlist]["tracks"]])
+        except Exception as e:
+            self.logger.error("Error while loading tracks for playlist: {}! {}".format(playlist, e))
 
     def update_tags(self):
         # tags
