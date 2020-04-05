@@ -12,6 +12,7 @@
 
 import logging
 import os
+from collections import OrderedDict
 
 import yaml
 import json
@@ -46,7 +47,11 @@ app_properties = _get_app_properties()
 def get_tags():
     # returns dict of gestures:
     # names are the keys and path are values
-    return _get_property(app_properties, 'tags')
+    return _get_property(app_properties, "tags")
+
+
+def get_tablet_properties():
+    return _get_property(app_properties, "tablet")
 
 
 ####
@@ -166,16 +171,38 @@ def get_gestures():
 # ANIMATIONS
 ###
 def get_animations():
-    animations_dict = {}
+    animations_dict = OrderedDict()
     try:
         # with open('interaction_manager/properties/animations.json') as anim_file:
         #    animations_dict.update(json.load(anim_file))
         with open("interaction_manager/properties/animations.yaml", 'r') as ymlfile:
-            animations_dict.update(yaml.load(ymlfile, Loader=yaml.SafeLoader))
+            animations_dict = ordered_yaml(ymlfile, yaml_loader=yaml.SafeLoader)
     except Exception as e:
         logger.error("Error while opening the behaviors properties file! {}".format(e))
     finally:
         return animations_dict
+
+
+def ordered_yaml(data_stream, yaml_loader, hook=OrderedDict):
+    """
+    :param data_stream:
+    :param yaml_loader:
+    :param hook:
+    :return: ordered dict of the data stream from yaml file
+    """
+
+    class YamlOrderedLoader(yaml_loader):
+        pass
+
+    def create_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return hook(loader.construct_pairs(node))
+
+    YamlOrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, create_mapping
+    )
+
+    return yaml.load(data_stream, YamlOrderedLoader)
 
 
 ####

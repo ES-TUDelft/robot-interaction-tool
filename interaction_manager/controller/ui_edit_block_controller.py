@@ -102,6 +102,8 @@ class UIEditBlockController(QtWidgets.QDialog):
         if not tablet_page.name == "":
             self.ui.tabletPageNameComboBox.setCurrentIndex(
                 self.ui.tabletPageNameComboBox.findText(tablet_page.name, QtCore.Qt.MatchFixedString))
+        self.ui.tabletImageComboBox.clear()
+        self.ui.tabletImageComboBox.addItems(config_helper.get_tablet_properties()["images"])
         if not tablet_page.image == "":
             self.ui.tabletImageComboBox.setCurrentIndex(
                 self.ui.tabletImageComboBox.findText(tablet_page.image, QtCore.Qt.MatchFixedString))
