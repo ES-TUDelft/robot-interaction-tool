@@ -243,6 +243,14 @@ class InteractionBlock(Serializable):
         return "" if self.block is None else self.block.title
 
     @property
+    def volume(self):
+        return self.behavioral_parameters.voice.volume
+
+    @volume.setter
+    def volume(self, val):
+        self.behavioral_parameters.voice.volume = val
+
+    @property
     def to_dict(self):
         block_dict = OrderedDict([
             ("id", self.id),

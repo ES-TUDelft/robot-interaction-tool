@@ -44,8 +44,6 @@ class UIController(QtWidgets.QMainWindow):
 
         self.logger = logging.getLogger("UIController")
 
-        self.robot_controller = None
-
         self.image_viewer = None
         self.start_time = 0.0
         self.behavioral_parameters = BehavioralParameters()
@@ -488,6 +486,8 @@ class UIController(QtWidgets.QMainWindow):
     def set_volume(self, vol=pconfig.default_voice_volume):
         if self._check_value(vol, pconfig.voice_volume_range[0], pconfig.voice_volume_range[1]) is True:
             self.volume = vol
+            if self.interaction_controller is not None:
+                self.interaction_controller.robot_volume = vol
 
     # TABLET
     # ------
@@ -546,6 +546,7 @@ class UIController(QtWidgets.QMainWindow):
             self._display_message(message="Attempting to play the interaction!")
             self._enable_buttons([self.ui.actionMenuPlay], enabled=False)
             self._enable_buttons([self.ui.actionMenuStop], enabled=True)
+            self.interaction_controller.robot_volume = self.volume
             self.interaction_controller.start_playing(int_block=block.parent)
 
     def on_finished_playing(self, event):
@@ -598,7 +599,8 @@ class UIController(QtWidgets.QMainWindow):
             # Open edit dialog
             edit_dialog = UIEditBlockController(interaction_block=self.selected_block.parent,
                                                 block_controller=self.block_controller,
-                                                music_controller=self.music_controller)
+                                                music_controller=self.music_controller,
+                                                robot_controller=self.get_robot_controller())
 
             if edit_dialog.exec_():
                 edit_dialog.update_interaction_block(self.selected_block.parent)
@@ -900,6 +902,14 @@ class UIController(QtWidgets.QMainWindow):
                                 btns=[], enable=False)
             self._display_message(message="New blocks are imported.")
             self.repaint()
+
+    ###
+    # HELPER METHODS
+    ###
+    def get_robot_controller(self):
+        if self.interaction_controller is None:
+            return None
+        return self.interaction_controller.robot_controller
 
     def _check_value(self, value, start, stop):
         if start <= value <= (stop + 1):

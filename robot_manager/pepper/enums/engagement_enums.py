@@ -32,9 +32,5 @@ class EngagementZone(ESEnum):
 
 class DialogTopic(ESEnum):
     INDEX = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/index.top"
-    SERVICE = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/service.top"
-    HEALTH = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/health.top"
-    WELLBEING = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/wellbeing.top"
-    WEATHER = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/weather.top"
     CHITCHAT = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/chitchat.top"
     QUESTION = "/home/nao/.local/share/PackageManager/apps/hre_dialog/topics/question.top"

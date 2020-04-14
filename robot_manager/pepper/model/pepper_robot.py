@@ -297,8 +297,8 @@ class PepperRobot(object):
     def say(self, message="Hi"):
         self.speech_handler.say(message=message)
 
-    def animated_say(self, message=None, animation_name=None):
-        self.speech_handler.animated_say(message=message, animation_name=animation_name)
+    def animated_say(self, message=None, animation_name=None, robot_voice=None):
+        self.speech_handler.animated_say(message=message, animation_name=animation_name, robot_voice=robot_voice)
 
     def complain(self, message="Hey"):
         self.animated_say(message=message)

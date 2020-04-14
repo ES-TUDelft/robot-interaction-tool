@@ -17,3 +17,4 @@ class ActionCommand(ESEnum):
     DRAW_NUMBER = "DrawNumber"
     BINGO_SPINNER = "BingoSpinner"
     PLAY_MUSIC = "PlayMusic"
+    WAIT = "Wait"

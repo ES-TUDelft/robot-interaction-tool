@@ -27,7 +27,7 @@ from es_common.model.topic_tag import TopicTag
 
 
 class UIEditBlockController(QtWidgets.QDialog):
-    def __init__(self, interaction_block, block_controller, music_controller=None, parent=None):
+    def __init__(self, interaction_block, block_controller, music_controller=None, robot_controller=None, parent=None):
         super(UIEditBlockController, self).__init__(parent)
 
         self.logger = logging.getLogger("EditBlockController")
@@ -35,6 +35,7 @@ class UIEditBlockController(QtWidgets.QDialog):
         self.block_controller = block_controller
         self.interaction_block = interaction_block
         self.music_controller = music_controller
+        self.robot_controller = robot_controller
 
         self.pattern = self.interaction_block.pattern.lower()
         self.pattern_settings = config_helper.get_patterns()[self.pattern]
@@ -94,6 +95,15 @@ class UIEditBlockController(QtWidgets.QDialog):
             text_box=self.ui.closeGestureLineEdit,
             gesture_type="close"
         ))
+        if self.robot_controller is not None:
+            # Open Gestures
+            self.ui.testOpenGesturesPushButton.setEnabled(True)
+            self.ui.testOpenGesturesPushButton.clicked.connect(lambda: self.test_animation(
+                animation_name=self.ui.openGestureLineEdit.text()))
+            # Close Gestures
+            self.ui.testCloseGesturePushButton.setEnabled(True)
+            self.ui.testCloseGesturePushButton.clicked.connect(lambda: self.test_animation(
+                animation_name=self.ui.closeGestureLineEdit.text()))
 
         # tablet page
         # self.ui.tabletPageNameComboBox.clear()
@@ -127,18 +137,19 @@ class UIEditBlockController(QtWidgets.QDialog):
             self._set_topic_tab(reset=False)
 
     def set_actions(self):
+        # TODO: Use the action property defined in the pattern
+        
         if "action" in self.pattern:
             try:
                 actions = [a for a in ActionCommand.keys()]
-                self.ui.actionGroupBox.setHidden(False)
-                self.ui.rangeGroupBox.setHidden(True)
-                self.ui.musicGroupBox.setHidden(True)
+                self.toggle_action_tab(enable=True)
 
                 self.ui.actionComboBox.addItems([pconfig.SELECT_OPTION])
                 self.ui.actionComboBox.addItems(actions)
 
                 # listeners
                 self.ui.actionComboBox.currentIndexChanged.connect(self.on_action_change)
+                # music
                 self.ui.playlistComboBox.currentIndexChanged.connect(self.update_tracks_combo)
                 self.ui.animationsCheckBox.stateChanged.connect(lambda: self.ui.animationsComboBox.setEnabled(
                     self.ui.animationsCheckBox.isChecked()))
@@ -159,6 +170,8 @@ class UIEditBlockController(QtWidgets.QDialog):
                     if comm_type is ActionCommand.DRAW_NUMBER:
                         self.ui.rangeMinSpinBox.setValue(self.interaction_block.action_command.range_min)
                         self.ui.rangeMaxSpinBox.setValue(self.interaction_block.action_command.range_max)
+                    elif comm_type is ActionCommand.WAIT:
+                        self.ui.timeSpinBox.setValue(self.interaction_block.action_command.wait_time)
                     elif comm_type is ActionCommand.PLAY_MUSIC:
                         self.ui.playlistComboBox.setCurrentIndex(
                             self.ui.playlistComboBox.findText(self.interaction_block.action_command.playlist,
@@ -178,18 +191,32 @@ class UIEditBlockController(QtWidgets.QDialog):
                 self.logger.error("Error while setting actions! {}".format(e))
 
         else:  # otherwise: hide the actions
-            self.ui.actionGroupBox.setHidden(True)
+            self.toggle_action_tab(enable=False)
+
+    def toggle_action_tab(self, enable=False):
+        tab_index = self.ui.tabWidget.indexOf(self.ui.tabWidget.findChild(QtWidgets.QWidget, 'actionTab'))
+        self.ui.tabWidget.setTabEnabled(tab_index, enable)
+        self.ui.rangeGroupBox.setHidden(True)
+        self.ui.musicGroupBox.setHidden(True)
+        self.ui.timeGroupBox.setHidden(True)
+
+        if enable is False:
+            self.ui.actionComboBox.setHidden(True)
+            self.ui.tabWidget.removeTab(tab_index)
 
     def on_action_change(self):
-        enable_range, enable_music = True, True
+        hide_range, hide_music, hide_time = True, True, True
         if self.ui.actionComboBox.currentText() in ActionCommand.DRAW_NUMBER.name:
-            enable_range, enable_music = False, True
+            hide_range = False
+        elif self.ui.actionComboBox.currentText() in ActionCommand.WAIT.name:
+            hide_time = False
         elif self.ui.actionComboBox.currentText() in ActionCommand.PLAY_MUSIC.name:
-            enable_range, enable_music = True, False
+            hide_music = False
             self.update_playlist_combo()
 
-        self.ui.rangeGroupBox.setHidden(enable_range)
-        self.ui.musicGroupBox.setHidden(enable_music)
+        self.ui.rangeGroupBox.setHidden(hide_range)
+        self.ui.timeGroupBox.setHidden(hide_time)
+        self.ui.musicGroupBox.setHidden(hide_music)
 
     def verify_range(self, update_max):
         if self.ui.rangeMinSpinBox.value() >= self.ui.rangeMaxSpinBox.value():
@@ -273,6 +300,14 @@ class UIEditBlockController(QtWidgets.QDialog):
         gest = config_helper.get_gestures()[gesture_type]
         if gesture_name in gest:
             text_box.setText("{}".format(gest[gesture_name]))
+
+    def test_animation(self, animation_name=None):
+        if self.robot_controller is None or animation_name is None or animation_name.strip() == "":
+            return
+        try:
+            self.robot_controller.execute_animation(animation_name=animation_name)
+        except Exception as e:
+            self.logger.error("Error while testing animation: {}! {}".format(animation_name, e))
 
     def _set_topic_tab(self, reset=False):
         # clear the combo-boxes
@@ -377,13 +412,15 @@ class UIEditBlockController(QtWidgets.QDialog):
                           )
 
     def get_command(self):
-        if self.ui.actionGroupBox.isHidden():
+        if self.ui.actionComboBox.isHidden():
             return None
 
         comm_name = "{}".format(self.ui.actionComboBox.currentText())
         if comm_name in ActionCommand.keys():
             args = self.get_command_arguments(comm_name=comm_name)
-            if args is None and comm_name != ActionCommand.PLAY_MUSIC.name:
+            if args is None:
+                if comm_name == ActionCommand.PLAY_MUSIC.name:
+                    return None
                 return CommandFactory.create_command(ActionCommand[comm_name])
             else:
                 return CommandFactory.create_command(ActionCommand[comm_name], *args)
@@ -394,6 +431,8 @@ class UIEditBlockController(QtWidgets.QDialog):
         args = None
         if comm_name == ActionCommand.DRAW_NUMBER.name:
             args = [self.ui.rangeMinSpinBox.value(), self.ui.rangeMaxSpinBox.value()]
+        elif comm_name == ActionCommand.WAIT.name:
+            args = [self.ui.timeSpinBox.value()]
         elif comm_name == ActionCommand.PLAY_MUSIC.name:
             args = self.get_music_arguments()
 

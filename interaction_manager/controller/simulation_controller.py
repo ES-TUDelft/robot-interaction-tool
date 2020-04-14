@@ -21,7 +21,6 @@ class SimulationController(object):
         self._init_dock_widget(parent)
         self.user_turn = False
         self.timer_helper = TimerHelper()
-        self.animations_dict = {}
         self.animations_lst = []
 
         self.current_interaction_block = None
@@ -129,8 +128,12 @@ class SimulationController(object):
             self.update_interaction_log(robot_message=self.current_interaction_block.message)
             if self.current_interaction_block.topic_tag.topic != "":
                 self.user_turn = True
-            elif self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
+                return True
+            # check actions
+            if self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
                 self.on_music_mode()
+            elif self.current_interaction_block.has_action(action_type=ActionCommand.WAIT):
+                self.on_wait_mode()
             else:
                 QTimer.singleShot(1500, self.execute_next_interaction_block)
 
@@ -169,12 +172,19 @@ class SimulationController(object):
         except Exception as e:
             self.logger.error("Error while verifying user input! {}".format(e))
 
-    def on_music_mode(self):
-        if self.music_controller is None:
+    def on_wait_mode(self):
+        wait_command = self.current_interaction_block.action_command
+        if wait_command is None:
             QTimer.singleShot(1000, self.execute_next_interaction_block)
         else:
-            self.current_interaction_block.action_command.music_controller = self.music_controller
-            music_command = self.current_interaction_block.action_command
+            QTimer.singleShot(wait_command.wait_time * 1000, self.execute_next_interaction_block)
+
+    def on_music_mode(self):
+        music_command = self.current_interaction_block.action_command
+        if self.music_controller is None or music_command is None:
+            QTimer.singleShot(1000, self.execute_next_interaction_block)
+        else:
+            music_command.music_controller = self.music_controller
             success = music_command.execute()
             if success is True:
                 message = "Playing now: {}".format(music_command.track)
@@ -189,8 +199,7 @@ class SimulationController(object):
                     QTimer.singleShot(wait_time * 1000, self.on_music_stop)
                 else:
                     self.timer_helper.start()
-                    self.animations_dict = config_helper.get_animations()[music_command.animations_key]
-                    self.animations_lst = self.animations_dict.keys()
+                    self.animations_lst = config_helper.get_animations()[music_command.animations_key]
                     self.on_animation_mode(music_command=music_command,
                                            animation_time=wait_time,
                                            counter=0)
@@ -205,14 +214,26 @@ class SimulationController(object):
 
         if self.timer_helper.elapsed_time() <= animation_time - 4:  # 4s threshold
             anim_index = 0 if counter >= len(self.animations_lst) else counter
-            animation = self.animations_lst[anim_index]
-            msg = self.animations_dict[animation]
-            robot_message = "{} - Executing {}".format("Animation time" if msg is None else msg, animation)
+            anim, msg = self.get_next_animation(anim_index)
+
+            robot_message = "{} - Executing {}".format("Animation time" if msg is None else msg, anim)
             self.update_interaction_log(robot_message=robot_message)
             QTimer.singleShot(4000, lambda: self.on_animation_mode(music_command, animation_time, anim_index + 1))
         else:
             remaining_time = animation_time - self.timer_helper.elapsed_time()
             QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)
+
+    def get_next_animation(self, anim_index):
+        anim, msg = ("", "")
+        try:
+            animation_dict = self.animations_lst[anim_index]
+            if len(animation_dict) > 0:
+                anim = animation_dict.keys()[0]
+                msg = animation_dict[anim]
+        except Exception as e:
+            self.logger.error("Error while getting next animation! {}".format(e))
+        finally:
+            return anim, msg
 
     def on_music_stop(self):
         self.update_interaction_log(robot_message="Let' continue!")

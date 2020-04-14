@@ -66,17 +66,21 @@ class SpeechHandler:
         self.logger.info("Message from say: {}".format(message))
         return False if message is None else self.tts.say(message)
 
-    def animated_say(self, message=None, animation_name=None):
+    def animated_say(self, message=None, animation_name=None, robot_voice=None):
         if message is None:
             return False
+
         try:
+            self.setup_voice(robot_voice=robot_voice)
             if animation_name is None:
-                return self.animated_speech.say(message, {"bodyLanguageMode": "contextual"})  # vs random
+                success = self.animated_speech.say(message, {"bodyLanguageMode": "contextual"})  # vs random
             else:
-                return self.animated_speech.say('^start({}) {} ^wait({})'.format(animation_name,
-                                                                                 message,
-                                                                                 animation_name),
-                                                {"bodyLanguageMode": "contextual"})
+                success = self.animated_speech.say('^start({}) {} ^wait({})'.format(animation_name,
+                                                                                    message,
+                                                                                    animation_name),
+                                                   {"bodyLanguageMode": "contextual"})
+            self.setup_voice(reset=True)
+            return success
         except Exception as e:
             self.logger.error("Error while executing animated message! {}".format(e))
 
@@ -100,7 +104,7 @@ class SpeechHandler:
         self.logger.info("Message = {}".format(to_say))
 
         animation_name = None if interaction_block.gestures is None else interaction_block.gestures[
-                interaction_block.gestures_type.name.lower()]
+            interaction_block.gestures_type.name.lower()]
 
         success = self.animated_say(message=to_say, animation_name=animation_name)
 
@@ -262,10 +266,13 @@ class SpeechHandler:
 
         # insert in the form: field{i} = arr[i]
         for i in range(len(arr)):
+            to_insert = "{}{}".format(field_name, (i + 1))
             if self.is_valid_string(arr[i]):
                 to_insert = "{}{}".format(field_name, (i + 1))
                 self.logger.info("**** {} | {}".format(to_insert, arr[i]))
                 self.memory.insertData(to_insert, arr[i])
+            else:
+                self.memory.insertData(to_insert, "")
 
     def _set_page_fields(self, page):
         # load the appropriate webpage on the tablet, if any

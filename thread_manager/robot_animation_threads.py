@@ -101,6 +101,7 @@ class AnimateRobotThread(QThread):
         self.logger = logging.getLogger("AnimateRobot Thread")
         self.animation_name = None
         self.message = None
+        self.robot_voice = None
         self.interaction_block = None
         self.behavioral_parameters = None
         self.is_first_block = True
@@ -124,9 +125,10 @@ class AnimateRobotThread(QThread):
         if not self.isRunning():
             self.start()
 
-    def animated_say(self, message=None, animation_name=None):
+    def animated_say(self, message=None, animation_name=None, robot_voice=None):
         self.message = message
         self.animation_name = animation_name
+        self.robot_voice = robot_voice
         if not self.isRunning():
             self.start()
 
@@ -147,6 +149,7 @@ class AnimateRobotThread(QThread):
         self.move = False
         self.animation_name = None
         self.message = None
+        self.robot_voice = None
         self.interaction_block = None
         self.is_first_block = True
         self.test_mode = False
@@ -157,9 +160,12 @@ class AnimateRobotThread(QThread):
                 if self.message is None:
                     self.robot_controller.execute_animation(animation_name=self.animation_name)
                 else:
-                    self.robot_controller.animated_say(message=self.message, animation_name=self.animation_name)
+                    self.robot_controller.animated_say(message=self.message,
+                                                       animation_name=self.animation_name,
+                                                       robot_voice=self.robot_voice)
                 self.animation_name = None
                 self.message = None
+                self.robot_voice = None
                 self.logger.debug("Completed animation.")
                 self.animation_completed.emit(True)
             else:

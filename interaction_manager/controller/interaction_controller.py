@@ -39,10 +39,10 @@ class InteractionController(object):
         self.face_tracker_thread = None
         self.timer_helper = TimerHelper()
         self.music_command = None
-        self.animations_dict = {}
         self.animations_lst = []
         self.animation_time = 0
         self.animation_counter = -1
+        self.robot_volume = 50
 
         self.robot_ip = None
         self.port = None
@@ -194,6 +194,9 @@ class InteractionController(object):
             next_block, connecting_edge = self.current_interaction_block.get_next_interaction_block(
                 execution_result=self.animation_thread.execution_result)
 
+            # complete execution
+            self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+
             # update previous block
             self.previous_interaction_block = self.current_interaction_block
         except Exception as e:
@@ -271,15 +274,14 @@ class InteractionController(object):
 
         self.block_controller.clear_selection()
         connecting_edge = None
+
+        # check for remaining actions
+        if self.execute_action_command() is True:
+            return True
+
         if self.previous_interaction_block is None:  # interaction has just started
             self.previous_interaction_block = self.current_interaction_block
-        elif self.current_interaction_block.execution_mode is ExecutionMode.EXECUTING \
-                and self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
-            return self.on_music_mode()
         else:
-            # complete the block
-            self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
-
             # get the next block to say
             self.current_interaction_block, connecting_edge = self.get_next_interaction_block()
             if self.verify_current_interaction_block() is False:
@@ -288,6 +290,8 @@ class InteractionController(object):
         # execute the block
         self.current_interaction_block.execution_mode = ExecutionMode.EXECUTING
         self.current_interaction_block.set_selected(True)
+        self.current_interaction_block.volume = self.robot_volume
+
         if connecting_edge is not None:
             connecting_edge.set_selected(True)
 
@@ -302,6 +306,32 @@ class InteractionController(object):
 
         self.logger.debug("Robot: {}".format(self.current_interaction_block.message))
         return True
+
+    def execute_action_command(self):
+        # check for remaining actions
+        if self.current_interaction_block.execution_mode is ExecutionMode.EXECUTING:
+            if self.current_interaction_block.has_action(action_type=ActionCommand.PLAY_MUSIC):
+                self.on_music_mode()
+                return True
+            elif self.current_interaction_block.has_action(action_type=ActionCommand.WAIT):
+                self.on_wait_mode()
+                return True
+
+        return False
+
+    def on_wait_mode(self):
+        wait_time = 1  # 1s
+        try:
+            if self.current_interaction_block is not None:
+                self.current_interaction_block.execution_mode = ExecutionMode.COMPLETED
+                wait_command = self.current_interaction_block.action_command
+                if wait_command is not None:
+                    wait_time = wait_command.wait_time
+        except Exception as e:
+            self.logger.error("Error while setting wait time! {}".format(e))
+        finally:
+            self.logger.debug("Waiting for {} s".format(wait_time))
+            QTimer.singleShot(wait_time * 1000, self.customized_say)
 
     def on_music_mode(self):
         if self.music_controller is None:
@@ -330,8 +360,7 @@ class InteractionController(object):
 
     def on_animation_mode(self, music_command, animation_time=0):
         self.music_command = music_command
-        self.animations_dict = config_helper.get_animations()[music_command.animations_key]
-        self.animations_lst = self.animations_dict.keys()
+        self.animations_lst = config_helper.get_animations()[music_command.animations_key]
         self.animation_time = animation_time
         self.animation_counter = -1
 
@@ -343,7 +372,7 @@ class InteractionController(object):
             self.logger.debug("*** Animation Thread is still running!")
             QTimer.singleShot(2000, self.on_animation_completed)  # wait for the thread to finish
         else:
-            QTimer.singleShot(2000, self.execute_next_animation)
+            QTimer.singleShot(3000, self.execute_next_animation)
 
     def execute_next_animation(self):
         if self.music_command is None or len(self.animations_lst) == 0:
@@ -353,16 +382,34 @@ class InteractionController(object):
             self.animation_counter += 1
             if self.animation_counter >= len(self.animations_lst):
                 self.animation_counter = 0
-            animation = self.animations_lst[self.animation_counter]
-            message = self.animations_dict[animation]
+            animation, message = self.get_next_animation(self.animation_counter)
             if message is None or message == "":
-                self.animation_thread.animate(animation_name=self.animations_lst[self.animation_counter])
+                self.animation_thread.animate(animation_name=animation)
             else:
                 self.animation_thread.animated_say(message=message,
-                                                   animation_name=self.animations_lst[self.animation_counter])
+                                                   animation_name=animation,
+                                                   robot_voice=self.get_robot_voice())
         else:
             remaining_time = self.animation_time - self.timer_helper.elapsed_time()
             QTimer.singleShot(1000 if remaining_time < 0 else remaining_time * 1000, self.on_music_stop)
+
+    def get_next_animation(self, anim_index):
+        anim, msg = ("", "")
+        try:
+            animation_dict = self.animations_lst[anim_index]
+            if len(animation_dict) > 0:
+                anim = animation_dict.keys()[0]
+                msg = animation_dict[anim]
+        except Exception as e:
+            self.logger.error("Error while getting next animation! {}".format(e))
+        finally:
+            return anim, msg
+
+    def get_robot_voice(self):
+        if self.current_interaction_block is None:
+            return None
+
+        return self.current_interaction_block.behavioral_parameters.voice
 
     def on_music_stop(self):
         self.logger.debug("Finished playing music.")
