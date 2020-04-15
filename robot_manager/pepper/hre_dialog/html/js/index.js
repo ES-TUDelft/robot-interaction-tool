@@ -40,6 +40,9 @@ function getAndFillPage(pageName, pageHeading, pageText, pageImage) {
         case "confirmation":
             window.location = "pages/confirmation.html";
             break;
+        case "displayimage":
+            window.location = "pages/displayimage.html";
+            break;
         default:
             window.location = "index.html";
             return;
@@ -53,8 +56,11 @@ function getPage(pageName) {
         case "help":
             window.location = "pages/help.html";
             break;
-        case "question":
-            window.location = "pages/question.html";
+        case "confirmation":
+            window.location = "pages/confirmation.html";
+            break;
+        case "displayimage":
+            window.location = "pages/displayimage.html";
             break;
         default:
             //window.location = "index.html";

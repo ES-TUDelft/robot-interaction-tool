@@ -3,10 +3,12 @@ tags:
     pages:
       - index
       - displayinfo
+      - displayimage
   confirmationTag:
     pages:
       - index
       - displayinfo
+      - displayimage
       - confirmation
   offerHelpTag:
     pages:
@@ -17,6 +19,7 @@ tablet:
   pages:
     - index
     - displayinfo
+    - displayimage
   images:
     - pepper-standing.png
     - pepper-question.png

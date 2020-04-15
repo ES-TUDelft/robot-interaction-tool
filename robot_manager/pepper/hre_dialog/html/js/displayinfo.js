@@ -27,7 +27,10 @@ function raiseEvent(name, value) {
 
 function displayPageInformation() {
     //alert("Inside display: " + localStorage.getItem("pageHeading"));
-    document.getElementById("pageImage").src = "../pics/" + localStorage.getItem("pageImage");
+    imageName = localStorage.getItem("pageImage");
+    if (imageName) {
+        document.getElementById("pageImage").src = "../pics/" + localStorage.getItem("pageImage");
+    }
     document.getElementById("pageHeading").innerHTML = localStorage.getItem("pageHeading");
     document.getElementById("pageText").innerHTML  = localStorage.getItem("pageText");
 }
@@ -54,6 +57,9 @@ function getAndFillPage(pageName, pageHeading, pageText, pageImage) {
         case "confirmation":
             window.location = "confirmation.html";
             break;
+        case "displayimage":
+            window.location = "displayimage.html";
+            break;
         default:
             window.location = "../index.html";
             return;
@@ -75,6 +81,9 @@ function getPage(pageName) {
             break;
         case "confirmation":
             window.location = "confirmation.html";
+            break;
+        case "displayimage":
+            window.location = "displayimage.html";
             break;
         default:
             window.location = "../index.html";
