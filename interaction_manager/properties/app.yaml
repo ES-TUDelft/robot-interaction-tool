@@ -21,5 +21,7 @@ tablet:
     - displayinfo
     - displayimage
   images:
+    - welcome.jpg
     - pepper-standing.png
     - pepper-question.png
+    - blank.jpg
