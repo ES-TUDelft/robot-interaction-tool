@@ -65,7 +65,7 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         self.title_item.block = self.block
 
         # self.title_item.setDefaultTextColor(Qt.white)
-        self.title_item.setFont(QFont("Arial", 14, QFont.Bold))
+        self.title_item.setFont(config_helper.get_block_title_font())
         x_pos = self._padding + self.title_height  # self._padding + self.title_icon.pixmap().width()
         self.title_item.setPos(x_pos, 0)
         self.title_item.setTextWidth(

@@ -12,11 +12,13 @@
 
 import logging
 import os
+import sys
 from collections import OrderedDict
 
 import yaml
 import json
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QFont
 
 
 def _setup_logger():
@@ -256,12 +258,21 @@ def get_spotify_settings():
 ###
 def load_stylesheet():
     try:
-        filename = "interaction_manager/qss/blockstyle.qss"
+        filename = "interaction_manager/qss/blockstyle-linux.qss"
+        if "darwin" in sys.platform:  # for Mac: darwin | for windows: win32 | for Linux: linux
+            filename = "interaction_manager/qss/blockstyle.qss"
 
         with open(filename, 'r') as stylesheet:
             QApplication.instance().setStyleSheet(stylesheet.read())
     except Exception as e:
         logger.error("Error while reading the stylesheet file! {}".format(e))
+
+
+def get_block_title_font():
+    if "darwin" in sys.platform:
+        return QFont("Courier", 14, QFont.Bold)
+
+    return QFont("Courier", 10, QFont.Bold)
 
 
 ###
