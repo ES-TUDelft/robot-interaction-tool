@@ -45,9 +45,11 @@ To use the tool you need to do the following:
 
 **III.** [User Manual](#iii-user-manual)
 
-**IV.** [Quick Start](#iv-quick-start)
+**IV.** [Design Guidelines](#iv-design-guidelines)
 
-**V.** [Citation](#v-citation)
+**V.** [Quick Start](#v-quick-start)
+
+**VI.** [Citation](#vi-citation)
 
 ---
 
@@ -77,24 +79,30 @@ To use the tool on [Linux](https://github.com/ES-TUDelft/robot-interaction-tool/
 
 ---
 
-## III. User Manual: 
+## III. User Manual
 
 A [user manual](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/user-manual/MANUAL.md) describing the main features of the UI can be found in [docs/user-manual/MANUAL.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/user-manual/MANUAL.md).
 
 ---
 
-## IV. Quick Start
+## IV. Design Guidelines
+
+To help you in designing a successful human-robot interaction, we put together a list of [design guidelines](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/GUIDELINES.md) which can be found in [docs/GUIDELINES.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/GUIDELINES.md).
+
+---
+
+## V. Quick Start
 
 To quickly test the tool, import one of the [examples](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/examples) and run the simulator or connect to a physical robot and test the interaction.
 
 ---
 
-## V. Citation
+## VI. Citation
 Please cite our work when you use this tool in your studies:
 
     @inproceedings{Saad2020,
       author = {Elie Saad and Joost Broekens and Mark A. Neerincx},
       booktitle = {InPress},
-      title = {Design Tool for Prototyping Multi-Modal Robot Communication},
+      title = {An Iterative Interaction-Design Method for Multi-Modal Robot Communication},
       year = {2020}
     }
