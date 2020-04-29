@@ -202,6 +202,7 @@
    <addaction name="actionMenuSimulate"/>
    <addaction name="separator"/>
    <addaction name="actionMenuImportBlocks"/>
+   <addaction name="actionMenuExportBlocks"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="behavioralParametersDockWidget">
