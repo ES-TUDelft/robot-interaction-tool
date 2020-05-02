@@ -31,7 +31,7 @@ In this document we go over the installation of the required libraries and setti
 
 * Install [Python 2.7](https://www.python.org/downloads/release/python-2717/)
 
-`$ sudo apt install python2`
+`$ sudo apt-get install python2 libpython2.7`
 
 ## I.2. NAOqi for Python
 
@@ -59,26 +59,33 @@ In this document we go over the installation of the required libraries and setti
 
 * Test that NAOqi is imported correctly:
 
-`$ python`
+`$ python2`
 
 `>>> import naoqi`
 
-* In case of errors, verify your PYTHONPAH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
+* In case of errors, verify your PYTHONPATH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
 
 
 ## I.3. Install PIP and other dependencies
 
 * Open a terminal
 
-`$ sudo apt-get update`
+`$ sudo apt-get install curl`
 
-`$ sudo apt-get install -y python-pip python-dev`
+`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
+
+`$ python2 get-pip.py`
+
+`$ sudo apt-get install -y python-dev`
 
 * Now use pip to install the project requirements:
+
+`$ cd ~/Documents/robot-interaction-tool`
 
 `$ pip install -r requirements.txt`
 
     * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
+    * If you get errors related to "pip" check if /home/YOUR_USER/.local/bin is in the PATH or add it in ~/.bashrc
     
 
 ## I.4. Install qt513
