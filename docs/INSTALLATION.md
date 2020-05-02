@@ -29,7 +29,9 @@ In this document we go over the installation of the required libraries and setti
 
 ## I.1. Python 2.7
 
-* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/) 
+* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/)
+
+`$ sudo apt install python2`
 
 ## I.2. NAOqi for Python
 
