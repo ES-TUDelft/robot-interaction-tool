@@ -88,24 +88,28 @@ In this document we go over the installation of the required libraries and setti
     * If you get errors related to "pip" check if /home/YOUR_USER/.local/bin is in the PATH or add it in ~/.bashrc
     
 
-## I.4. Install qt513
+## I.4. Install qt5
 
 * Open a terminal:
 
+`$ sudo apt-get install qt5-default`
+
+<!--
 `$ sudo add-apt-repository ppa:beineri/opt-qt-5.13.2-bionic`
 
 `$ sudo apt-get update`
 
 `$ apt-get install -y build-essential libgl1-mesa-dev qt513-meta-minimal qt513svg`
 
-==> Qt should be now in: /opt/qt513
+== Qt should be now in: /opt/qt513
+-->
 
 
 ## I.5. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
 
-* Open a terminal and cd to the downloads folder (or to where you dowloaded sip)
+* Open a new terminal and cd to the downloads folder (or to where you dowloaded sip)
 
 `$ cd Downloads`
 
@@ -127,7 +131,7 @@ In this document we go over the installation of the required libraries and setti
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
-* Open a terminal and cd to the downloads folder (or to where you dowloaded PyQt)
+* Open a new terminal and cd to the downloads folder (or to where you dowloaded PyQt)
 
 `$ cd Downloads`
 
@@ -135,13 +139,17 @@ In this document we go over the installation of the required libraries and setti
 
 `$ cd PyQt5-5.13.2`
 
-`$ LD_LIBRARY_PATH=/opt/qt513/lib python configure.py --confirm-license --disable=QtNfc --qmake=/opt/qt513/bin/qmake QMAKE_LFLAGS_RPATH=`
+<!-- `$ LD_LIBRARY_PATH=/opt/qt513/lib` --qmake=/opt/qt513/bin/qmake -->
+
+`$ python2 configure.py --confirm-license --disable=QtNfc --qmake=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake QMAKE_LFLAGS_RPATH=`
+
+   * If you get errors related to "qmake", check where it is located using: $ qmake qt=5 --version
 
 `$ make -j 4`
 
 `$ sudo make install`
 
-* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step).
+* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step) OR check **Section V**.
 
 `$ pip list | grep 'PyQt5'`
 
