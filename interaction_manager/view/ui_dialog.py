@@ -921,6 +921,7 @@ class Ui_DialogGUI(object):
         self.mainToolBar.addAction(self.actionMenuSimulate)
         self.mainToolBar.addSeparator()
         self.mainToolBar.addAction(self.actionMenuImportBlocks)
+        self.mainToolBar.addAction(self.actionMenuExportBlocks)
 
         self.retranslateUi(DialogGUI)
         self.tabWidget.setCurrentIndex(0)
