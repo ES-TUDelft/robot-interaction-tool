@@ -53,7 +53,7 @@ In this document we go over the installation of the required libraries and setti
 
 `$ vim ~/.bashrc`
 
-`export PYTHONPATH=${PYTHONPATH}:/path_to_pynaoqi-sdk-2.5.5.5-linux64/lib/python2.7/site-packages`
+`export PYTHONPATH=${PYTHONPATH}:/home/YOUR_USERNAME/Documents/pynaoqi-python2.7-2.5.5.5-linux64/lib/python2.7/site-packages`
 
 `$ source ~/.bashrc`
 
@@ -143,7 +143,7 @@ In this document we go over the installation of the required libraries and setti
 
 `$ python2 configure.py --confirm-license --disable=QtNfc --qmake=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake QMAKE_LFLAGS_RPATH=`
 
-   * If you get errors related to "qmake", check where it is located using: $ qmake qt=5 --version
+   * If you get errors related to "qmake", check where it is located using: *$ qmake qt=5 --version*
 
 `$ make -j 4`
 
