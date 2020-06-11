@@ -45,7 +45,7 @@ In this document we go over the installation of the required libraries and setti
 
 `$ cd ~/Downloads`
 
-`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-linux64.tar`
+`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-linux64.tar.gz`
 
 `$ mv pynaoqi-python2.7-2.5.5.5-linux64 ~/Documents`
 
