@@ -74,7 +74,7 @@ In this document we go over the installation of the required libraries and setti
 
 `$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
 
-`$ python2 get-pip.py`
+`$ sudo python2 get-pip.py`
 
 `$ sudo apt-get install -y python-dev`
 
