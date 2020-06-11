@@ -107,15 +107,15 @@ In this document we go over the installation of the required libraries and setti
 
 ## I.5. Install SIP 4.19.x
 
-* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
+* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.23**
 
 * Open a new terminal and cd to the downloads folder (or to where you dowloaded sip)
 
 `$ cd Downloads`
 
-`$ tar -xvzf sip-4.19.21.tar.gz`
+`$ tar -xvzf sip-4.19.23.tar.gz`
 
-`$ cd sip-4.19.21`
+`$ cd sip-4.19.23`
 
 `$ python configure.py --sip-module=PyQt5.sip`
 
@@ -141,7 +141,7 @@ In this document we go over the installation of the required libraries and setti
 
 <!-- `$ LD_LIBRARY_PATH=/opt/qt513/lib` --qmake=/opt/qt513/bin/qmake -->
 
-`$ python2 configure.py --confirm-license --disable=QtNfc --qmake=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake QMAKE_LFLAGS_RPATH=`
+`$ python configure.py --confirm-license --disable=QtNfc --qmake=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake QMAKE_LFLAGS_RPATH=`
 
    * If you get errors related to "qmake", check where it is located using: *$ qmake qt=5 --version*
 
@@ -268,7 +268,7 @@ The user interface should run now, good luck!
 
 ## II.6. SIP 4.19
 
-* Download SIP-4.19.21 from https://www.riverbankcomputing.com/software/sip/download 
+* Download SIP-4.19.23 from https://www.riverbankcomputing.com/software/sip/download 
 
 * Unzip the file
 
@@ -278,7 +278,7 @@ The user interface should run now, good luck!
 
 `$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"`
 
-`$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.21`
+`$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.23`
 
 `$ python configure.py --sip-module PyQt5.sip`
 
@@ -388,15 +388,15 @@ The user interface should run now, good luck!
 
 ## III.5. Install SIP 4.19.21
 
-* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.21**
+* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.23**
 
 * Open a terminal and cd to the downloads folder (or to where you dowloaded sip)
 
 `$ cd Downloads`
 
-`$ tar -xvzf sip-4.19.21.tar.gz`
+`$ tar -xvzf sip-4.19.23.tar.gz`
 
-`$ cd sip-4.19.21`
+`$ cd sip-4.19.23`
 
 `$ python configure.py -d /usr/local/lib/python2.7/site-packages/`
 
