@@ -4,12 +4,13 @@ unset PYTHONPATH; pyuic5 -x interaction_manager/ui/dialogmainwindow.ui -o intera
 
 unset PYTHONPATH; pyuic5 -x interaction_manager/ui/editblockdialog.ui -o interaction_manager/view/ui_editblock_dialog.py -x; source ~/.bash_profile
 unset PYTHONPATH; pyuic5 -x interaction_manager/ui/connectiondialog.ui -o interaction_manager/view/ui_connection_dialog.py -x; source ~/.bash_profile
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/editblockdialog.ui -o interaction_manager/view/ui_editblock_dialog.py -x
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/confirmationdialog.ui -o interaction_manager/view/ui_confirmation_dialog.py -x
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/dbconnectiondialog.ui -o interaction_manager/view/ui_db_connection_dialog.py -x
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/exportdialog.ui -o interaction_manager/view/ui_exportblocks_dialog.py -x
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/importdialog.ui -o interaction_manager/view/ui_importblocks_dialog.py -x
-unset PYTHONPATH; pyuic5 -x interaction_manager/ui/spotifydialog.ui -o interaction_manager/view/ui_spotify_dialog.py -x
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/editblockdialog.ui -o interaction_manager/view/ui_editblock_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/confirmationdialog.ui -o interaction_manager/view/ui_confirmation_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/dbconnectiondialog.ui -o interaction_manager/view/ui_db_connection_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/exportdialog.ui -o interaction_manager/view/ui_exportblocks_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/importdialog.ui -o interaction_manager/view/ui_importblocks_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/spotifydialog.ui -o interaction_manager/view/ui_spotify_dialog.py -x; source ~/.bash_profile
+unset PYTHONPATH; pyuic5 -x interaction_manager/ui/parametersdialog.ui -o interaction_manager/view/ui_parameters_dialog.py -x; source ~/.bash_profile
 
 
 

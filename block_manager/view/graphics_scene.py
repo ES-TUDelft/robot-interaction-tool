@@ -1,11 +1,9 @@
-from __future__ import absolute_import
-
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from interaction_manager.utils import config_helper
-import math
 import logging
+
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
+from block_manager.utils import config_helper
 
 
 class ESGraphicsScene(QGraphicsScene):

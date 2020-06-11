@@ -11,7 +11,6 @@
 # **
 
 import logging
-import time
 
 from PyQt5.QtCore import QTimer
 
@@ -19,7 +18,7 @@ import es_common.hre_config as pconfig
 from es_common.enums.command_enums import ActionCommand
 from es_common.model.observable import Observable
 from es_common.utils.timer_helper import TimerHelper
-from interaction_manager.enums.block_enums import ExecutionMode
+from block_manager.enums.block_enums import ExecutionMode
 from interaction_manager.utils import config_helper
 from robot_manager.pepper.controller.robot_controller import RobotController
 from thread_manager.robot_animation_threads import WakeUpRobotThread, AnimateRobotThread

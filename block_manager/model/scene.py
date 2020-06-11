@@ -1,13 +1,13 @@
-from collections import OrderedDict
 import logging
+from collections import OrderedDict
 
-from es_common.model.observable import Observable
-from interaction_manager.model.edge import Edge
-from interaction_manager.model.block import Block
-from interaction_manager.view.graphics_scene import ESGraphicsScene
+from block_manager.controller.scene_history_controller import SceneHistoryController
+from block_manager.model.block import Block
+from block_manager.model.edge import Edge
+from block_manager.view.graphics_scene import ESGraphicsScene
 from es_common.datasource.serializable import Serializable
-from interaction_manager.utils import data_helper
-from interaction_manager.controller.scene_history_controller import SceneHistoryController
+from es_common.model.observable import Observable
+from es_common.utils import data_helper
 
 
 class Scene(Serializable, Observable):
@@ -106,13 +106,13 @@ class Scene(Serializable, Observable):
     # SERIALIZATION
     ###
     def serialize(self):
-        try:
-            to_return = OrderedDict([
-                ("id", self.id),
-                ("blocks", []),
-                ("edges", [])
-            ])
+        to_return = OrderedDict([
+            ("id", self.id),
+            ("blocks", []),
+            ("edges", [])
+        ])
 
+        try:
             # serialize the blocks
             to_return["blocks"] = [b.serialize() for b in self.blocks]
 
@@ -128,7 +128,7 @@ class Scene(Serializable, Observable):
         finally:
             return to_return
 
-    def deserialize(self, data, hashmap={}):
+    def deserialize(self, data, hashmap=None):
         try:
             # clear scene
             self.clear()
@@ -137,7 +137,7 @@ class Scene(Serializable, Observable):
 
             # create block
             for b_data in data["blocks"]:
-                Block(self).deserialize(b_data, hashmap)
+                Block(self, bg_color=self.get_property(b_data, "bg_color")).deserialize(b_data, hashmap)
 
             # create edges
             for e_data in data["edges"]:

@@ -1,12 +1,12 @@
+import logging
 from collections import OrderedDict
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from es_common.datasource.serializable import Serializable
 
-from interaction_manager.utils import config_helper
-import logging
+from block_manager.utils import config_helper
+from es_common.datasource.serializable import Serializable
 
 
 class ESBlockContentWidget(QWidget, Serializable ):

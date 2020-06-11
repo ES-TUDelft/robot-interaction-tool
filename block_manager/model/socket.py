@@ -1,16 +1,14 @@
+import logging
 from collections import OrderedDict
 
+from block_manager.enums.block_enums import Position, SocketType
+from block_manager.view.graphics_socket import ESGraphicsSocket
 from es_common.datasource.serializable import Serializable
-from interaction_manager.utils import config_helper
-from interaction_manager.view.graphics_socket import ESGraphicsSocket
-from interaction_manager.enums.block_enums import Position, SocketType
-import logging
-
 from es_common.model.observable import Observable
 
 
 class Socket(Serializable, Observable):
-    def __init__(self, block, index=0, position=Position.BOTTOM_LEFT, socket_type=SocketType.INPUT):
+    def __init__(self, block, index=0, position=Position.BOTTOM_LEFT, socket_type=SocketType.INPUT, edge_limit=-1):
         super(Socket, self).__init__()
         Observable.__init__(self)  # explicit call to second parent class
 
@@ -20,13 +18,16 @@ class Socket(Serializable, Observable):
         self.index = index
         self.position = position
         self.socket_type = socket_type
+        self.edge_limit = edge_limit
 
         self.edges = []
+        self._init_graphics()
 
+    def _init_graphics(self):
         # create a graphics socket and attach it to the graphics block as parent
         self.graphics_socket = ESGraphicsSocket(socket=self, parent=self.block.graphics_block)
         # set the socket's position
-        self.graphics_socket.setPos(*self.block.get_socket_position(index, position))
+        self.graphics_socket.setPos(*self.block.get_socket_position(self.index, self.position))
 
     def __str__(self):
         return "<Socket id {}..{}>".format((hex(id(self))[2:5]), (hex(id(self))[-3:]))
@@ -57,18 +58,14 @@ class Socket(Serializable, Observable):
         return edge in self.edges
 
     def can_have_more_edges(self):
-        result = True
-        try:
-            if self.socket_type is SocketType.OUTPUT:
-                output_edges = config_helper.get_patterns()[self.block.pattern.lower()]["output_edges"]
-                if len(self.edges) >= output_edges:
-                    result = False
-        except Exception as e:
-            self.logger.error("Error while checking for edges! {}".format(e))
-        finally:
-            self.logger.debug("Socket {} of {} {} have more edges.".format(self, self.block.title,
-                                                                           "can" if result is True else "cannot"))
-            return result
+        if self.edge_limit < 0:
+            return True
+
+        if len(self.edges) >= self.edge_limit:
+            self.logger.debug("Socket {} of {} cannot have more edges.".format(self, self.block.title))
+            return False
+
+        return True
 
     def update_edge_positions(self):
         for edge in self.edges:
@@ -114,7 +111,8 @@ class Socket(Serializable, Observable):
             ("id", self.id),
             ("index", self.index),
             ("position", self.position.name),
-            ("socket_type", self.socket_type.name)
+            ("socket_type", self.socket_type.name),
+            ("edge_limit", self.edge_limit)
         ])
 
     def deserialize(self, data, hashmap={}):

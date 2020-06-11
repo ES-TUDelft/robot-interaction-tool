@@ -1,9 +1,11 @@
-from PyQt5.QtWidgets import QGraphicsItem
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from interaction_manager.utils import config_helper
-from interaction_manager.enums.block_enums import SocketType
 import logging
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QGraphicsItem
+
+from block_manager.enums.block_enums import SocketType
+from block_manager.utils import config_helper
 
 
 class ESGraphicsSocket(QGraphicsItem):

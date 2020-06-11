@@ -16,24 +16,20 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import es_common.hre_config as pconfig
-from es_common.enums.led_enums import LedColor
-from es_common.enums.speech_enums import *
-from es_common.enums.voice_enums import *
-from es_common.model.observable import Observable
+from block_manager.utils import config_helper as bconfig_helper
 from es_common.utils import date_helper
-from interaction_manager.controller.block_controller import BlockController
+from interaction_manager.controller.block_controller import ESBlockController
 from interaction_manager.controller.database_controller import DatabaseController
 from interaction_manager.controller.interaction_controller import InteractionController
-from interaction_manager.controller.simulation_controller import SimulationController
 from interaction_manager.controller.music_controller import MusicController
+from interaction_manager.controller.simulation_controller import SimulationController
 from interaction_manager.controller.ui_confirmation_dialog_controller import UIConfirmationDialogController
 from interaction_manager.controller.ui_edit_block_controller import UIEditBlockController
 from interaction_manager.controller.ui_export_blocks_controller import UIExportBlocksController
 from interaction_manager.controller.ui_import_blocks_controller import UIImportBlocksController
+from interaction_manager.controller.ui_parameters_controller import UIParametersController
 from interaction_manager.controller.ui_robot_connection_controller import UIRobotConnectionController
 from interaction_manager.controller.ui_spotify_connection_controller import UISpotifyConnectionController
-from interaction_manager.model.behavioral_parameters import BehavioralParameters
-from interaction_manager.utils import config_helper
 from interaction_manager.view.ui_dialog import Ui_DialogGUI
 
 
@@ -46,8 +42,6 @@ class UIController(QtWidgets.QMainWindow):
 
         self.image_viewer = None
         self.start_time = 0.0
-        self.behavioral_parameters = BehavioralParameters()
-        self.copied_behavioral_parameters = None
         self.interaction_blocks = []
         self.selected_block = None
         self.copied_block = None
@@ -65,7 +59,7 @@ class UIController(QtWidgets.QMainWindow):
         self.music_controller = None
 
         # load stylesheet
-        config_helper.load_stylesheet()
+        bconfig_helper.load_stylesheet()
         # init UI elements
         self._init_ui()
 
@@ -114,9 +108,7 @@ class UIController(QtWidgets.QMainWindow):
         # VOLUME
         self.ui.actionMenuVolumeUp.triggered.connect(self.volume_up)
         self.ui.actionMenuVolumeDown.triggered.connect(self.volume_down)
-        # RELOAD
-        # ------
-        self.ui.actionReload.triggered.connect(self.reset_behavioral_parameters)
+
         # UNDO/REDO
         # ---------
         self.ui.actionMenuUndo.triggered.connect(self.on_undo)
@@ -136,34 +128,6 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionMenuCopy.triggered.connect(self.copy_block)
         self.ui.actionMenuPasteParameters.triggered.connect(self.paste_behavioral_parameters)
 
-        # COMMUNICATION & BEHAVIORAL PARAMETERS
-        # --------------------------------------
-        # group eye color buttons
-        self.eye_color_radio_buttons = [self.ui.whiteEyeColorRadioButton, self.ui.redEyeColorRadioButton,
-                                        self.ui.greenEyeColorRadioButton, self.ui.blueEyeColorRadioButton]
-        self._set_behavioral_parameters_elements()
-
-        # Eye color
-        self.ui.whiteEyeColorRadioButton.toggled.connect(lambda: self.eye_color(self.ui.whiteEyeColorRadioButton))
-        self.ui.redEyeColorRadioButton.toggled.connect(lambda: self.eye_color(self.ui.redEyeColorRadioButton))
-        self.ui.greenEyeColorRadioButton.toggled.connect(lambda: self.eye_color(self.ui.greenEyeColorRadioButton))
-        self.ui.blueEyeColorRadioButton.toggled.connect(lambda: self.eye_color(self.ui.blueEyeColorRadioButton))
-
-        # behvioral parameters
-        self.ui.gestureOpennessSlider.valueChanged.connect(lambda: self.gesture_openness(self.ui.gestureOpennessSlider))
-        self.ui.gazePatternSlider.valueChanged.connect(lambda: self.gaze_pattern(self.ui.gazePatternSlider))
-        self.ui.proxemicsSlider.valueChanged.connect(lambda: self.proxemics(self.ui.proxemicsSlider))
-        self.ui.voicePitchSlider.valueChanged.connect(lambda: self.voice_pitch(self.ui.voicePitchSlider))
-        self.ui.voiceSpeedSlider.valueChanged.connect(lambda: self.voice_speed(self.ui.voiceSpeedSlider))
-        self.ui.voiceProsodySlider.valueChanged.connect(lambda: self.voice_prosody(self.ui.voiceProsodySlider))
-
-        # TEST button
-        self.ui.testBehavioralParametersButton.clicked.connect(self.test_behavioral_parameters)
-        # Apply buttons
-        self.ui.behavioralParametersApplyButton.clicked.connect(self.apply_behavioral_parameters)
-        self.ui.behavioralParametersApplyToAllButton.clicked.connect(
-            lambda: self.apply_behavioral_parameters(to_all_items=True))
-
         # DELETE, RESET, CLEAR, IMPORT and SAVE list listeners
         self._enable_buttons([self.ui.actionMenuNew, self.ui.actionMenuSaveAs],
                              enabled=False)  # disabled for now!
@@ -180,22 +144,14 @@ class UIController(QtWidgets.QMainWindow):
         # TODO: replace by action menu
         # self.ui.enableMovingCheckBox.clicked.connect(self.enable_moving)
 
-        # Create dialogue blocks
-        # self.create_drag_blocks()
-        # self._enable_buttons([self.ui.actionMenuPlay], True)
-
-        # behavioral parameters widget ==> does it need a controller class?
-        self.ui.behavioralParametersDockWidget.setFloating(True)
-        self.ui.behavioralParametersDockWidget.setHidden(True)
-
     def _setup_block_controller(self):
-        self.block_controller = BlockController(parent_widget=self)
+        self.block_controller = ESBlockController(parent_widget=self)
 
         # remove tmp widget and setup the blocks controller
         self.ui.designPanelLayout.removeWidget(self.ui.tmpWidget)
 
         # add design widget in the middle
-        self.ui.designPanelLayout.addWidget(self.block_controller.get_block_widget())
+        self.ui.designPanelLayout.addWidget(self.block_controller.block_widget)
 
         # add dock list widget
         self.block_dock_widget = self.block_controller.create_block_dock()
@@ -467,12 +423,6 @@ class UIController(QtWidgets.QMainWindow):
     def tracking(self, enable=True):
         self.interaction_controller.tracking(enable=enable)
 
-    def test_behavioral_parameters(self):
-        message, error = self.interaction_controller.test_behavioral_parameters(self.selected_block.parent,
-                                                                                self.behavioral_parameters.clone(),
-                                                                                self.volume)
-        self._display_message(message=message, error=error)
-
     def volume_up(self):
         vol = self.volume + pconfig.volume_increase
         self.set_volume(vol)
@@ -573,22 +523,12 @@ class UIController(QtWidgets.QMainWindow):
         self.ui.actionMenuCopy.setEnabled(True)
         self.enable_paste_buttons()
 
-        self.update_parameters_widget()
-
     def on_no_block_selected(self, event):
         self.selected_block = None
-        self._set_warning_label_color(reset=True)
 
         # disable copy/paste
         self._enable_buttons([self.ui.actionMenuCopy, self.ui.actionMenuPaste, self.ui.actionMenuPasteParameters],
                              enabled=False)
-
-        # Disable behavioral parameters widget
-        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                            btns=[],
-                            enable=False)
-
-        self.ui.behavioralParametersDockWidget.setHidden(True)
 
     def block_editing(self, block):
         if block is None:
@@ -616,121 +556,43 @@ class UIController(QtWidgets.QMainWindow):
             return
 
         self.selected_block = block
-        # Enable behavioral parameters widget and update the values
-        self.ui.behavioralParametersDockWidget.setHidden(False)
-        self.update_parameters_widget()
+        try:
+            # Open parameters dialog
+            interaction_block = self.selected_block.parent
+            interaction_block.volume = self.volume
+            parameters_dialog = UIParametersController(interaction_block=interaction_block,
+                                                       block_controller=self.block_controller,
+                                                       interaction_controller=self.interaction_controller)
 
-    def update_parameters_widget(self):
-        if self.selected_block is None:
-            return False
+            if parameters_dialog.exec_():
+                self.selected_block.parent.set_behavioral_parameters(
+                    p_name="all",
+                    behavioral_parameters=parameters_dialog.behavioral_parameters)
+                self._display_message(
+                    message="The parameters are updated.")
+                self.block_controller.store("Edited Parameters")
 
-        self._set_warning_label_color(reset=True)
+        except Exception as e:
+            self._display_message(error="Error while attempting to edit the parameters! {}".format(e))
+            self.repaint()
 
-        self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                            btns=[],
-                            enable=True)
-
-        # Set widget's behavioral parameter
-        self.ui.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
-        self._set_behavioral_parameters_elements(self.ui.behavioral_parameters)
-
-        self.ui.behavioralParametersDockWidget.repaint()
-
-    # ---------------------
-    # BEHAVIORAL PARAMETERS
-    # ---------------------
-    # Can be used to simplify the remaining functions!
-    def slider_listener(self, slider, the_enum, beh_param_property):
-        val = slider.value() if slider.value() in the_enum.values() else 0
-        beh_param_property = the_enum(val)
-
-    def gesture_openness(self, slider):
-        val = slider.value() if slider.value() in GesturesType.values() else 0
-        self.behavioral_parameters.gestures_type = GesturesType(val)
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def gaze_pattern(self, slider):
-        val = slider.value() if slider.value() in GazePattern.values() else 0
-        self.behavioral_parameters.gaze_pattern = GazePattern(val)
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def voice_prosody(self, slider):
-        val = slider.value() if slider.value() in VoiceProsody.values() else 0
-        self.behavioral_parameters.voice.prosody = VoiceProsody(val)
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def voice_pitch(self, slider):
-        self.behavioral_parameters.voice.pitch = (float(slider.value()) * 0.1) + 1
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def voice_speed(self, slider):
-        self.behavioral_parameters.voice.speed = (float(slider.value()) * 10) + 100
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def proxemics(self, slider):
-        p_val = self._convert_proxemics(value=float(slider.value()), to_float=True)
-        self.ui.proxemicsLcdNumber.display(p_val)
-        self.behavioral_parameters.proxemics = p_val
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def eye_color(self, btn):
-        self.behavioral_parameters.eye_color = LedColor[btn.text().upper()]
-        self._set_warning_label_color(c=pconfig.warning_color_rgb)
-
-    def apply_behavioral_parameters(self, to_all_items=False):
-        if to_all_items is True:
-            confirmation_dialog = UIConfirmationDialogController(message="The changes will be applied to all items.")
-            if confirmation_dialog.exec_():
-                self.block_controller.update_blocks_behavioral_parameters(
-                    param_name="{}".format(self.ui.behavioralParametersApplyComboBox.currentText()),
-                    behavioral_parameters=self.behavioral_parameters)
-
-                self._display_message(message="The parameters of all blocks are updated.")
-        else:
-            if self.selected_block is not None:
-                self.selected_block.parent.set_behavioral_parameters(p_name="all",
-                                                                     behavioral_parameters=self.behavioral_parameters)
-
-                self._display_message(message="The '{}' parameters are updated.".format(self.selected_block.title))
-                self.block_controller.store("Updated parameters for {}".format(self.selected_block.title))
-
-        # reset warning
-        self._set_warning_label_color(reset=True)
-
-        self.ui.behavioralParametersDockWidget.repaint()
-        self.ui.logsDockWidget.repaint()
-
-    def reset_behavioral_parameters(self):
-        self.behavioral_parameters = BehavioralParameters()
-        # self.logger.info("*** {}".format(self.behavioral_parameters.voice.to_dict))
-        self._set_behavioral_parameters_elements()
-        self._display_message(message="Behavioral parameters successfully reset.")
-        self.ui.behavioralParametersDockWidget.repaint()
-        self.ui.logsDockWidget.repaint()
+        self.selected_block = block
 
     def copy_block(self):
         if self.selected_block is not None:
             self.copied_block = self.selected_block
             self.enable_paste_buttons()
 
-    def copy_behavioral_parameters(self):
-        self.copied_behavioral_parameters = self.behavioral_parameters.clone()
-        self._enable_buttons(buttons=[self.ui.actionMenuPasteParameters], enabled=True)
-
     def paste_behavioral_parameters(self):
         if self.selected_block is not None and self.copied_block is not None:
+            behavioral_parameters = self.copied_block.parent.behavioral_parameters.clone()
             self.selected_block.parent.set_behavioral_parameters(
-                p_name="{}".format(self.ui.behavioralParametersApplyComboBox.currentText()),
-                behavioral_parameters=self.copied_block.parent.behavioral_parameters)
+                p_name="All",
+                behavioral_parameters=behavioral_parameters)
 
             self.block_controller.store("Updated parameters")
 
-            self.behavioral_parameters = self.selected_block.parent.behavioral_parameters.clone()
-            self._set_behavioral_parameters_elements(self.behavioral_parameters)
-
             self._display_message(message="Successfully pasted the parameters.")
-
-            self.ui.behavioralParametersDockWidget.repaint()
 
     def enable_paste_buttons(self):
         # TODO: activate paste block!
@@ -836,24 +698,13 @@ class UIController(QtWidgets.QMainWindow):
         self.backup_blocks()
 
         self._display_message(message="Successfully duplicated the block.")
-        self.ui.behavioralParametersDockWidget.repaint()
         self.repaint()
-
-    def _fill_widget_with_blocks(self, blocks=[]):
-        # TODO: fill scene with imported blocks
-        self.block_controller.clear_scene()
-
-        # self.block_controller.clear_selection()
 
     def clear_blocks(self):
         # Ask for confirmation
         confirmation_dialog = UIConfirmationDialogController(message="All blocks will be deleted!")
         if confirmation_dialog.exec_():
             self.block_controller.clear_scene()
-
-            # Disable widget
-            self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                                btns=[], enable=False)
 
             self.repaint()
 
@@ -882,11 +733,6 @@ class UIController(QtWidgets.QMainWindow):
         self.block_controller.save_blocks(filename=filename)
         self._display_message(message="Successfully saved the blocks!")
 
-        # interaction_design = self.create_interaction_design()
-        # interaction_design.blocks = {}  # self.ui.dropListWidget.to_dict
-
-        # self.insert_interaction_design(interaction_design)
-
     def import_blocks(self):
         # open import dialog
         import_dialog = UIImportBlocksController()
@@ -897,9 +743,6 @@ class UIController(QtWidgets.QMainWindow):
             # fill scene with blocks
             self.block_controller.load_blocks_data(data=import_dialog.blocks_data)
 
-            # Disable behavioral parameters widget
-            self._toggle_widget(widget=self.ui.behavioralParametersDockWidget,
-                                btns=[], enable=False)
             self._display_message(message="New blocks are imported.")
             self.repaint()
 
@@ -918,65 +761,6 @@ class UIController(QtWidgets.QMainWindow):
             self.logger.error("*** Please provide a value in range: [{}, {}]".format(start, stop))
             return False
 
-    def _set_behavioral_parameters_elements(self, behavioral_parameters=None):
-        if behavioral_parameters is None:
-            behavioral_parameters = self.behavioral_parameters
-        self.ui.gestureOpennessSlider.setValue(behavioral_parameters.gestures_type.value)
-        self.ui.gazePatternSlider.setValue(behavioral_parameters.gaze_pattern.value)
-        # roll back the proxemics value
-        self.ui.proxemicsSlider.setValue(self._convert_proxemics(value=behavioral_parameters.proxemics, to_int=True))
-        self.ui.proxemicsLcdNumber.display(behavioral_parameters.proxemics)
-        self.ui.voicePitchSlider.setValue(int(round((behavioral_parameters.voice.pitch - 1) / .1, 1)))
-        self.ui.voiceSpeedSlider.setValue(int((behavioral_parameters.voice.speed - 100) / 10))
-        self.ui.voiceProsodySlider.setValue(behavioral_parameters.voice.prosody.value)
-        self._check_eye_color_btn(color=behavioral_parameters.eye_color)
-
-        # reset warning label
-        self._set_warning_label_color(reset=True)
-        self.repaint()
-
-    def _set_warning_label_color(self, c=None, reset=False):
-        if c is None or c == "" or reset is True:
-            c = pconfig.default_color_rgb
-        self.ui.warningLabel.setStyleSheet("QLabel { color : " + c + "; }")
-
-    def _convert_proxemics(self, value=0.0, to_int=False, to_float=False):
-        if to_int is True:
-            return int((value - pconfig.proxemics_initial_value) / pconfig.proxemics_multiplier)
-        elif to_float is True:
-            return float(value * pconfig.proxemics_multiplier) + pconfig.proxemics_initial_value
-        else:
-            return 1
-
-    def _check_eye_color_btn(self, color=LedColor.WHITE):
-        for btn in self.eye_color_radio_buttons:
-            if btn.text().lower() == color.name.lower():
-                self._check_buttons([btn], checked=True)
-                return
-
-    def _set_combo_box(self, combo_box, items):
-        combo_box.clear()
-        combo_box.addItems(items)
-
-    def _connect_radio_button_listeners(self, func=None, btns=[]):
-        if func is None: return
-
-        for btn in btns:
-            btn.toggled.connect(lambda: func(btn))
-
-    def _connect_slider_listeners(self, func=None, sliders=[], enums=[]):
-        if func is None: return
-
-        for i in range(0, len(sliders)):
-            sliders[i].valueChanged.connect(lambda: func(sliders[i], enums[i]))
-
-    def _get_index_of_current_item(self):
-        # TODO: index of selected item
-        indexes = None
-        if indexes:
-            return indexes[0].row()
-        return -1
-
     def _display_message(self, message=None, error=None, warning=None):
         if error is None:
             # check if we have a warning or a normal message
@@ -993,7 +777,10 @@ class UIController(QtWidgets.QMainWindow):
 
         self.repaint()
 
-    def _enable_buttons(self, buttons=[], enabled=False):
+    def _enable_buttons(self, buttons=None, enabled=False):
+        if buttons is None:
+            return
+
         for button in buttons:
             try:
                 button.setEnabled(enabled)
@@ -1003,19 +790,10 @@ class UIController(QtWidgets.QMainWindow):
             finally:
                 pass
 
-    def _check_buttons(self, btns=[], checked=False):
-        if btns is None: return
+    def _toggle_widget(self, widget, btns=None, enable=True):
+        if btns is None:
+            return
 
-        for btn in btns:
-            btn.setChecked(checked)
-            try:
-                btn.setChecked(checked)
-            except Exception as e:
-                self.logger.info("Error while checking radio button: {} | {}".format(btn, e))
-            finally:
-                pass
-
-    def _toggle_widget(self, widget, btns=[], enable=True):
         widget.setEnabled(enable)
         self._enable_buttons(buttons=btns, enabled=enable)
 
@@ -1025,7 +803,6 @@ class UIController(QtWidgets.QMainWindow):
             self._enable_buttons([self.ui.actionMenuRest, self.ui.actionMenuShowImage,
                                   self.ui.actionMenuEnableTouch,
                                   self.ui.actionMenuVolumeDown, self.ui.actionMenuVolumeUp, self.ui.actionMenuPlay,
-                                  self.ui.testBehavioralParametersButton
                                   ], enabled=True)
             self._enable_buttons([self.ui.actionMenuWakeUp, self.ui.actionMenuHideImage,
                                   self.ui.actionMenuStop], enabled=False)
@@ -1037,5 +814,4 @@ class UIController(QtWidgets.QMainWindow):
                                   self.ui.actionMenuEnableTouch,
                                   self.ui.actionMenuVolumeDown, self.ui.actionMenuVolumeUp, self.ui.actionMenuPlay,
                                   self.ui.actionMenuStop,
-                                  self.ui.testBehavioralParametersButton
                                   ], enabled=False)

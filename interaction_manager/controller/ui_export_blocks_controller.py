@@ -17,7 +17,7 @@ from os.path import expanduser
 
 from PyQt5 import QtGui, QtWidgets
 
-from interaction_manager.utils import data_helper
+from es_common.utils import data_helper
 from interaction_manager.view.ui_exportblocks_dialog import Ui_ExportBlocksDialog
 
 

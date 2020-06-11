@@ -4,7 +4,7 @@ import spotipy
 
 from interaction_manager.utils import config_helper
 
-logger = logging.getLogger("Spotify Win Config")
+logger = logging.getLogger("Spotify Config")
 
 default_spotify_settings = config_helper.get_spotify_settings()
 

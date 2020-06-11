@@ -11,7 +11,7 @@
 # **
 
 import logging
-from interaction_manager.utils import config_helper
+from block_manager.utils import config_helper
 
 
 class HistoryController(object):

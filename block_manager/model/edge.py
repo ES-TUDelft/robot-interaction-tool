@@ -1,11 +1,11 @@
 from collections import OrderedDict
 
+from block_manager.enums.block_enums import EdgeType
+from block_manager.view.graphics_edge import *
 from es_common.datasource.serializable import Serializable
-from interaction_manager.view.graphics_edge import *
-from interaction_manager.enums.block_enums import EdgeType
-import logging
-
 from es_common.model.observable import Observable
+
+import logging
 
 
 class Edge(Serializable, Observable):

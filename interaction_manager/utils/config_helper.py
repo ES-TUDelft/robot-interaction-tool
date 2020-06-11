@@ -12,13 +12,9 @@
 
 import logging
 import os
-import sys
 from collections import OrderedDict
 
 import yaml
-import json
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QFont
 
 
 def _setup_logger():
@@ -80,52 +76,6 @@ def get_db_mongo_settings():
 
 
 ####
-# Block Properties
-###
-def _get_block_properties():
-    props = None
-    try:
-        # on Linux use: block-linux.yaml
-        filename = "block.yaml"
-        # if "linux" in sys.platform:  # for Mac: darwin | for windows: win32
-        #    filename = "block-linux.yaml"
-
-        with open("interaction_manager/properties/{}".format(filename), 'r') as yaml_file:
-            props = yaml.load(yaml_file, Loader=yaml.SafeLoader)
-    except Exception as e:
-        logger.error("Error while opening the block properties file! {}".format(e))
-    finally:
-        return props
-
-
-block_props = _get_block_properties()
-
-
-def get_colors():
-    return block_props["colors"]
-
-
-def get_icons():
-    return block_props["icons"]
-
-
-def get_block_mimetype():
-    return block_props["block_mimetype"]
-
-
-def get_history_limit():
-    return block_props["history_limit"]
-
-
-def get_block_size_settings():
-    return block_props["size"]["block"]
-
-
-def get_socket_size_settings():
-    return block_props["size"]["socket"]
-
-
-####
 # Patterns
 ###
 def _get_patterns_properties():
@@ -143,7 +93,7 @@ _patterns = _get_patterns_properties()
 
 
 def get_patterns():
-    return _patterns
+    return _get_patterns_properties()
 
 
 ####
@@ -251,28 +201,6 @@ spotify_config = _get_spotify_config()
 
 def get_spotify_settings():
     return spotify_config["spotify"]
-
-
-###
-# STYLESHEET
-###
-def load_stylesheet():
-    try:
-        filename = "interaction_manager/qss/blockstyle-linux.qss"
-        if "darwin" in sys.platform:  # for Mac: darwin | for windows: win32 | for Linux: linux
-            filename = "interaction_manager/qss/blockstyle.qss"
-
-        with open(filename, 'r') as stylesheet:
-            QApplication.instance().setStyleSheet(stylesheet.read())
-    except Exception as e:
-        logger.error("Error while reading the stylesheet file! {}".format(e))
-
-
-def get_block_title_font():
-    if "darwin" in sys.platform:
-        return QFont("Courier", 14, QFont.Bold)
-
-    return QFont("Courier", 10, QFont.Bold)
 
 
 ###

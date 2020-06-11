@@ -1,19 +1,19 @@
+import logging
 from collections import OrderedDict
 
-from es_common.model.observable import Observable
+from block_manager.enums.block_enums import Position, SocketType
+from block_manager.model.socket import Socket
+from block_manager.view.block_content_widget import ESBlockContentWidget
+from block_manager.view.graphics_block import ESGraphicsBlock
 from es_common.datasource.serializable import Serializable
-from interaction_manager.view.graphics_block import ESGraphicsBlock
-from interaction_manager.view.block_content_widget import ESBlockContentWidget
-from interaction_manager.model.socket import Socket
-from interaction_manager.enums.block_enums import Position, SocketType
-import logging
-
+from es_common.model.observable import Observable
 from es_common.utils import block_helper
 
 
 class Block(Serializable, Observable):
 
-    def __init__(self, scene, title="Start", socket_types=[], pos=[], parent=None, icon=None):
+    def __init__(self, scene, title="Start", socket_types=[], pos=[],
+                 parent=None, icon=None, output_edges=1, bg_color=None):
         super(Block, self).__init__()
         Observable.__init__(self)  # explicit call to second parent class
 
@@ -22,6 +22,7 @@ class Block(Serializable, Observable):
         self.scene = scene
         self.parent = parent  # any container
         self.graphics_block = None
+        self.bg_color = bg_color
 
         self.icon = icon
         self.title = title  # is also the pattern name
@@ -31,7 +32,7 @@ class Block(Serializable, Observable):
 
         self.socket_spacing = 22
 
-        self._init_ui(socket_types, pos)
+        self._init_ui(socket_types, pos, output_edges)
 
         # add observables
         self.editing_observables = Observable()
@@ -44,16 +45,16 @@ class Block(Serializable, Observable):
         # add block to the scene
         self.scene.add_block(self)
 
-    def _init_ui(self, socket_types, pos):
+    def _init_ui(self, socket_types, pos, output_edges):
         self.content = ESBlockContentWidget(block=self)
-        self.graphics_block = ESGraphicsBlock(block=self)
+        self.graphics_block = ESGraphicsBlock(block=self, bg_color=self.bg_color)
 
-        self._init_sockets(socket_types)
+        self._init_sockets(socket_types, output_edges)
 
         if pos is not None and len(pos) == 2:
             self.set_pos(*pos)
 
-    def _init_sockets(self, socket_types):
+    def _init_sockets(self, socket_types, output_edges):
         in_counter = 0
         out_counter = 0
         for st in socket_types:
@@ -67,7 +68,9 @@ class Block(Serializable, Observable):
                 self.outputs.append(Socket(block=self,
                                            index=out_counter,
                                            position=Position.TOP_RIGHT,
-                                           socket_type=SocketType.OUTPUT))
+                                           socket_type=SocketType.OUTPUT,
+                                           edge_limit=output_edges)
+                                    )
                 out_counter += 1
 
     def get_socket_position(self, index, position):
@@ -192,7 +195,8 @@ class Block(Serializable, Observable):
             ("inputs", [s.serialize() for s in self.inputs]),
             ("outputs", [s.serialize() for s in self.outputs]),
             ("content", self.content.serialize()),
-            ("parent", {} if self.parent is None else self.parent.serialize())
+            ("parent", {} if self.parent is None else self.parent.serialize()),
+            ("bg_color", self.bg_color)
         ])
 
     def deserialize(self, data, hashmap={}):
@@ -202,6 +206,7 @@ class Block(Serializable, Observable):
         self.icon = data["icon"]
         self.title = data["title"]
         self.set_pos(data["pos_x"], data["pos_y"])
+        self.bg_color = data["bg_color"] if "bg_color" in data.keys() else None
 
         # set inputs and outputs
         data["inputs"].sort(key=lambda s: s["index"] + Position[s["position"]].value * 1000)
@@ -212,7 +217,8 @@ class Block(Serializable, Observable):
             socket = Socket(block=self,
                             index=s_data["index"],
                             position=Position[s_data["position"]],
-                            socket_type=SocketType[s_data["socket_type"]])
+                            socket_type=SocketType[s_data["socket_type"]],
+                            edge_limit=s_data["edge_limit"] if "edge_limit" in s_data.keys() else 1)
             socket.deserialize(s_data, hashmap)
             self.inputs.append(socket)
 
@@ -221,7 +227,8 @@ class Block(Serializable, Observable):
             socket = Socket(block=self,
                             index=s_data["index"],
                             position=Position[s_data["position"]],
-                            socket_type=SocketType[s_data["socket_type"]])
+                            socket_type=SocketType[s_data["socket_type"]],
+                            edge_limit=s_data["edge_limit"] if "edge_limit" in s_data.keys() else 1)
             socket.deserialize(s_data, hashmap)
             self.outputs.append(socket)
 

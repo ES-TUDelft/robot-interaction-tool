@@ -14,7 +14,7 @@ import logging
 
 from PyQt5 import QtCore, QtWidgets
 
-from interaction_manager.enums.block_enums import SocketType
+from block_manager.enums.block_enums import SocketType
 from es_common.enums.command_enums import ActionCommand
 from es_common.factory.command_factory import CommandFactory
 from interaction_manager.utils import config_helper

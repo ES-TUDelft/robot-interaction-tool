@@ -14,8 +14,9 @@ import logging
 
 from PyQt5 import QtGui, QtWidgets
 
-from interaction_manager.utils import data_helper
+from es_common.utils import data_helper
 from interaction_manager.view.ui_importblocks_dialog import Ui_ImportBlocksDialog
+from interaction_manager.utils import config_helper
 
 
 class UIImportBlocksController(QtWidgets.QDialog):
@@ -50,6 +51,14 @@ class UIImportBlocksController(QtWidgets.QDialog):
 
         self.import_blocks()
 
+    def get_property(self, data, name):
+        try:
+            p = data[name] if name in data.keys() else None
+            return p
+        except Exception as e:
+            self.logger.error("Error while checking the property '{}' | {}".format(name, e))
+            return None
+
     def import_blocks(self):
         error, message = (None,) * 2
         filename = self.ui.fileNameLineEdit.text()
@@ -60,6 +69,17 @@ class UIImportBlocksController(QtWidgets.QDialog):
 
         try:
             self.blocks_data = data_helper.load_data_from_file(filename)
+            for b_data in self.blocks_data["blocks"]:
+                pattern = config_helper.get_patterns()[b_data["title"].lower()]
+                bg_color = self.get_property(b_data, "bg_color")
+                if bg_color is None:
+                    if "bg_color" in pattern.keys():
+                        # self.logger.debug("Setting bg_color for: {}".format(b_data["title"]))
+                        b_data["bg_color"] = pattern["bg_color"]
+                if "icon" in pattern.keys():
+                    # self.logger.debug("Setting icon for: {}".format(b_data["title"]))
+                    b_data["icon"] = pattern["icon"]
+
             message = "Data successfully imported."
         except Exception as e:
             error = "{} | {}".format("Error while importing data!" if error is None else error, e)

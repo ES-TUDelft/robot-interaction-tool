@@ -34,9 +34,9 @@ size:
         height: 6.0
 
 icons:
-    settings: interaction_manager/icons/white/parameters.png
-    edit: interaction_manager/icons/white/edit.png
+    settings: block_manager/icons/white/parameters.png
+    edit: block_manager/icons/white/edit.png
 
 block_mimetype: application/x-item
 
-history_limit: 50
+history_limit: 100

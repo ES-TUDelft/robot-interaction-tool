@@ -1,8 +1,9 @@
+import logging
+
 from PyQt5.Qt import *
 
+from block_manager.controller.graphics_view_controller import ESGraphicsViewController
 from es_common.model.observable import Observable
-from interaction_manager.controller.graphics_view_controller import ESGraphicsViewController
-import logging
 
 
 class BlockManagerWidget(QWidget):

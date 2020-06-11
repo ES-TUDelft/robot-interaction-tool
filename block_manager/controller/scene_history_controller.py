@@ -10,8 +10,7 @@
 # @author ES
 # **
 
-from interaction_manager.controller.history_controller import HistoryController
-from interaction_manager.view.graphics_edge import ESGraphicsEdge
+from block_manager.controller.history_controller import HistoryController
 
 
 class SceneHistoryController(HistoryController):

@@ -16,17 +16,16 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 from es_common.model.observable import Observable
-from interaction_manager.model.edge import Edge
-from interaction_manager.utils import config_helper
-from interaction_manager.view.graphics_edge import ESGraphicsEdge
-from interaction_manager.view.graphics_socket import ESGraphicsSocket
-from interaction_manager.enums.block_enums import Mode, EdgeType, SocketType
+from block_manager.model.edge import Edge
+from block_manager.view.graphics_edge import ESGraphicsEdge
+from block_manager.view.graphics_socket import ESGraphicsSocket
+from block_manager.enums.block_enums import Mode, EdgeType
 import logging
 
 
 class ESGraphicsViewController(QGraphicsView):
     def __init__(self, graphics_scene, parent=None):
-        super(ESGraphicsViewController, self).__init__(parent=parent)
+        super(ESGraphicsViewController, self).__init__(parent)
 
         self.logger = logging.getLogger("GraphicsView")
 
@@ -162,7 +161,8 @@ class ESGraphicsViewController(QGraphicsView):
             if type(item) is ESGraphicsSocket:
                 if item.socket != self.drag_start_socket:
                     success = self.edge_drag_end(item)
-                    if success: return
+                    if success:
+                        return
 
         # if item is not None and self.dragMode() == QGraphicsView.RubberBandDrag and self.mode is Mode.NO_OP:
         #    print("selection changed")
@@ -207,7 +207,6 @@ class ESGraphicsViewController(QGraphicsView):
     def wheelEvent(self, event):
         modifiers = QApplication.keyboardModifiers()
         if modifiers == Qt.ControlModifier:
-            delta_y = event.angleDelta().y()
             self.zoom_scene(delta_y=event.angleDelta().y())
         else:
             super(ESGraphicsViewController, self).wheelEvent(event)
@@ -281,10 +280,10 @@ class ESGraphicsViewController(QGraphicsView):
                 # check if the connection is valid
                 if self.is_valid_connection(item.socket):
                     # create edge
-                    edge = Edge(scene=self.graphics_scene.scene,
-                                start_socket=self.drag_start_socket,
-                                end_socket=item.socket,
-                                edge_type=EdgeType.BEZIER)
+                    Edge(scene=self.graphics_scene.scene,
+                         start_socket=self.drag_start_socket,
+                         end_socket=item.socket,
+                         edge_type=EdgeType.BEZIER)
 
                     # store
                     self.graphics_scene.scene.store("New edge created")

@@ -16,7 +16,7 @@ from collections import OrderedDict
 from es_common.datasource.serializable import Serializable
 from es_common.model.tablet_page import TabletPage
 from es_common.model.topic_tag import TopicTag
-from interaction_manager.enums.block_enums import SocketType, ExecutionMode
+from block_manager.enums.block_enums import SocketType, ExecutionMode
 from es_common.enums.command_enums import ActionCommand
 from es_common.factory.command_factory import CommandFactory
 from interaction_manager.model.behavioral_parameters import BehavioralParameters

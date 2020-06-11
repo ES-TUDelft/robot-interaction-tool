@@ -3,8 +3,8 @@ import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from interaction_manager.utils import config_helper
-from interaction_manager.enums.block_enums import Position
+from block_manager.utils import config_helper
+from block_manager.enums.block_enums import Position
 import logging
 
 

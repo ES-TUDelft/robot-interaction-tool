@@ -4,12 +4,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from interaction_manager.utils import config_helper
+from block_manager.utils import config_helper
 from es_common.model.observable import Observable
 
 
 class ESGraphicsBlock(QGraphicsItem, Observable, object):
-    def __init__(self, block, parent=None):
+    def __init__(self, block, parent=None, bg_color=None):
         super(ESGraphicsBlock, self).__init__(parent=parent)
         Observable.__init__(self)
 
@@ -29,11 +29,13 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
         # pen
         block_colors = config_helper.get_colors()
         self._default_pen = QPen(QColor("#{}".format(block_colors['pen']['default'])))
+        self._default_pen.setWidthF(2.0)
         self._selected_pen = QPen(QColor("#{}".format(block_colors['pen']['selected'])))
         self._selected_pen.setWidthF(block_size_settings["selected_pen_width"])
 
         self._title_brush = QBrush(QColor("#{}".format(block_colors['brush']['block_title'])))
-        self._bg_brush = QBrush(QColor("#{}".format(block_colors['brush']['block_bg'])))
+        self._bg_brush = QBrush(QColor("#{}".format(
+            block_colors['brush']['block_bg'] if bg_color is None else bg_color)))
 
         # set title
         self.__title = ""
@@ -66,6 +68,7 @@ class ESGraphicsBlock(QGraphicsItem, Observable, object):
 
         # self.title_item.setDefaultTextColor(Qt.white)
         self.title_item.setFont(config_helper.get_block_title_font())
+        # self.title_item.setDefaultTextColor(QColor("white"))
         x_pos = self._padding + self.title_height  # self._padding + self.title_icon.pixmap().width()
         self.title_item.setPos(x_pos, 0)
         self.title_item.setTextWidth(
