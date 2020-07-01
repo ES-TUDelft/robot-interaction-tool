@@ -100,9 +100,15 @@ To quickly test the tool, import one of the [examples](https://github.com/ES-TUD
 ## VI. Citation
 Please cite our work when you use this tool in your studies:
 
-    @inproceedings{Saad2020,
-      author = {Elie Saad and Joost Broekens and Mark A. Neerincx},
-      booktitle = {InPress},
-      title = {An Iterative Interaction-Design Method for Multi-Modal Robot Communication},
-      year = {2020}
-    }
+ * Elie Saad, Joost Broekens and Mark A. Neerincx (2020): An Iterative Interaction-Design Method for Multi-Modal Robot Communication. In *Proceedings of the IEEE International Conference on Robot and Human Interactive Communication (RO-MAN)*, Italy, Sep. 2020, pp. 1-8, *IN PRESS*.
+
+       @InProceedings{Saad2020,
+         author    = {Elie Saad and Joost Broekens and Mark A. Neerincx},
+         booktitle = {IEEE International Conference on Robot and Human Interactive Communication (RO-MAN)},
+         title     = {An Iterative Interaction-Design Method for Multi-Modal Robot Communication},
+         year      = {2020},
+         address   = {Italy},
+         month     = Sep,
+         pages     = {1--8},
+         publisher = {InPRESS},
+       }
