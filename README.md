@@ -19,13 +19,13 @@ To use the tool you need to do the following:
 
   * **B.** Clone the repository (e.g., in the Documents folder)
 
-`cd ~/Documents`
+`$ cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
 
   * **C.** Launch the interface as follows:
 
-`cd ~/Documents/robot-interaction-tool`
+`$ cd ~/Documents/robot-interaction-tool`
 
 `$ python main.py`
 
