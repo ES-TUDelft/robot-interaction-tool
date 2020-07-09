@@ -37,23 +37,22 @@ In this document we go over the installation of the required libraries and setti
 
 * Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
    
-   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
-   * Open an account, if you don't have one
-   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Linux 64** (or go to [https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255](https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255) and click on the download link)
+   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
+   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under LINUX
 
 * Open a terminal and do the following:
 
 `$ cd ~/Downloads`
 
-`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-linux64.tar.gz`
+`$ tar -xvzf pynaoqi-python2.7-2.5.7.1-linux64.tar.gz`
 
-`$ mv pynaoqi-python2.7-2.5.5.5-linux64 ~/Documents`
+`$ mv pynaoqi-python2.7-2.5.7.1-linux64 ~/Documents`
 
-* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.5.5-linux64**)*
+* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.7.1-linux64**)*
 
 `$ vim ~/.bashrc`
 
-`export PYTHONPATH=${PYTHONPATH}:/home/YOUR_USERNAME/Documents/pynaoqi-python2.7-2.5.5.5-linux64/lib/python2.7/site-packages`
+`export PYTHONPATH=${PYTHONPATH}:/home/YOUR_USERNAME/Documents/pynaoqi-python2.7-2.5.7.1-linux64/lib/python2.7/site-packages`
 
 `$ source ~/.bashrc`
 
@@ -206,17 +205,16 @@ The user interface should run now, good luck!
 
 ## II.3. NAOqi for Python
 
-* Download Pynaoqi (pynaoqi-python2.7-2.5.5.5-win32-vs2013) for Windows:
-   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
-   * Open an account, if you don't have one
-   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Win 32 Binaries** (or go to [https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255](https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255) and click on the download link for Windows)
-
+* Download Pynaoqi (pynaoqi-python2.7-2.5.7.1-win32-vs2013) for Windows:
+   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
+   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under WINDOWS
+   
 * Follow the installation instructions (for Windows) from SoftbankRobotics http://doc.aldebaran.com/2-5/dev/python/install_guide.html#python-install-guide
    * extract pynaoqi (downloaded in the previous step) to your Documents folder (or somewhere else)
    * modify your user environment variables by adding the following:
     
          Variable name: PYTHONPATH
-         Variable value: C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.5.5-win32-vs2013\lib; C:\Python27\Lib\site-packages
+         Variable value: C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.7.1-win32-vs2013\lib; C:\Python27\Lib\site-packages
    
 * Open a new command prompt and try the following:
 
@@ -331,27 +329,26 @@ The user interface should run now, good luck!
 
 * Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
    
-   * Go to: [https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb](https://community.ald.softbankrobotics.com/en/resources/software/language/en-gb)
-   * Open an account, if you don't have one
-   * In the 'Software' page, scroll down to: **Pepper SDKs and documentation 2.5.5** and download **Python 2.7 SDK 2.5.5 Mac 64** (or go to https://community.ald.softbankrobotics.com/en/resources/software/pepper-sdks-and-documentation-255 and click on the download link for Mac)
+   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
+   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under MAC
 
 * Open a terminal and do the following:
 
 `$ cd ~/Downloads`
 
-`$ tar -xvzf pynaoqi-python2.7-2.5.5.5-mac64.tar`
+`$ tar -xvzf pynaoqi-python2.7-2.5.7.1-mac64.tar`
 
-`$ mv pynaoqi-python2.7-2.5.5.5-mac64 ~/Documents`
+`$ mv pynaoqi-python2.7-2.5.7.1-mac64 ~/Documents`
 
-* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bash_profile* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.5.5-mac64**)*
+* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bash_profile* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.7.1-mac64**)*
 
 `$ vim ~/.bash_profile`
 
 `export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python2.7/site-packages`
 
-`export PYTHONPATH=${PYTHONPATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib/python2.7/site-packages`
+`export PYTHONPATH=${PYTHONPATH}:/path_to/pynaoqi-python2.7-2.5.7.1-mac64/lib/python2.7/site-packages`
 
-`export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.5.5-mac64/lib`
+`export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.7.1-mac64/lib`
 
 * ==> save the file using ESC:wq!
 
