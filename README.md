@@ -2,7 +2,7 @@
 
 This project provides a prototyping tool for designing communicative (expressive) behaviors for social robots. The current version is compatible with the [Pepper Robot](https://www.ald.softbankrobotics.com/en/robots/pepper).
 
-The tool was successfully tested on ***MAC*** and ***Linux***.
+The tool was successfully tested on ***MAC***, ***Windows*** and ***Linux***.
 
 ## Requirements
 [![Python 2.7](https://img.shields.io/badge/Python-2.7.14-yellow.svg)](https://www.python.org/downloads/)
