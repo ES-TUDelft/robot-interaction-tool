@@ -1,4 +1,4 @@
-# Design Tool for Multi-Modal Robot Communication
+# Interaction-Design Tool for Multi-Modal Robot Communication
 
 This project provides a prototyping tool for designing communicative (expressive) behaviors for social robots. The current version is compatible with the [Pepper Robot](https://www.ald.softbankrobotics.com/en/robots/pepper).
 
