@@ -65,6 +65,10 @@ class UIParametersController(QtWidgets.QDialog):
 
         # TEST button
         self.ui.testBehavioralParametersButton.clicked.connect(self.test_behavioral_parameters)
+        self.ui.testBehavioralParametersButton.setEnabled(
+            False if self.interaction_controller is None else self.interaction_controller.is_connected()
+        )
+        # Apply button
         self.ui.behavioralParametersApplyToAllButton.clicked.connect(self.apply_behavioral_parameters)
 
         self.reset_parameters()

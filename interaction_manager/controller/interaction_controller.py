@@ -86,6 +86,9 @@ class InteractionController(object):
         #     self.animation_thread.dialog(start=False)
         return True
 
+    def is_connected(self):
+        return False if self.robot_controller is None else True
+
     def update_threads(self, enable_moving=False):
         if self.animation_thread is None:
             self.animation_thread = AnimateRobotThread(robot_ip=self.robot_ip, port=self.port)
