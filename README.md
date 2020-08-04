@@ -32,7 +32,7 @@ To use the tool you need to do the following:
   * ***Note***: This repository is being updated on a regular basis. Use ***git pull*** to integrate the latest changes.
 
 <div align="center">
-  <img src="interaction_manager/ui/ui_view.png" width="500px" />
+  <img src="interaction_manager/ui/ui_view.png" width="750px" />
 </div>
 
 ---
