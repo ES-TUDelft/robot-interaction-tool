@@ -17,11 +17,11 @@ To use the tool you need to do the following:
 
   * **A.** Clone the repository (e.g., in the Documents folder).
 
-  * **B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
-
 `$ cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
+
+  * **B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
 
   * **C.** Launch the interface as follows:
 
