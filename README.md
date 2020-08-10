@@ -15,9 +15,9 @@ The tool was successfully tested on ***MAC***, ***Windows*** and ***Linux***.
 
 To use the tool you need to do the following:
 
-  * **A.** Install the requirements as described in [Section I](#i-installation-guide).
+  * **A.** Clone the repository (e.g., in the Documents folder).
 
-  * **B.** Clone the repository (e.g., in the Documents folder)
+  * **B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
 
 `$ cd ~/Documents`
 
