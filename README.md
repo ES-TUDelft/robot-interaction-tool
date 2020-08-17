@@ -15,21 +15,21 @@ The tool was successfully tested on ***MAC***, ***Windows*** and ***Linux***.
 
 To use the tool you need to do the following:
 
-  * **A.** Clone the repository (e.g., in the Documents folder).
+**A.** Clone the repository (e.g., in the Documents folder).
 
 `$ cd ~/Documents`
 
 `$ git clone https://github.com/ES-TUDelft/robot-interaction-tool.git`
 
-  * **B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
+**B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
 
-  * **C.** Run the following script to load the tablet app on Pepper:
+**C.** Run the following script to load the tablet app on Pepper:
   
   `$ cd ~/Documents/robot-interaction-tool`
   
   `$ ./update_app.sh`
   
-  * **D.** Launch the interface as follows:
+**D.** Launch the interface as follows:
 
 `$ cd ~/Documents/robot-interaction-tool`
 
