@@ -1,6 +1,6 @@
 In this document we go over the installation of the required libraries and setting up Spotify for successfully running the prototyping tool.
 
-* First, clone the repository (e.g., to your Documents):
+**A.** Clone the repository (e.g., to your Documents):
 
 `$ cd Documents`
 
@@ -8,7 +8,15 @@ In this document we go over the installation of the required libraries and setti
 
 ==> if you don't have git, install it from: https://git-scm.com/downloads
 
-* Then, proceed with the installation guide depending on your PC's OS.
+**B.** Run the following script to load the tablet app on Pepper:
+
+`$ cd ~/Documents/robot-interaction-tool`
+
+`$ ./update_app.sh`
+
+   * Note that when running the script, you will be asked for the Pepper's IP address as well as your PC's and Pepper's passwords.
+
+**C.** Proceed with the installation guide depending on your PC's OS.
 
 ---
 
