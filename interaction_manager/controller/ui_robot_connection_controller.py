@@ -15,6 +15,7 @@ import logging
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 import es_common.hre_config as pconfig
+from es_common.enums.robot_name import RobotName
 from interaction_manager.view.ui_connection_dialog import Ui_ConnectionDialog
 from es_common.utils import ip_helper
 
@@ -46,6 +47,7 @@ class UIRobotConnectionController(QtWidgets.QDialog):
         # Set validator and field for IP address
         self._set_ip_validator(self.ui.robotIPValue)
         self._set_ip_field(self.ui.robotIPValue)
+
         # connect listener
         self.ui.connectPushButton.clicked.connect(self.connect)
 
@@ -64,9 +66,10 @@ class UIRobotConnectionController(QtWidgets.QDialog):
         self.logger.info("IP: {} - PORT: {}".format(self.robot_ip, self.robot_port))
 
         self._display_message(message="Connecting...")
-
+        robot_name = RobotName[self.ui.robotNameComboBox.currentText().upper()]
         message, error, self.is_awake = self.interaction_controller.connect_to_robot(robot_ip=self.robot_ip,
-                                                                                     port=self.robot_port)
+                                                                                     port=self.robot_port,
+                                                                                     robot_name=robot_name)
         if message is None:
             self.success = False
             error = "Please enter a valid IP and PORT | {}".format(error)

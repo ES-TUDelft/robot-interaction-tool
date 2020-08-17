@@ -10,19 +10,18 @@
 # @author ES
 # **
 
-import time
-import logging
 import functools
+import logging
+import math
+import time
 
 import es_common.hre_config as pconfig
 from es_common.enums.led_enums import LedColor
-from robot_manager.pepper.enums.motion_enums import HeadMotion, Animation, AutonomousLife
-from robot_manager.pepper.enums.tablet_enums import TabletAction
-from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
-from robot_manager.pepper.model.pepper_robot import PepperRobot
 from es_common.utils.timer_helper import TimerHelper
-
-import math
+from robot_manager.pepper.enums.motion_enums import HeadMotion, Animation, AutonomousLife
+from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
+from robot_manager.pepper.enums.tablet_enums import TabletAction
+from robot_manager.pepper.model.pepper_robot import PepperRobot
 
 
 class RobotController(object):
@@ -35,8 +34,8 @@ class RobotController(object):
         self.robot_id, self.last_time_touched = None, 0
         self.timer_helper = TimerHelper()
 
-    def connect(self, robot_ip, port):
-        self.pepper_robot = PepperRobot()
+    def connect(self, robot_ip, port, robot_name=None):
+        self.pepper_robot = PepperRobot(name=robot_name)
         return self.pepper_robot.connect(robot_ip=robot_ip, port=port)
 
     """

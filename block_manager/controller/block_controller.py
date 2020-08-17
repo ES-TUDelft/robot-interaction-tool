@@ -241,6 +241,9 @@ class BlockController(object):
                 return p
         return None
 
+    def get_block_widget(self):
+        return self.block_widget;
+
     ###
     # DRAG and DROP OBSERVERS
     ###

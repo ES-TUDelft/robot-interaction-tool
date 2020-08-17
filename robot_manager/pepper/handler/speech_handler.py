@@ -216,10 +216,10 @@ class SpeechHandler:
             # 1) Deactivate active topics
             self.deactivate_topics()
 
-            # 3) activate needed topic
+            # 2) activate needed topic
             self.dialog.activateTopic(topic_tag.topic)
 
-            # 4) set custom fields and insert data in memory
+            # 3) set custom fields and insert data in memory
             self._set_topic_fields(custom_message=interaction_block.message,
                                    custom_animation=interaction_block.gestures[
                                        interaction_block.gestures_type.name.lower()],

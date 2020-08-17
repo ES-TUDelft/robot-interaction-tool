@@ -634,7 +634,9 @@ class UIController(QtWidgets.QMainWindow):
 
         if hasattr(item, "block"):
             self.logger.debug("item has block attribute: {}".format(item))
+
             block = item.block
+            block.set_selected(val=True)
 
             # enable widget
             # TODO: enable right click menu
@@ -664,8 +666,8 @@ class UIController(QtWidgets.QMainWindow):
             # Add a separator
             self.right_click_menu.addSeparator()
 
-            # Add a duplicate option
-            self.right_click_menu.addAction("Duplicate")
+            # TODO: Add a duplicate option
+            # self.right_click_menu.addAction("Duplicate")
 
             # TODO:
             action = self.right_click_menu.exec_(self.block_controller.get_block_widget().mapToGlobal(
@@ -678,17 +680,16 @@ class UIController(QtWidgets.QMainWindow):
         Function that executes popup menu actions
         """
         action_name = str(action.text()).translate(None, '&')
-        if action_name == "Delete":
-            # TODO: delete block
-            pass
-        elif action_name == "Edit":
+        if action_name == "Edit":
             self.block_editing(block)
         elif action_name == "Set Parameters":
             self.block_settings(block)
         elif action_name == "Copy Settings":
-            self.copy_behavioral_parameters()
+            self.copy_block()
         elif action_name == "Paste Settings":
             self.paste_behavioral_parameters()
+        elif action_name == "Delete":
+            self.on_delete()
         elif action_name == "Duplicate":
             pass  # self.duplicate_block()
 

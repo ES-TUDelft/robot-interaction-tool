@@ -89,14 +89,14 @@ class AnimateRobotThread(QThread):
     customized_say_in_progress = pyqtSignal(bool)
     is_disconnected = pyqtSignal(bool)
 
-    def __init__(self, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port, robot_name=None):
         QThread.__init__(self)
 
         self.dialog_thread = None
         self.robot_controller = None
 
         # establish a connection with the robot
-        self.connect_to_robot(robot_ip, port)
+        self.connect_to_robot(robot_ip, port, robot_name)
 
         self.logger = logging.getLogger("AnimateRobot Thread")
         self.animation_name = None
@@ -109,9 +109,9 @@ class AnimateRobotThread(QThread):
         self.moving_enabled = False
         self.execution_result = None
 
-    def connect_to_robot(self, robot_ip, port):
+    def connect_to_robot(self, robot_ip, port, robot_name=None):
         self.robot_controller = RobotController()
-        self.robot_controller.connect(robot_ip=robot_ip, port=port)
+        self.robot_controller.connect(robot_ip=robot_ip, port=port, robot_name=robot_name)
         if self.dialog_thread is not None:
             self.dialog_thread.robot_controller = self.robot_controller  # update controllers
 

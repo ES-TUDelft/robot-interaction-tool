@@ -45,6 +45,7 @@ class InteractionController(object):
 
         self.robot_ip = None
         self.port = None
+        self.robot_name = None
 
         self.engagement_counter = 0
         self.is_ready_to_interact = False
@@ -57,16 +58,19 @@ class InteractionController(object):
         self.execution_result = None
         self.has_finished_playing_observable = Observable()
 
-    def connect_to_robot(self, robot_ip, port):
+    def connect_to_robot(self, robot_ip, port, robot_name=None):
         self.robot_ip = robot_ip
         self.port = port
+        self.robot_name = robot_name
 
         pconfig.robot_ip = self.robot_ip
         pconfig.naoqi_port = self.port
 
         self.robot_controller = RobotController()
 
-        message, error, is_awake = self.robot_controller.connect(robot_ip=self.robot_ip, port=self.port)
+        message, error, is_awake = self.robot_controller.connect(robot_ip=self.robot_ip,
+                                                                 port=self.port,
+                                                                 robot_name=self.robot_name)
 
         self.update_threads()
 
@@ -91,7 +95,8 @@ class InteractionController(object):
 
     def update_threads(self, enable_moving=False):
         if self.animation_thread is None:
-            self.animation_thread = AnimateRobotThread(robot_ip=self.robot_ip, port=self.port)
+            self.animation_thread = AnimateRobotThread(robot_ip=self.robot_ip, port=self.port,
+                                                       robot_name=self.robot_name)
             self.animation_thread.dialog_started.connect(self.engagement)
             self.animation_thread.customized_say_completed.connect(self.customized_say)
             self.animation_thread.animation_completed.connect(self.on_animation_completed)
@@ -101,7 +106,8 @@ class InteractionController(object):
             self.animation_thread.is_disconnected.connect(self.disconnect_from_robot)
         else:
             self.animation_thread.connect_to_robot(robot_ip=self.robot_ip,
-                                                   port=self.port)
+                                                   port=self.port,
+                                                   robot_name=self.robot_name)
 
         if self.face_tracker_thread is None:
             self.face_tracker_thread = FaceTrackerThread(robot_controller=self.robot_controller)

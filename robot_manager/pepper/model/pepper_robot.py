@@ -17,6 +17,7 @@ import functools
 
 import es_common.hre_config as pconfig  # TODO: replace!
 from es_common.enums.led_enums import LedColor
+from es_common.enums.robot_name import RobotName
 from robot_manager.pepper.enums.motion_enums import Animation, AutonomousLife
 from robot_manager.pepper.enums.tablet_enums import TabletAction
 from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
@@ -31,8 +32,10 @@ from robot_manager.pepper.model.person import Person
 
 class PepperRobot(object):
 
-    def __init__(self):
-        self.logger = logging.getLogger("Pepper Robot")
+    def __init__(self, name=RobotName.PEPPER):
+        self.logger = logging.getLogger("SoftBank Robot")
+
+        self.name = name
         self.touch = None
         self.people_in_zones, self.people_in_zones_id = (None,) * 2
         self.is_interacting = False
@@ -72,7 +75,8 @@ class PepperRobot(object):
     def _init_handlers(self, robot_ip, port):
         self.animation_handler = AnimationHandler(session=self.session, robot_ip=robot_ip, port=port)
         self.speech_handler = SpeechHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.screen_handler = ScreenHandler(session=self.session, robot_ip=robot_ip, port=port)
+        if self.name is None or self.name is RobotName.PEPPER:
+            self.screen_handler = ScreenHandler(session=self.session, robot_ip=robot_ip, port=port)
         self.sensor_handler = SensorHandler(session=self.session, robot_ip=robot_ip, port=port)
         self.engagement_handler = EngagementHandler(session=self.session, robot_ip=robot_ip, port=port)
 
@@ -314,8 +318,9 @@ class PepperRobot(object):
 
     def stop_dialog(self):
         self.speech_handler.stop_dialog()
-        self.screen_handler.set_webview(hide=True)
-        self.screen_handler.set_image(hide=True)
+        if self.screen_handler is not None:
+            self.screen_handler.set_webview(hide=True)
+            self.screen_handler.set_image(hide=True)
 
         self.is_interacting = False
         self.pid = 0
@@ -329,13 +334,18 @@ class PepperRobot(object):
     # TABLET:
     # -------
     def tablet(self, action_name=TabletAction.WEBVIEW, action_url="http://www.google.com", hide=False):
-        if action_name is TabletAction.IMAGE:
-            self.screen_handler.set_image(image_path=action_url, hide=hide)
-        elif action_name is TabletAction.WEBVIEW:
-            self.screen_handler.set_webview(webpage=action_url, hide=hide)
+        if self.screen_handler is not None:
+            try:
+                if action_name is TabletAction.IMAGE:
+                    self.screen_handler.set_image(image_path=action_url, hide=hide)
+                elif action_name is TabletAction.WEBVIEW:
+                    self.screen_handler.set_webview(webpage=action_url, hide=hide)
+            except Exception as e:
+                self.logger.error("Error while setting the tablet: {}".format(e))
 
     def load_application(self, app_name):
-        self.screen_handler.load_application(app_name)
+        if self.screen_handler is not None:
+            self.screen_handler.load_application(app_name)
 
     def load_html_page(self, page_name="index"):
         self.speech_handler.raise_event(event_name="loadPage", event_value=page_name.lower())
