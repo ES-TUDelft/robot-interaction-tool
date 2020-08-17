@@ -23,7 +23,13 @@ To use the tool you need to do the following:
 
   * **B.** Install the requirements as described in [Section I](#i-installation-guide) ***OR*** use the executables from: [https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/](https://gitlab.tudelft.nl/eliesaad/interaction-design-tool/)
 
-  * **C.** Launch the interface as follows:
+  * **C.** Run the following script to load the tablet app on Pepper:
+  
+  `$ cd ~/Documents/robot-interaction-tool`
+  
+  `$ ./update_app.sh`
+  
+  * **D.** Launch the interface as follows:
 
 `$ cd ~/Documents/robot-interaction-tool`
 
