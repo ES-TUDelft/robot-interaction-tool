@@ -10,23 +10,23 @@
 # @author ES
 # **
 
-import qi
-import time
-import logging
 import functools
+import logging
+import time
 
 import es_common.hre_config as pconfig  # TODO: replace!
 from es_common.enums.led_enums import LedColor
 from es_common.enums.robot_name import RobotName
-from robot_manager.pepper.enums.motion_enums import Animation, AutonomousLife
-from robot_manager.pepper.enums.tablet_enums import TabletAction
-from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
 from robot_manager.pepper.enums.engagement_enums import EngagementMode, EngagementZone
+from robot_manager.pepper.enums.motion_enums import Animation, AutonomousLife
+from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
+from robot_manager.pepper.enums.tablet_enums import TabletAction
 from robot_manager.pepper.handler.animation_handler import AnimationHandler
-from robot_manager.pepper.handler.speech_handler import SpeechHandler
+from robot_manager.pepper.handler.connection_handler import ConnectionHandler
+from robot_manager.pepper.handler.engagement_handler import EngagementHandler
 from robot_manager.pepper.handler.screen_handler import ScreenHandler
 from robot_manager.pepper.handler.sensor_handler import SensorHandler
-from robot_manager.pepper.handler.engagement_handler import EngagementHandler
+from robot_manager.pepper.handler.speech_handler import SpeechHandler
 from robot_manager.pepper.model.person import Person
 
 
@@ -54,22 +54,17 @@ class PepperRobot(object):
 
     def connect(self, robot_ip, port):
         message, error, is_awake = [None, None, False]
+        self.session = ConnectionHandler.create_qi_session(robot_ip, port)
+        if self.session is None:
+            return message, "Unable to connect to Naoqi:\n- IP: {} | Port: {}".format(robot_ip, port), is_awake
+
         try:
-            self.session = qi.Session()
-            self.session.connect("tcp://{}:{}".format(robot_ip, port))
             self._init_handlers(robot_ip, port)
             message = "Successfully connected to Pepper:\n- IP: {} | Port: {}".format(robot_ip, port)
-            self.logger.info(message)
             is_awake = self.is_awake()
         except RuntimeError as e:
             error = "Unable to connect to Naoqi:\n- IP: {} | Port: {}\n{}".format(robot_ip, port, e)
-            self.logger.error(error)
         finally:
-            self.logger.debug("Message: {} | Error: {} | IsAwake: {} | IP: {} | Port: {}".format(message,
-                                                                                                 error,
-                                                                                                 is_awake,
-                                                                                                 robot_ip,
-                                                                                                 port))
             return message, error, is_awake
 
     def _init_handlers(self, robot_ip, port):
