@@ -272,6 +272,8 @@ The user interface should run now, good luck!
 
 * Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2015 & 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
 
+  * Note that for this step you will need XCode to be installed on your machine.
+
 ## II.6. SIP 4.19
 
 * Download SIP-4.19.23 from https://www.riverbankcomputing.com/software/sip/download 
