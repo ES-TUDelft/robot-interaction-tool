@@ -391,7 +391,7 @@ The user interface should run now, good luck!
 
 * Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: qt-unified-mac-x64-online.dmg) from https://download.qt.io/official_releases/online_installers/
 
-  * Note that for this step you will need XCode to be installed on your machine.
+  * Note that for this step you will need **XCode** to be installed on your machine.
 
 ## III.5. Install SIP 4.19.21
 
