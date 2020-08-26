@@ -138,6 +138,8 @@ In this document we go over the installation of the required libraries and setti
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
+  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
+
 * Open a new terminal and cd to the downloads folder (or to where you dowloaded PyQt)
 
 `$ cd Downloads`
@@ -296,6 +298,8 @@ The user interface should run now, good luck!
 ## II.7. PyQt5-5.13.2
 * Download PyQt5-5.13.2 from https://www.riverbankcomputing.com/software/pyqt/download5 
 
+  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
+
 * unzip the file
 
 * In the same **Visual-Studio Developer Command prompt** as step II.6 do the following:
@@ -415,6 +419,8 @@ The user interface should run now, good luck!
 ## III.6. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
+  
+  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
 
 * Open a terminal and cd to the downloads folder (or to where you dowloaded PyQt)
 
