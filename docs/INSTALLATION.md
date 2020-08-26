@@ -57,37 +57,25 @@ The user interface should run now, good luck!
 
 # II. Windows Installation guide
 
-## I.1 Install the requirements
+## II.1 Install the requirements
 
 * Follow the steps found in this document: [/docs/installation/win.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/win.md)
 
-## I.2. Launch the Interaction Tool
+## II.2. Launch the Interaction Tool
 
-Once you finish installing all the requirements, open a command prompt and cd to where you saved the tool:
-
-`$ cd robot-interaction-tool`
-
-`$ python main.py`
-
-The user interface should run now, good luck!
+Once you finish installing all the requirements, open a command prompt and follow the same steps as **Section I.2** above.
 
 ---
 
 ## III. MAC Installation Guide
 
-## I.1 Install the requirements
+## III.1 Install the requirements
 
 * Follow the steps found in this document: [/docs/installation/mac.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/mac.md)
 
-## I.2. Launch the Interaction Tool
+## III.2. Launch the Interaction Tool
 
-Once you finish installing all the requirements, open a terminal and cd to where you saved the tool:
-
-`$ cd robot-interaction-tool`
-
-`$ python main.py`
-
-The user interface should run now, good luck!
+Once you finish installing all the requirements, open a terminal and follow the same steps as **Section I.2** above.
 
 ---
 
