@@ -393,17 +393,17 @@ The user interface should run now, good luck!
 
   * Note that for this step you will need **XCode** to be installed on your machine.
 
-## III.5. Install SIP 4.19.21
+## III.5. Install SIP 4.19.24
 
-* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.23**
+* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.24**
 
 * Open a terminal and cd to the downloads folder (or to where you dowloaded sip)
 
 `$ cd Downloads`
 
-`$ tar -xvzf sip-4.19.23.tar.gz`
+`$ tar -xvzf sip-4.19.24.tar.gz`
 
-`$ cd sip-4.19.23`
+`$ cd sip-4.19.24`
 
 `$ python configure.py -d /usr/local/lib/python2.7/site-packages/`
 
@@ -424,7 +424,7 @@ The user interface should run now, good luck!
 
 `$ cd PyQt5-5.13.2`
 
-`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/usr/local/Cellar/qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.21/siplib`
+`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/Users/YOUR_USERNAME/Qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.24/siplib`
 
 * ==> if you encounter any errors, verify the path to Qt 5.13.2 (i.e., where you installed it) and to sip (e.g., *--sip=/Library/Frameworks/Python.framework/Versions/2.7/bin/sip*)
 
