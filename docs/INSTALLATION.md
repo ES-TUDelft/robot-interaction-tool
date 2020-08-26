@@ -35,144 +35,11 @@ In this document we go over the installation of the required libraries and setti
 
 # I. Linux Installation guide
 
-## I.1. Python 2.7
+## I.1 Install the requirements
 
-* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/)
+* Follow the steps found in this document: [/docs/installation/linux.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/linux.md)
 
-`$ sudo apt-get install python2 libpython2.7`
-
-## I.2. NAOqi for Python
-
-* Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
-   
-   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
-   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under LINUX
-
-* Open a terminal and do the following:
-
-`$ cd ~/Downloads`
-
-`$ tar -xvzf pynaoqi-python2.7-2.5.7.1-linux64.tar.gz`
-
-`$ mv pynaoqi-python2.7-2.5.7.1-linux64 ~/Documents`
-
-* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bashrc* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.7.1-linux64**)*
-
-`$ vim ~/.bashrc`
-
-`export PYTHONPATH=${PYTHONPATH}:/home/YOUR_USERNAME/Documents/pynaoqi-python2.7-2.5.7.1-linux64/lib/python2.7/site-packages`
-
-`$ source ~/.bashrc`
-
-* Test that NAOqi is imported correctly:
-
-`$ python2`
-
-`>>> import naoqi`
-
-* In case of errors, verify your PYTHONPATH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
-
-
-## I.3. Install PIP and other dependencies
-
-* Open a terminal
-
-`$ sudo apt-get install curl`
-
-`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
-
-`$ sudo python2 get-pip.py`
-
-`$ sudo apt-get install -y python-dev`
-
-* Now use pip to install the project requirements:
-
-`$ cd ~/Documents/robot-interaction-tool`
-
-`$ pip install -r requirements.txt`
-
-    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
-    * If you get errors related to "pip" check if /home/YOUR_USER/.local/bin is in the PATH or add it in ~/.bashrc
-    
-
-## I.4. Install qt5
-
-* Open a terminal:
-
-`$ sudo apt-get install qt5-default`
-
-<!--
-`$ sudo add-apt-repository ppa:beineri/opt-qt-5.13.2-bionic`
-
-`$ sudo apt-get update`
-
-`$ apt-get install -y build-essential libgl1-mesa-dev qt513-meta-minimal qt513svg`
-
-== Qt should be now in: /opt/qt513
--->
-
-
-## I.5. Install SIP 4.19.x
-
-* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.23**
-
-* Open a new terminal and cd to the downloads folder (or to where you dowloaded sip)
-
-`$ cd Downloads`
-
-`$ tar -xvzf sip-4.19.23.tar.gz`
-
-`$ cd sip-4.19.23`
-
-`$ python configure.py --sip-module=PyQt5.sip`
-
-`$ make -j 4`
-
-`$ sudo make install`
-
-`$ pip list`
-
-==> you should see PyQt5-sip in the list
-
-## I.6. Install PyQt5
-
-* Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
-
-  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
-
-* Open a new terminal and cd to the downloads folder (or to where you dowloaded PyQt)
-
-`$ cd Downloads`
-
-`$ tar -xvzf PyQt5-5.13.2.tar.gz`
-
-`$ cd PyQt5-5.13.2`
-
-<!-- `$ LD_LIBRARY_PATH=/opt/qt513/lib` --qmake=/opt/qt513/bin/qmake -->
-
-`$ python configure.py --confirm-license --disable=QtNfc --qmake=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake QMAKE_LFLAGS_RPATH=`
-
-   * If you get errors related to "qmake", check where it is located using: *$ qmake qt=5 --version*
-
-`$ make -j 4`
-
-`$ sudo make install`
-
-* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step) OR check **Section V**.
-
-`$ pip list | grep 'PyQt5'`
-
-==> you should see PyQt5 in the results
-
-* To make sure that PyQt5 is installed correctly, try the following:
-
-`$ python`
-
-`>>> from PyQt5 import QtWidgets`
-
-===> If you have errors, this means that PyQt5 is not installed correctly! Check **Section V** for known issues!
-
-## I.7. Launch the Interaction Tool
+## I.2. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you saved the tool:
 
@@ -190,137 +57,11 @@ The user interface should run now, good luck!
 
 # II. Windows Installation guide
 
-*These steps are to guide throught the installation process. If you encounter some errors, try to modify the default paths to fit what you have on your machine!*
+## I.1 Install the requirements
 
-## II.1. Visual Studio
+* Follow the steps found in this document: [/docs/installation/win.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/win.md)
 
-* Install [Visual Studio](https://visualstudio.microsoft.com/vs/community/)
-
-   * In the Workloads, select "Python development" and enable "Python native development tools" only
-   
-* Install [Microsoft Visual C++ Redistributable for Visual Studio (x86)](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
-   
-* Optional: Install [Microsoft Visual C++ Compiler for Python 2.7](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
-
-
-## II.2. Python 2.7
-
-* Install [Python 2.7 32-bits](https://www.python.org/downloads/release/python-2717/) (select "Windows x86 MSI installer")
-
-* Verify that your system recognizes python: open a command prompt and try
-
-`$ python`
-
-==> **Note**: you may need to manually add python to your system **PATH** by editing the system environment variables and appending: C:\Python27; C:\Python27\Lib\site-packages; C:\Python27\Scripts to the Path variable.
-
-## II.3. NAOqi for Python
-
-* Download Pynaoqi (pynaoqi-python2.7-2.5.7.1-win32-vs2013) for Windows:
-   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
-   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under WINDOWS
-   
-* Follow the installation instructions (for Windows) from SoftbankRobotics http://doc.aldebaran.com/2-5/dev/python/install_guide.html#python-install-guide
-   * extract pynaoqi (downloaded in the previous step) to your Documents folder (or somewhere else)
-   * modify your user environment variables by adding the following:
-    
-         Variable name: PYTHONPATH
-         Variable value: C:\Users\YOUR_USER_NAME\Documents\pynaoqi-python2.7-2.5.7.1-win32-vs2013\lib; C:\Python27\Lib\site-packages
-   
-* Open a new command prompt and try the following:
-
-`$ python`
-
-`>>> import naoqi`
-
-
-## II.4. Install PIP and other dependencies
-
-* Open a command prompt and install pip:
-
-`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
-
-`$ python get-pip.py`
-
-* Use pip to install the project requirements:
-
-`$ cd robot-interaction-tool`
-
-`$ pip install -r requirements.txt`
-
-   * ==> if pip is not recognized, try: `python -m pip install -r requirements.txt`
-
-  * If you get errors related to the "qi" library, try to install it separately (e.g., pip install qi).
-
----
-
-### **NOTE**
-* Before performing Steps 5-7, try the following:
-
-* download PyQt5 build from: https://github.com/ES-TUDelft/PyQt5-Windows.git
-
-* Copy **ONLY "PyQt5" folder** to C:\Python27\Lib\site-packages
-
-* Add the following to your environment variables:
-   * Variable name: QT_QPA_PLATFORM_PLUGIN_PATH
-   * Variable value: C:\Python27\Lib\site-packages\PyQt5\plugins\platforms
-
-* Make sure that C:\Python27\Lib\site-packages AND C:\Python27\Scripts are in your PATH environment variable
-
-* Try Step II.8: if it works then you're good to go; otherwise, continue with step II.5.
-
----
-
-## II.5. Qt 5.13
-
-* Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2015 & 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
-
-
-## II.6. SIP 4.19
-
-* Download SIP-4.19.23 from https://www.riverbankcomputing.com/software/sip/download 
-
-* Unzip the file
-
-* Open a **Visual-Studio Developer Command prompt** and cd to where you downloaded SIP (verify the path in all the following commands):
-
-`$ "C:\Qt\5.13.2\msvc2017\bin\qtenv2.bat"`
-
-`$ "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"`
-
-`$ cd \Users\YOUR_USER_NAME\Downloads\sip-4.19.23`
-
-`$ python configure.py --sip-module PyQt5.sip`
-
-`$ nmake`
-
-`$ nmake install`
-
-## II.7. PyQt5-5.13.2
-* Download PyQt5-5.13.2 from https://www.riverbankcomputing.com/software/pyqt/download5 
-
-  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
-
-* unzip the file
-
-* In the same **Visual-Studio Developer Command prompt** as step II.6 do the following:
-
-`$ cd \Users\YOUR_USER_NAME\Downloads\PyQt5-5.13.2`
-
-`$ python configure.py --confirm-license --no-designer-plugin --no-qml-plugin --assume-shared --disable=QtNfc --qmake=C:\Qt\5.13.2\msvc2017\bin\qmake.exe`
-
-`$ nmake`
-
-`$ nmake install`
- 
- * To make sure that PyQt5 is installed correctly, try the following:
-
-`$ python`
-
-`>>> from PyQt5 import QtWidgets`
-
-===> If you have errors, this means that PyQt5 is not installed correctly! In that case, try to address the errors or check **Section V** below!
-
-## II.8. Launch the Interaction Tool
+## I.2. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a command prompt and cd to where you saved the tool:
 
@@ -334,123 +75,19 @@ The user interface should run now, good luck!
 
 ## III. MAC Installation Guide
 
-## III.1. Python 2.7
+## I.1 Install the requirements
 
-* Install [Python 2.7](https://www.python.org/downloads/release/python-2717/) 
+* Follow the steps found in this document: [/docs/installation/mac.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/mac.md)
 
-## III.2. NAOqi for Python
+## I.2. Launch the Interaction Tool
 
-* Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
-   
-   * Go to: [https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares](https://www.softbankrobotics.com/emea/en/support/pepper-naoqi-2-9/downloads-softwares)
-   * Click on Old Pepper SDK and download **Pepper SDK 2.5.10 - Python 2.7 SDK** under MAC
+Once you finish installing all the requirements, open a terminal and cd to where you saved the tool:
 
-* Open a terminal and do the following:
+`$ cd robot-interaction-tool`
 
-`$ cd ~/Downloads`
+`$ python main.py`
 
-`$ tar -xvzf pynaoqi-python2.7-2.5.7.1-mac64.tar`
-
-`$ mv pynaoqi-python2.7-2.5.7.1-mac64 ~/Documents`
-
-* Tip: add NAOqi to the PYTHONPATH by appending the following line to the end of the *.bash_profile* file as follows: *(change naoqi path to where you stored **pynaoqi-python2.7-2.5.7.1-mac64**)*
-
-`$ vim ~/.bash_profile`
-
-`export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python2.7/site-packages`
-
-`export PYTHONPATH=${PYTHONPATH}:/path_to/pynaoqi-python2.7-2.5.7.1-mac64/lib/python2.7/site-packages`
-
-`export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:/path_to/pynaoqi-python2.7-2.5.7.1-mac64/lib`
-
-* ==> save the file using ESC:wq!
-
-`$ source ~/.bash_profile`
-
-* Test that NAOqi is imported correctly:
-
-`$ python`
-
-`>>> import naoqi`
-
-* In case of errors, verify that you're not using the default python (e.g., try: $ which python) and set it in your PYTHONPAH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
-
-
-## III.3. Install PIP and other dependencies
-
-* Open a terminal
-
-`$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
-
-`$ python get-pip.py`
-
-* Now use pip to install the project requirements:
-
-`$ pip install -r requirements.txt`
-
-    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
-    
-
-## III.4. Install qt513
-
-* Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: qt-unified-mac-x64-online.dmg) from https://download.qt.io/official_releases/online_installers/
-
-  * Note that for this step you will need **XCode** to be installed on your machine.
-
-## III.5. Install SIP 4.19.24
-
-* Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.24**
-
-* Open a terminal and cd to the downloads folder (or to where you dowloaded sip)
-
-`$ cd Downloads`
-
-`$ tar -xvzf sip-4.19.24.tar.gz`
-
-`$ cd sip-4.19.24`
-
-`$ python configure.py -d /usr/local/lib/python2.7/site-packages/`
-
-`$ make`
-
-`$ sudo make install`
-
-
-## III.6. Install PyQt5
-
-* Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
-  
-  * If v5.13.2 is missing, you can find it from here: [PyQt5-5.13.2](https://github.com/ES-TUDelft/robot-interaction-tool/tree/master/docs/extra)
-
-* Open a terminal and cd to the downloads folder (or to where you dowloaded PyQt)
-
-`$ cd Downloads`
-
-`$ tar -xvzf PyQt5-5.13.2.tar.gz`
-
-`$ cd PyQt5-5.13.2`
-
-`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/Users/YOUR_USERNAME/Qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.24/siplib`
-
-* ==> if you encounter any errors, verify the path to Qt 5.13.2 (i.e., where you installed it) and to sip (e.g., *--sip=/Library/Frameworks/Python.framework/Versions/2.7/bin/sip*)
-
-`$ make`
-
-`$ sudo make install`
-
-* If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step).
-
-`$ pip list | grep 'PyQt5'`
-
-==> you should see PyQt5 in the results
-
-* To make sure that PyQt5 is installed correctly, try the following:
-
-`$ python`
-
-`>>> from PyQt5 import QtWidgets`
-
-===> If you have errors, this means that PyQt5 is not installed correctly! In that case, try to address the errors or check **Section V** below!
+The user interface should run now, good luck!
 
 ---
 
