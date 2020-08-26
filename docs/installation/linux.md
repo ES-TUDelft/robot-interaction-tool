@@ -135,12 +135,12 @@
 
 `>>> from PyQt5 import QtWidgets`
 
-===> If you have errors, this means that PyQt5 is not installed correctly! Check **Section V** for known issues!
+===> If you have errors, this means that PyQt5 is not installed correctly! Check [**Annex A**](#a-known-installation-issues) for known issues!
 
 
 ---
 
-# A. Known Installation Issues: 
+# A. Known Installation Issues
 
 ## a. ImportError: libQt5Widgets.so.5 not found!
 
