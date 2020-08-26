@@ -1,3 +1,5 @@
+# INSTALLATION GUIDE
+---
 In this document we go over the installation of the required libraries and setting up Spotify for successfully running the prototyping tool.
 
 **A.** Clone the repository (e.g., to your Documents):
