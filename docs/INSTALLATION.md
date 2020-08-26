@@ -272,7 +272,6 @@ The user interface should run now, good luck!
 
 * Install [Qt 5.13.2](https://download.qt.io/official_releases/online_installers/) from https://download.qt.io/official_releases/online_installers/. When asked to select components, deselect everything (to reduce the size of the required files) and select: MSVC 2015 & 2017 32-bits and 64-bits, and MinGW 32 and 64-bits. 
 
-  * Note that for this step you will need XCode to be installed on your machine.
 
 ## II.6. SIP 4.19
 
@@ -392,6 +391,7 @@ The user interface should run now, good luck!
 
 * Install [Qt 5.13](https://download.qt.io/official_releases/online_installers/) (select: qt-unified-mac-x64-online.dmg) from https://download.qt.io/official_releases/online_installers/
 
+  * Note that for this step you will need XCode to be installed on your machine.
 
 ## III.5. Install SIP 4.19.21
 
