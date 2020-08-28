@@ -102,6 +102,8 @@
 
 `$ make`
 
+   * *Note that this can take a couple of minutes to complete (ignore the warnings).*
+
 `$ sudo make install`
 
 * If you see **errors** during the install procedure, try to address them OR repeat steps 4-6 (i.e., and make sure there are no errors after performing each step).
