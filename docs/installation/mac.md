@@ -96,7 +96,7 @@
 
 `$ cd PyQt5-5.13.2`
 
-`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/Users/YOUR_USERNAME/Qt/5.13.2/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.24/siplib`
+`$ python configure.py -d /usr/local/lib/python2.7/site-packages/ --qmake=/Users/YOUR_USERNAME/Qt/5.13.2/clang_64/bin/qmake --sip=/usr/local/bin/sip --sip-incdir=../sip-4.19.24/siplib`
 
 * ==> if you encounter any errors, verify the path to Qt 5.13.2 (i.e., where you installed it) and to sip (e.g., *--sip=/Library/Frameworks/Python.framework/Versions/2.7/bin/sip*)
 
