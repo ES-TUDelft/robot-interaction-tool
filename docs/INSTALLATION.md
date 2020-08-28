@@ -37,11 +37,11 @@ In this document we go over the installation of the required libraries and setti
 
 # I. Linux Installation guide
 
-## I.1 Install the requirements
+## 1. Install the requirements
 
 * Follow the steps found in this document: [/docs/installation/linux.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/linux.md)
 
-## I.2. Launch the Interaction Tool
+## 2. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and cd to where you saved the tool:
 
@@ -59,11 +59,11 @@ The user interface should run now, good luck!
 
 # II. Windows Installation guide
 
-## II.1 Install the requirements
+## 1. Install the requirements
 
 * Follow the steps found in this document: [/docs/installation/win.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/win.md)
 
-## II.2. Launch the Interaction Tool
+## 2. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a command prompt and follow the same steps as **Section I.2** above.
 
@@ -71,11 +71,11 @@ Once you finish installing all the requirements, open a command prompt and follo
 
 ## III. MAC Installation Guide
 
-## III.1 Install the requirements
+## 1. Install the requirements
 
 * Follow the steps found in this document: [/docs/installation/mac.md](https://github.com/ES-TUDelft/robot-interaction-tool/blob/master/docs/installation/mac.md)
 
-## III.2. Launch the Interaction Tool
+## 2. Launch the Interaction Tool
 
 Once you finish installing all the requirements, open a terminal and follow the same steps as **Section I.2** above.
 
