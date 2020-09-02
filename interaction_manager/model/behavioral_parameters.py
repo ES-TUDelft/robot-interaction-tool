@@ -23,7 +23,7 @@ from interaction_manager.model.gesture import Gesture
 
 class BehavioralParameters(object):
     def __init__(self, randomize=True):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("BehavioralParameters")
 
         self.voice = RobotVoice()
         self.speech_act = SpeechAct()

@@ -13,17 +13,18 @@
 import logging
 
 import es_common.hre_config as pconfig
-from naoqi import ALProxy
 
 
 class ScreenHandler(object):
 
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, session):
 
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("ScreenHandler")
 
-        self.robot_screen = ALProxy("ALTabletService", robot_ip, port) if session is None else session.service(
-            "ALTabletService")
+        self.robot_screen = session.service("ALTabletService")
+
+        # self.configure_wifi()
+        # self.set_webview(hide=False
 
     def set_webview(self, webpage="http://www.google.com", hide=False):
         try:
@@ -56,3 +57,10 @@ class ScreenHandler(object):
             self.logger.info("Successfully loaded '{}'".format(app_name))
         except Exception as e:
             self.logger.info("Error while loading {}. {}".format(app_name, e))
+
+    def configure_wifi(self, security="WPA2", ssid="wlan 3", key="liacs_8_"):
+        try:
+            self.robot_screen.configureWifi(security, ssid, key)
+            self.logger.debug("Successfully configured the wifi.")
+        except Exception as e:
+            self.logger.error("Error while configuring the wifi! {}".format(e))

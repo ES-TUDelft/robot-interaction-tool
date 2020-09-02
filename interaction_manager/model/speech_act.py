@@ -19,7 +19,7 @@ from es_common.enums.speech_enums import SpeechActsType
 class SpeechAct(object):
 
     def __init__(self, message='', message_type=None):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("SpeechAct")
 
         self.message = message
         self.message_type = SpeechActsType.INFORMAL if message_type is None else message_type

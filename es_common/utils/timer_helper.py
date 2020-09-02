@@ -17,7 +17,7 @@ import es_common.hre_config as pconfig
 
 class TimerHelper(object):
     def __init__(self):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("TimerHelper")
         self.start_time, self.end_time = 0, 0
 
     def elapsed_time(self):

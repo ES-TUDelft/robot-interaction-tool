@@ -20,7 +20,7 @@ from es_common.enums.voice_enums import VoiceName, VoiceProsody, VoiceStyle
 class RobotVoice(object):
 
     def __init__(self, randomize=True):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("RobotVoice")
 
         # init parameters
         self.__name = VoiceName.NAO_ENU

@@ -36,7 +36,7 @@ class SoundProcessingModule(object):
 
         # Get the service ALAudioDevice.
         self.audio_service = self.session.service("ALAudioDevice")
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("SoundProcessingModule")
         self.micFront = []
         self.module_name = MODULE_NAME
         self.audio_queue = Queue()

@@ -20,7 +20,7 @@ import six
 
 class MongoDAO(object):
     def __init__(self, host=None, port=None, db_name=None):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("MongoDAO")
 
         self.db_props = config_helper.get_db_mongo_settings()
         self.db_name = self.get_formatted_db_name() if db_name is None else db_name

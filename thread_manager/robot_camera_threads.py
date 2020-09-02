@@ -37,7 +37,7 @@ class ImageControllerThread(QThread):
     def __init__(self, mongo_dao, robot_controller, camera_id=pconfig.camera_id,
                  pixel_res=PixelResolution.R_640x480):
         QThread.__init__(self)
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("ImageControllerThread")
         self.camera_id = camera_id
         self.pixel_resolution = pixel_res
         self.draw_image = False
@@ -140,10 +140,11 @@ class CameraThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
+
+        self.logger = logging.getLogger("CameraThread")
         self.robot_controller = robot_controller
         self.stop_image = False
         self.timer_helper = TimerHelper()
-        self.logger = logging.getLogger(pconfig.logger_name)
 
     def __del__(self):
         self.wait()

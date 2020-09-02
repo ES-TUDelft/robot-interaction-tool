@@ -59,7 +59,7 @@ class PepperRobot(object):
             return message, "Unable to connect to Naoqi:\n- IP: {} | Port: {}".format(robot_ip, port), is_awake
 
         try:
-            self._init_handlers(robot_ip, port)
+            self._init_handlers()
             message = "Successfully connected to Pepper:\n- IP: {} | Port: {}".format(robot_ip, port)
             is_awake = self.is_awake()
         except RuntimeError as e:
@@ -67,13 +67,13 @@ class PepperRobot(object):
         finally:
             return message, error, is_awake
 
-    def _init_handlers(self, robot_ip, port):
-        self.animation_handler = AnimationHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.speech_handler = SpeechHandler(session=self.session, robot_ip=robot_ip, port=port)
+    def _init_handlers(self):
+        self.animation_handler = AnimationHandler(session=self.session)
+        self.speech_handler = SpeechHandler(session=self.session)
         if self.name is None or self.name is RobotName.PEPPER:
-            self.screen_handler = ScreenHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.sensor_handler = SensorHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.engagement_handler = EngagementHandler(session=self.session, robot_ip=robot_ip, port=port)
+            self.screen_handler = ScreenHandler(session=self.session)
+        self.sensor_handler = SensorHandler(session=self.session)
+        self.engagement_handler = EngagementHandler(session=self.session)
 
     """
     TOUCH EVENTS

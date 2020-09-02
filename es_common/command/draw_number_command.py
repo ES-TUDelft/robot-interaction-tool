@@ -9,7 +9,7 @@
 #
 # @author ES
 # **
-
+import logging
 import random
 from collections import OrderedDict
 
@@ -18,9 +18,11 @@ from es_common.enums.command_enums import ActionCommand
 
 
 class DrawNumberCommand(ESCommand):
-    def __init__(self, command_type, range_min=None, range_max=None):
-        super(DrawNumberCommand, self).__init__(command_type, is_speech_related=True)
+    def __init__(self, range_min=None, range_max=None):
+        super(DrawNumberCommand, self).__init__(is_speech_related=True)
 
+        self.logger = logging.getLogger("DrawNumber Command")
+        self.command_type = ActionCommand.DRAW_NUMBER
         self.range_min = int(range_min) if range_min is not None else 0
         self.range_max = int(range_max) if range_max is not None else 10
         self._verify_range()
@@ -40,7 +42,7 @@ class DrawNumberCommand(ESCommand):
     # Override Parent methods
     # =======================
     def clone(self):
-        return DrawNumberCommand(ActionCommand.DRAW_NUMBER, range_min=self.range_min, range_max=self.range_max)
+        return DrawNumberCommand(range_min=self.range_min, range_max=self.range_max)
 
     def reset(self):
         self.choices = [i for i in range(self.range_min, self.range_max)]

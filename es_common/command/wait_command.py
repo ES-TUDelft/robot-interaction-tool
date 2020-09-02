@@ -10,26 +10,25 @@
 # @author ES
 # **
 import logging
-import random
 from collections import OrderedDict
-
-from PyQt5.QtCore import QTimer
 
 from es_common.command.es_command import ESCommand
 from es_common.enums.command_enums import ActionCommand
 
 
 class WaitCommand(ESCommand):
-    def __init__(self, command_type, wait_time=0):
-        super(WaitCommand, self).__init__(command_type, is_speech_related=False)
+    def __init__(self, wait_time=0):
+        super(WaitCommand, self).__init__(is_speech_related=False)
 
+        self.logger = logging.getLogger("Wait Command")
         self.wait_time = wait_time
+        self.command_type = ActionCommand.WAIT
 
     # =======================
     # Override Parent methods
     # =======================
     def clone(self):
-        return WaitCommand(ActionCommand.WAIT, wait_time=self.wait_time)
+        return WaitCommand(wait_time=self.wait_time)
 
     def reset(self):
         # TODO: reset the timer

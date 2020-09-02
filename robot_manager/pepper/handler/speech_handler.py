@@ -12,8 +12,6 @@
 
 import logging
 
-from naoqi import ALProxy
-
 import es_common.hre_config as pconfig
 from es_common.enums.voice_enums import VoiceTag, VoiceName
 from robot_manager.pepper.enums.engagement_enums import DialogTopic
@@ -21,20 +19,18 @@ from robot_manager.pepper.enums.engagement_enums import DialogTopic
 
 class SpeechHandler:
 
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, session):
 
         self.logger = logging.getLogger("Speech Handler")
 
-        self.tts = ALProxy("ALTextToSpeech", robot_ip, port) if session is None else session.service("ALTextToSpeech")
-        self.animated_speech = ALProxy("ALAnimatedSpeech", robot_ip, port) if session is None else session.service(
-            "ALAnimatedSpeech")
+        self.tts = session.service("ALTextToSpeech")
+        self.animated_speech = session.service("ALAnimatedSpeech")
 
-        # self.speech_recognition = ALProxy("ALSpeechRecognition", robot_ip,
-        #                                   port) if session is None else session.service("ALSpeechRecognition")
+        # self.speech_recognition = session.service("ALSpeechRecognition")
         # self.sound_detector = session.service("ALSoundDetection")
         self.audio = session.service("ALAudioDevice")
-        self.dialog = ALProxy("ALDialog", robot_ip, port) if session is None else session.service("ALDialog")
-        self.memory = ALProxy("ALMemory", robot_ip, port) if session is None else session.service("ALMemory")
+        self.dialog = session.service("ALDialog")
+        self.memory = session.service("ALMemory")
 
         # self.tts.setParameter('speed', 150)
         # self.animated_speech.setParameter('speed', 150)

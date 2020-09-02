@@ -18,7 +18,7 @@ import time
 import es_common.hre_config as pconfig
 from es_common.enums.led_enums import LedColor
 from es_common.utils.timer_helper import TimerHelper
-from robot_manager.pepper.enums.motion_enums import HeadMotion, Animation, AutonomousLife
+from robot_manager.pepper.enums.motion_enums import Animation, AutonomousLife
 from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
 from robot_manager.pepper.enums.tablet_enums import TabletAction
 from robot_manager.pepper.model.pepper_robot import PepperRobot
@@ -27,7 +27,7 @@ from robot_manager.pepper.model.pepper_robot import PepperRobot
 class RobotController(object):
 
     def __init__(self):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("RobotController")
         self.pepper_robot = None
         self.chat_agent = None
         self.image_viewer = None
@@ -67,17 +67,8 @@ class RobotController(object):
     def is_interacting(self, value):
         self.pepper_robot.is_interacting = value
 
-    def head(self, reset=False, motion=HeadMotion.YAW, angle=0.0, time=1.0):
-        if reset is True:
-            self.pepper_robot.head(reset=reset)
-        else:
-            # ang = self.pepper_robot.get_angles(joint = "Head", use_sensors=False)
-            # self.logger.info("ANGLES = " + str(ang))
-            # if math.fabs(math.fabs(ang[0]) - math.fabs(angle)) > 0.1:
-            to_rotate = 0.0
-            if motion._range[0] < angle < motion._range[1]:
-                to_rotate = angle
-            self.pepper_robot.head(motion=motion, angle=float(to_rotate), time=time)  # ang[0] - angle))
+    def head(self, reset=False):
+        self.pepper_robot.head(reset=reset)
 
     def get_angles(self, joint="Body", use_sensors=True):
         return self.pepper_robot.get_angles(joint=joint, use_sensors=use_sensors)

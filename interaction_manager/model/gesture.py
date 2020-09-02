@@ -19,7 +19,7 @@ from es_common.enums.speech_enums import GesturesType
 class Gesture(object):
 
     def __init__(self, gestures=None, gestures_type=None):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("Gesture")
 
         self.gestures = {"open": "", "close": ""} if gestures is None else gestures
         self.gestures_type = GesturesType.OPEN if gestures_type is None else gestures_type

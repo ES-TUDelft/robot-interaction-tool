@@ -178,7 +178,7 @@ sys_config = _get_config()
 # SPOTIFY
 ###
 def _get_spotify_config():
-    config = None
+    spotify = None
     try:
         # check if there is a config file for spotify, otherwise use default config
         file_path = "interaction_manager/properties/spotify.yaml"
@@ -189,18 +189,20 @@ def _get_spotify_config():
         else:
             logger.debug("Couldn't find a spotify config file! Using default config instead.")
             config = sys_config
+
+        spotify = config["spotify"]
     except Exception as e:
-        logger.error("Error while opening spotify config! {}".format(e))
-        config = sys_config
+        logger.error("Error while loading spotify config! {}".format(e))
     finally:
-        return config
+        return spotify
 
 
+# TODO: remove
 spotify_config = _get_spotify_config()
 
 
 def get_spotify_settings():
-    return spotify_config["spotify"]
+    return _get_spotify_config()
 
 
 ###

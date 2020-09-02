@@ -9,18 +9,19 @@
 #
 # @author ES
 # **
-
-import random
+import logging
 from collections import OrderedDict
 
 from es_common.command.es_command import ESCommand
 from es_common.enums.command_enums import ActionCommand
 
 
-class MusicCommand(ESCommand):
-    def __init__(self, command_type, playlist=None, track=None, play_time=-1, animations_key=""):
-        super(MusicCommand, self).__init__(command_type, is_speech_related=False)
+class PlayMusicCommand(ESCommand):
+    def __init__(self, playlist=None, track=None, play_time=-1, animations_key=""):
+        super(PlayMusicCommand, self).__init__(is_speech_related=False)
 
+        self.logger = logging.getLogger("PlayMusic Command")
+        self.command_type = ActionCommand.PLAY_MUSIC
         self.music_controller = None
         self.playlist = playlist
         self.track = track
@@ -31,8 +32,8 @@ class MusicCommand(ESCommand):
     # Override Parent methods
     # =======================
     def clone(self):
-        return MusicCommand(ActionCommand.PLAY_MUSIC, playlist=self.playlist,
-                            track=self.track, play_time=self.play_time, animations_key=self.animations_key)
+        return PlayMusicCommand(playlist=self.playlist, track=self.track,
+                                play_time=self.play_time, animations_key=self.animations_key)
 
     def reset(self):
         # TODO: reset the timer

@@ -4,12 +4,11 @@ from es_common.datasource.serializable import Serializable
 
 
 class ESCommand(Serializable):
-    def __init__(self, command_type, is_speech_related=False):
+    def __init__(self, is_speech_related=False):
         super(ESCommand, self).__init__()
 
-        self.logger = logging.getLogger(command_type.name)
-        self.command_type = command_type
         self.is_speech_related = is_speech_related
+        self.command_type = None
 
     def clone(self):
         raise NotImplementedError

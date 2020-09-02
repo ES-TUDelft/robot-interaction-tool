@@ -33,7 +33,7 @@ class WakeUpRobotThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
-        self.robot_controller = RobotController() if robot_controller is None else robot_controller
+        self.robot_controller = robot_controller
 
     def __del__(self):
         self.wait()
@@ -53,7 +53,7 @@ class MoveRobotThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
-        self.robot_controller = RobotController() if robot_controller is None else robot_controller
+        self.robot_controller = robot_controller
         self.logger = logging.getLogger("MoveRobot Thread")
         self.x = 0
         self.y = 0,

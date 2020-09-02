@@ -12,21 +12,18 @@
 
 import logging
 
-import es_common.hre_config as pconfig
 from es_common.enums.led_enums import LedColor
 from robot_manager.pepper.enums.sensor_enums import Sonar, LedName
-from naoqi import ALProxy
-import functools
 
 
 class SensorHandler(object):
 
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
-        self.logger = logging.getLogger(pconfig.logger_name)
+    def __init__(self, session=None):
+        self.logger = logging.getLogger("SensorHandler")
 
-        self.memory = ALProxy("ALMemory", robot_ip, port) if session is None else session.service("ALMemory")
-        self.sonar = ALProxy("ALSonar", robot_ip, port) if session is None else session.service("ALSonar")
-        self.leds = ALProxy("ALLeds", robot_ip, port) if session is None else session.service("ALLeds")
+        self.memory = session.service("ALMemory")
+        self.sonar = session.service("ALSonar")
+        self.leds = session.service("ALLeds")
 
     def get_distance(self, sonar=Sonar.FRONT):
         return self.memory.getData(sonar.value)

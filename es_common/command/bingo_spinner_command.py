@@ -12,24 +12,26 @@
 #
 # @author ES
 # **
-
+import logging
 import random
+from collections import OrderedDict
 
 from es_common.command.draw_number_command import DrawNumberCommand
 from es_common.enums.command_enums import ActionCommand
 
 
 class BingoSpinnerCommand(DrawNumberCommand):
-    def __init__(self, command_type):
-        super(BingoSpinnerCommand, self).__init__(command_type, range_min=1, range_max=75)
+    def __init__(self, range_min=1, range_max=75):
+        super(BingoSpinnerCommand, self).__init__(range_min=range_min, range_max=range_max)
 
-        self.is_speech_related = True  # redundant!
+        self.logger = logging.getLogger("Bingo Command")
+        self.command_type = ActionCommand.BINGO_SPINNER
 
     # =======================
     # Override Parent methods
     # =======================
     def clone(self):
-        return BingoSpinnerCommand(ActionCommand.BINGO_SPINNER)
+        return BingoSpinnerCommand()
 
     def execute(self):
         if len(self.choices) == 0:
@@ -67,3 +69,30 @@ class BingoSpinnerCommand(DrawNumberCommand):
 
         # draw <= 75
         return "O {}".format(self.draw)
+
+    ###
+    # SERIALIZATION
+    ###
+    def serialize(self):
+        return OrderedDict([
+            ("id", self.id),
+            ("command_type", self.command_type.name),
+            ("range_min", self.range_min),
+            ("range_max", self.range_max),
+            ("draw", self.draw),
+            ("choices", self.choices),
+            ("prev_choices", self.prev_choices)
+        ])
+
+    def deserialize(self, data, hashmap={}):
+        self.id = data["id"]
+        hashmap[data["id"]] = self
+
+        self.range_min = data["range_min"]
+        self.range_max = data["range_max"]
+
+        self.choices = data["choices"]
+        self.prev_choices = data["prev_choices"]
+        self.draw = data["draw"] if "draw" in data.keys() else self.prev_choices[len(self.prev_choices)-1]
+
+        return True

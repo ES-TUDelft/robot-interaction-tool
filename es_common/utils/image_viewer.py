@@ -21,7 +21,7 @@ class ImageViewer:
     def __init__(self, output_dir=pconfig.output_dir,
                  image_name=pconfig.image_name, image_ext=pconfig.image_ext,
                  video_name=pconfig.video_name, video_ext=pconfig.video_ext, video_fps=pconfig.video_fps):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("ImageViewer")
 
         self.video_writer = None
         self.output_dir = output_dir

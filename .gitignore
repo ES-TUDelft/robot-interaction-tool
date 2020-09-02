@@ -133,3 +133,4 @@ logs/*.json
 interaction_manager/properties/spotify*.yaml
 interaction_manager/properties/*animations*.yaml
 design-tool-v*
+es_common/properties/tablebooker.yaml

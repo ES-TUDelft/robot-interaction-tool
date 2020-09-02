@@ -35,10 +35,11 @@ class DialogThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
+
+        self.logger = logging.getLogger("DialogThread")
         self.robot_controller = robot_controller
         self.robot_controller.subscribe_to_dialog_events(self.block_completed, self.user_answer)
         self.stop_dialog = False
-        self.logger = logging.getLogger(pconfig.logger_name)
 
     def __del__(self):
         self.wait()
@@ -89,9 +90,10 @@ class EngagementThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
+
+        self.logger = logging.getLogger("EngagementThread")
         self.robot_controller = robot_controller
         self.stop_engagement = False
-        self.logger = logging.getLogger(pconfig.logger_name)
 
     def __del__(self):
         self.wait()
@@ -126,11 +128,12 @@ class FaceTrackerThread(QThread):
 
     def __init__(self, robot_controller):
         QThread.__init__(self)
+
+        self.logger = logging.getLogger("FaceTrackerThread")
         self.robot_controller = robot_controller
         self.stop_tracking = False
         self.gaze_pattern = GazePattern.FIXATED
         self.tracking_start_time = 0
-        self.logger = logging.getLogger(pconfig.logger_name)
 
     def __del__(self):
         self.wait()

@@ -34,6 +34,14 @@ def get_day_and_month(a_date=None):
     return "{0:%A}_{0:%B}{0:%d}_{0:%Y}".format(get_datetime(a_date))
 
 
+def get_today_date(date_format="{0:%Y}-{0:%m}-{0:%d}"):
+    return date_format.format(get_datetime())
+
+
+def get_tomorrow_date(date_format="{0:%Y}-{0:%m}-{0:%d}"):
+    return date_format.format(get_datetime() + datetime.timedelta(days=1))
+
+
 def get_daytime_message():
     d = datetime.datetime.now()
     if d.hour <= 12:
