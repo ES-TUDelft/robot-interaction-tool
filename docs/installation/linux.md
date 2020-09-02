@@ -6,6 +6,7 @@
 
 `$ sudo apt-get install python2 libpython2.7`
 
+<!--
 ## I.2. NAOqi for Python
 
 * Install [PYNAOqi 2.5 for Python](http://doc.aldebaran.com/2-5/dev/python/install_guide.html):
@@ -36,9 +37,9 @@
 `>>> import naoqi`
 
 * In case of errors, verify your PYTHONPATH or check Softbank documentation at: [http://doc.aldebaran.com/2-5/dev/python/install_guide.html](http://doc.aldebaran.com/2-5/dev/python/install_guide.html)
+-->
 
-
-## I.3. Install PIP and other dependencies
+## I.2. Install PIP (for Python 2.7) and other dependencies
 
 * Open a terminal
 
@@ -56,11 +57,11 @@
 
 `$ pip install -r requirements.txt`
 
-    * If you get errors related to the "qi" library, verify that NAOqi is in the PYTHONPATH.
+    * If you get errors related to the "qi" library, try installing it from terminal (i.e., $ pip install qi).
     * If you get errors related to "pip" check if /home/YOUR_USER/.local/bin is in the PATH or add it in ~/.bashrc
     
 
-## I.4. Install qt5
+## I.3. Install qt5
 
 * Open a terminal:
 
@@ -77,7 +78,7 @@
 -->
 
 
-## I.5. Install SIP 4.19.x
+## I.4. Install SIP 4.19.x
 
 * Go to https://www.riverbankcomputing.com/software/sip/download and select **sip-4.19.23**
 
@@ -99,7 +100,7 @@
 
 ==> you should see PyQt5-sip in the list
 
-## I.6. Install PyQt5
+## I.5. Install PyQt5
 
 * Dowload **PyQt5-5.13.2.tar.gz** from (https://www.riverbankcomputing.com/software/pyqt/download5)
 
