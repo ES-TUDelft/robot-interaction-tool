@@ -23,7 +23,6 @@ setuptools.setup(
         "pyyaml",
         "pymongo",
         "spotipy",
-        "naoqi",
         "qi"
     ],
     classifiers=[

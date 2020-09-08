@@ -37,6 +37,7 @@ class SpeechHandler:
 
         # Subscribe to get last input
         self.lastInput = self.memory.subscriber("Dialog/LastInput")
+        # self.logger.info("\n\nBodyId: {}\n\n".format(self.memory.getData("Device/DeviceList/ChestBoard/BodyId")))
         self.lastInput.signal.connect(self.log)
 
         # Notify when topic is completed
