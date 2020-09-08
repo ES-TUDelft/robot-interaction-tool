@@ -24,8 +24,8 @@ class RobotVoice(object):
 
         # init parameters
         self.__name = VoiceName.NAO_ENU
-        self.__speed = (random.randrange(70, 140, 10)) if randomize is True else pconfig.default_voice_speed
-        self.__pitch = (float(random.randrange(7, 14, 1)) / 10.0) if randomize is True else pconfig.default_voice_pitch
+        self.__speed = pconfig.default_voice_speed  # (random.randrange(70, 140, 10)) if randomize is True else
+        self.__pitch = pconfig.default_voice_pitch  # (float(random.randrange(7, 14, 1)) / 10.0) if randomize is True
         self.__prosody = VoiceProsody.WEAK
         self.__style = VoiceStyle.NEUTRAL
         self.__volume = pconfig.default_voice_volume

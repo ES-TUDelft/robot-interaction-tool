@@ -13,7 +13,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
-from interaction_manager.model.interaction_block import InteractionBlock
+from es_common.model.interaction_block import InteractionBlock
 
 GUI_NAME = "DialogGUI"
 

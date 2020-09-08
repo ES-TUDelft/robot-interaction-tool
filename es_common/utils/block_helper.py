@@ -1,4 +1,4 @@
-from interaction_manager.model.interaction_block import InteractionBlock
+from es_common.model.interaction_block import InteractionBlock
 from es_common.model.observable import Observable
 
 block_observable = Observable()

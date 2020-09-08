@@ -19,7 +19,7 @@ from es_common.enums.command_enums import ActionCommand
 from es_common.factory.command_factory import CommandFactory
 from interaction_manager.utils import config_helper
 import es_common.hre_config as pconfig
-from interaction_manager.model.interaction_block import InteractionBlock
+from es_common.model.interaction_block import InteractionBlock
 from interaction_manager.model.speech_act import SpeechAct
 from interaction_manager.view.ui_editblock_dialog import Ui_EditBlockDialog
 from es_common.model.tablet_page import TabletPage

@@ -30,11 +30,14 @@ class BehavioralParameters(object):
         self.gaze_pattern = GazePattern.FIXATED
 
         self.gesture = Gesture()
-        proxemics_range = [int(i * 100) for i in pconfig.proxemics_range]
-        self.proxemics = (float(random.randrange(proxemics_range[0], proxemics_range[1],
-                                                 25)) / 100.0) if randomize is True else pconfig.default_proxemics
-        self.eye_color = list(LedColor)[
-            random.randint(0, len(LedColor.keys()) - 1)] if randomize is True else LedColor.WHITE
+
+        # proxemics_range = [int(i * 100) for i in pconfig.proxemics_range]
+        self.proxemics = pconfig.default_proxemics
+        # (float(random.randrange(proxemics_range[0], proxemics_range[1], 25)) / 100.0)
+        #           if randomize is True else pconfig.default_proxemics
+
+        self.eye_color = LedColor.GREEN
+        # list(LedColor)[random.randint(0, len(LedColor.keys()) - 1)] if randomize is True else LedColor.WHITE
 
     @property
     def to_dict(self):

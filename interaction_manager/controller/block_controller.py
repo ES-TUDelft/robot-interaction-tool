@@ -17,7 +17,7 @@ from PyQt5 import QtCore, QtGui
 from block_manager.controller.block_controller import BlockController
 from es_common.utils import block_helper
 from interaction_manager.controller.block_list_controller import ESBlockListWidget
-from interaction_manager.model.interaction_block import InteractionBlock
+from es_common.model.interaction_block import InteractionBlock
 from interaction_manager.utils import config_helper
 
 

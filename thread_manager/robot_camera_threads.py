@@ -22,7 +22,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 import es_common.hre_config as pconfig
 from es_common.controller.image_controller import ImageController
-from es_common.enums.sensor_enums import PixelResolution
+from robot_manager.pepper.enums.sensor_enums import PixelResolution
 from es_common.utils.timer_helper import TimerHelper
 
 """
