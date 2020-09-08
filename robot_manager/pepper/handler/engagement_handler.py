@@ -53,19 +53,20 @@ class EngagementHandler(object):
             self.tracker.unregisterAllTargets()
 
     def divert_look(self, gaze_pattern=None, frame=pconfig.robot_frame, thresh=pconfig.divert_look_threshold):
-        if not (gaze_pattern is None):
-            multiplier = 1.5 if gaze_pattern.value > 1 else gaze_pattern.value
-            thresh = thresh * multiplier
-            # self.logger.info("Gaze thresh is now: {}".format(thresh))
-        pos = self.tracker.getTargetPosition(frame)
-
-        if len(pos) > 0:
-            # divert look
-            pos = [pos[0] + thresh, pos[1] + thresh, pos[2]]
-            self.tracker.lookAt(pos, frame, 0.1, False)
-            # move back
-            pos = [pos[0] - thresh, pos[1] - thresh, pos[2]]
-            self.tracker.lookAt(pos, frame, 0.1, False)
+        pass  # this option is disabled!
+        # if not (gaze_pattern is None):
+        #     multiplier = 1.5 if gaze_pattern.value > 1 else gaze_pattern.value
+        #     thresh = thresh * multiplier
+        #     # self.logger.info("Gaze thresh is now: {}".format(thresh))
+        # pos = self.tracker.getTargetPosition(frame)
+        #
+        # if len(pos) > 0:
+        #     # divert look
+        #     pos = [pos[0] + thresh, pos[1] + thresh, pos[2]]
+        #     self.tracker.lookAt(pos, frame, 0.1, False)
+        #     # move back
+        #     pos = [pos[0] - thresh, pos[1] - thresh, pos[2]]
+        #     self.tracker.lookAt(pos, frame, 0.1, False)
 
     def tracking(self, enable=True):
         if self.face_detection.isTrackingEnabled() is enable:

@@ -101,7 +101,7 @@
                     <string>White</string>
                    </property>
                    <property name="checked">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -149,6 +149,9 @@
                    <property name="text">
                     <string>Green</string>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item row="0" column="1" rowspan="2">
@@ -164,6 +167,9 @@
                 <layout class="QGridLayout" name="gridLayout_28">
                  <item row="0" column="3">
                   <widget class="QLabel" name="label_12">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>Fixated</string>
                    </property>
@@ -174,6 +180,9 @@
                  </item>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_7">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -232,6 +241,9 @@
                  </item>
                  <item row="0" column="5">
                   <widget class="QLabel" name="label_13">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>Diverted</string>
                    </property>
@@ -242,6 +254,9 @@
                  </item>
                  <item row="0" column="4">
                   <widget class="QSlider" name="gazePatternSlider">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -303,7 +318,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="value" stdset="0">
-                    <double>3.500000000000000</double>
+                    <double>1.000000000000000</double>
                    </property>
                   </widget>
                  </item>
@@ -357,10 +372,10 @@
                     <number>1</number>
                    </property>
                    <property name="value">
-                    <number>5</number>
+                    <number>1</number>
                    </property>
                    <property name="sliderPosition">
-                    <number>5</number>
+                    <number>1</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>

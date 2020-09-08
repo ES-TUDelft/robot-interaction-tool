@@ -152,11 +152,11 @@ class FaceTrackerThread(QThread):
             self.tracking_start_time = time.time()
 
             while self.stop_tracking is False:
-                if ('DIVERTED' in self.gaze_pattern.name) and (
-                        time.time() - self.tracking_start_time > pconfig.tracker_divert_time):
-                    self.robot_controller.divert_face_tracker(gaze_pattern=self.gaze_pattern)
-                    self.logger.info("*** Diverting gaze")
-                    self.tracking_start_time = time.time()
+                # if ('DIVERTED' in self.gaze_pattern.name) and (
+                #         time.time() - self.tracking_start_time > pconfig.tracker_divert_time):
+                #     self.robot_controller.divert_face_tracker(gaze_pattern=self.gaze_pattern)
+                #     self.logger.info("*** Diverting gaze")
+                #     self.tracking_start_time = time.time()
                 time.sleep(1)
 
             self.robot_controller.face_tracker(start=False)
