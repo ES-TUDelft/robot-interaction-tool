@@ -11,7 +11,10 @@
 # **
 
 import logging
-import qi
+
+from es_common.hre_config import py2
+qi = py2.__import__('qi')
+# import qi
 
 
 class ConnectionHandler(object):
@@ -27,7 +30,7 @@ class ConnectionHandler(object):
             ConnectionHandler.logger.info("Successfully connected to Pepper:\n- IP: {} | Port: {}".format(
                 robot_ip, port))
         except RuntimeError as e:
-            session = None
+            # session = None
             ConnectionHandler.logger.error("Unable to connect to Naoqi:\n- IP: {} | Port: {}\n{}".format(
                 robot_ip, port, e))
         finally:

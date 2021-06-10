@@ -619,7 +619,7 @@ class Ui_DialogGUI(object):
         self.actionMenuSimulationDockView.setToolTip(_translate("DialogGUI", "Simulation"))
 
 
-import resources_rc
+import interaction_manager.view.resources_rc
 
 
 if __name__ == "__main__":

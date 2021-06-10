@@ -13,17 +13,16 @@
 import logging
 
 import es_common.hre_config as pconfig
-from naoqi import ALProxy
+# from naoqi import ALProxy
 
 
 class ScreenHandler(object):
 
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, session):
 
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("ScreenHandler")
 
-        self.robot_screen = ALProxy("ALTabletService", robot_ip, port) if session is None else session.service(
-            "ALTabletService")
+        self.robot_screen = session.service("ALTabletService")
 
     def set_webview(self, webpage="http://www.google.com", hide=False):
         try:

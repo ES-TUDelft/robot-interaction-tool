@@ -108,7 +108,6 @@ class InteractionController(object):
             self.animation_thread.connect_to_robot(robot_ip=self.robot_ip,
                                                    port=self.port,
                                                    robot_name=self.robot_name)
-
         if self.face_tracker_thread is None:
             self.face_tracker_thread = FaceTrackerThread(robot_controller=self.robot_controller)
             self.face_tracker_thread.is_disconnected.connect(self.disconnect_from_robot)
@@ -452,7 +451,8 @@ class InteractionController(object):
     # TABLET
     # ------
     def tablet_image(self, hide=False):
-        self.robot_controller.tablet_image(hide=hide)
+        if self.robot_controller is not None:
+            self.robot_controller.tablet_image(hide=hide)
 
     # MOVEMENT
     # --------

@@ -24,7 +24,7 @@ class UIDBController(QtWidgets.QDialog):
     def __init__(self, parent=None, db_list=[]):
         super(UIDBController, self).__init__(parent)
 
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("UIDBController")
 
         # init UI elements
         self._init_ui(db_list=db_list)

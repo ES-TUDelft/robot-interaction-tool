@@ -12,52 +12,55 @@
 
 import logging
 
-from naoqi import ALProxy
-
 import es_common.hre_config as pconfig
 from es_common.enums.voice_enums import VoiceTag, VoiceName
 from robot_manager.pepper.enums.engagement_enums import DialogTopic
 
-
 class SpeechHandler:
 
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, session):
 
         self.logger = logging.getLogger("Speech Handler")
 
-        self.tts = ALProxy("ALTextToSpeech", robot_ip, port) if session is None else session.service("ALTextToSpeech")
-        self.animated_speech = ALProxy("ALAnimatedSpeech", robot_ip, port) if session is None else session.service(
-            "ALAnimatedSpeech")
+        self.tts = session.service("ALTextToSpeech")
+        self.animated_speech = session.service("ALAnimatedSpeech")
 
         # self.speech_recognition = ALProxy("ALSpeechRecognition", robot_ip,
         #                                   port) if session is None else session.service("ALSpeechRecognition")
         # self.sound_detector = session.service("ALSoundDetection")
         self.audio = session.service("ALAudioDevice")
-        self.dialog = ALProxy("ALDialog", robot_ip, port) if session is None else session.service("ALDialog")
-        self.memory = ALProxy("ALMemory", robot_ip, port) if session is None else session.service("ALMemory")
+        self.dialog = session.service("ALDialog")
+        self.memory = session.service("ALMemory")
 
         # self.tts.setParameter('speed', 150)
         # self.animated_speech.setParameter('speed', 150)
 
         # Subscribe to get last input
         self.lastInput = self.memory.subscriber("Dialog/LastInput")
-        self.lastInput.signal.connect(self.log)
+        # self.lastInput.signal.connect(self.log)
 
         # Notify when topic is completed
         self.block_completed = self.memory.subscriber("blockCompleted")
-        self.block_completed.signal.connect(self.exit_topic)  # not important (for testing purposes)
 
         # self.sound_detected = self.memory.subscriber("SoundDetected")
         # self.sound_detected.signal.connect(self.log)
 
         # listen to webpage loaded
         self.pageLoaded = self.memory.subscriber("pageLoaded")
-        self.pageLoaded.signal.connect(self.webpage_loaded)
+        # self.pageLoaded.signal.connect(self.webpage_loaded)
 
         self.answer_listener = self.memory.subscriber("userAnswer")
-        self.answer_listener.signal.connect(self.set_user_answer)  # for testing purposes
+        # self.answer_listener.signal.connect(self.set_user_answer)  # for testing purposes
+
+        self.set_db_insert()
 
         self.current_topic = None
+
+    def set_db_insert(self):
+        py2_helper = pconfig.mongo_scope['Py2Helper']()
+
+        self.block_completed.signal.connect(py2_helper.insert_block_completed)
+        self.answer_listener.signal.connect(py2_helper.insert_user_answer)
 
     # ======
     # SPEECH
@@ -98,7 +101,7 @@ class SpeechHandler:
         #            VoiceTag.SPEED.value, robot_voice.speed,
         #            VoiceTag.PITCH.value, robot_voice.pitch, 
         to_say = "\\{}={}\\ {}".format(
-            VoiceTag.PROSODY.value, "S" if robot_voice.prosody.value is 1 else "W",
+            VoiceTag.PROSODY.value, "S" if robot_voice.prosody.value == 1 else "W",
             interaction_block.message)
 
         self.logger.info("Message = {}".format(to_say))
@@ -155,8 +158,9 @@ class SpeechHandler:
     def start_dialog(self):
         try:
             for d_topic in DialogTopic.values():
-                topic_name = self.dialog.loadTopic(d_topic)
-                self.logger.info("TOPIC: {}".format(topic_name))
+                if d_topic is not None:
+                    topic_name = self.dialog.loadTopic(d_topic)
+                    self.logger.info("TOPIC: {}".format(topic_name))
             self.dialog.subscribe("hre_dialog")
             self.logger.info("Started the dialog successfully.")
         except Exception as e:

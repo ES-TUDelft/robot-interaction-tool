@@ -27,7 +27,7 @@ from robot_manager.pepper.model.pepper_robot import PepperRobot
 class RobotController(object):
 
     def __init__(self):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("RobotController")
         self.pepper_robot = None
         self.chat_agent = None
         self.image_viewer = None

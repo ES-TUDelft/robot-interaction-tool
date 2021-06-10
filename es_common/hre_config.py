@@ -11,7 +11,34 @@
 # @author ES
 #**
 
+from python2.client import Python2
+py2 = Python2('/usr/local/bin/python')
+
 logger_name = 'hre_logger'
+
+mongo_scope = py2.exec("""
+import os
+import pymongo
+import functools
+
+class Py2Helper(object):
+    def __init__(self):
+        self.client = pymongo.MongoClient(os.environ['CHANGE_STREAM_DB'])
+        self.db = self.client["InteractionBlocksDB"]
+        self.robot_collection = self.db.collection["RobotCollection"]
+
+        self.people_in_zones_id = None
+
+    def insert_block_completed(self, val=None):
+        self.robot_collection.insert_one({'blockCompleted': 1})
+
+    def insert_user_answer(self, val=None):
+        if val is not None:
+            self.robot_collection.insert_one({'userAnswer': val})
+
+    def insert_people(self, event_name=None, subscriber_identifier=None):
+        self.robot_collection.insert_one({'updatePeople': 1})
+""")
 
 # NAOQI properties
 robot_ip = '127.0.0.1' # Replace by the robot IP

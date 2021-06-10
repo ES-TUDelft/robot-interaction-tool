@@ -14,30 +14,22 @@ import logging
 
 import es_common.hre_config as pconfig
 from robot_manager.pepper.enums.motion_enums import HeadMotion, Animation, AutonomousLife
-from naoqi import ALProxy
 
 
 class AnimationHandler(object):
-    def __init__(self, session=None, robot_ip=pconfig.robot_ip, port=pconfig.naoqi_port):
+    def __init__(self, session):
 
-        self.logger = logging.getLogger(pconfig.logger_name)
-        if session is None:
-            self.motion = ALProxy("ALMotion", robot_ip, port)
-            self.navigation = ALProxy("ALNavigation", robot_ip, port)
-            self.posture = ALProxy("ALRobotPosture", robot_ip, port)
-            self.awareness = ALProxy('ALBasicAwareness', robot_ip, port)
-            self.autonomous_life = ALProxy('ALAutonomousLife', robot_ip, port)
-            self.animation_player = ALProxy("ALAnimationPlayer")
-        else:
-            self.motion = session.service("ALMotion")
-            self.navigation = session.service("ALNavigation")
-            self.posture = session.service("ALRobotPosture")
-            self.awareness = session.service('ALBasicAwareness')
-            self.autonomous_life = session.service('ALAutonomousLife')
-            self.animation_player = session.service("ALAnimationPlayer")
+        self.logger = logging.getLogger("Animation Handler")
 
-        self.motion_proxy = ALProxy("ALMotion", robot_ip,
-                                    int(port))  # needed for using 'post' when combining mvt with speech/gestures
+        self.motion = session.service("ALMotion")
+        self.navigation = session.service("ALNavigation")
+        self.posture = session.service("ALRobotPosture")
+        self.awareness = session.service('ALBasicAwareness')
+        self.autonomous_life = session.service('ALAutonomousLife')
+        self.animation_player = session.service("ALAnimationPlayer")
+
+        # needed for using 'post' when combining mvt with speech/gestures
+        # self.motion_proxy = ALProxy("ALMotion", robot_ip, int(port))
 
     def wakeup(self, awareness=True, breathing=False):
         # Wake up robot
@@ -126,7 +118,8 @@ class AnimationHandler(object):
         # self.motion_proxy.post.moveTo(x, y, theta)
 
     def finish_move(self):
-        self.motion_proxy.waitUntilMoveIsFinished()
+        pass
+        # self.motion_proxy.waitUntilMoveIsFinished()
 
     def _get_angle(self, angle=0.0, joint_range=[0.0, 0.0]):
         return angle if joint_range[0] <= angle <= joint_range[1] else 0.0

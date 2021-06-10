@@ -15,7 +15,6 @@ import time
 
 from PyQt5.QtCore import QThread, pyqtSignal
 
-import es_common.hre_config as pconfig
 from es_common.enums.speech_enums import GazePattern
 
 
@@ -38,7 +37,7 @@ class DialogThread(QThread):
         self.robot_controller = robot_controller
         self.robot_controller.subscribe_to_dialog_events(self.block_completed, self.user_answer)
         self.stop_dialog = False
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("DialogThread")
 
     def __del__(self):
         self.wait()
@@ -56,7 +55,6 @@ class DialogThread(QThread):
     def activate_topic(self, dialogue_block):
         if self.isRunning():
             self.robot_controller.activate_topic(dialogue_block)
-            # self.robot_controller.pepper_robot.speech_handler.block_completed.signal.connect(self.raise_block_completed_event)
 
     def raise_block_completed_event(self, val):
         self.logger.info("EVENT: {}".format(val))
@@ -91,7 +89,7 @@ class EngagementThread(QThread):
         QThread.__init__(self)
         self.robot_controller = robot_controller
         self.stop_engagement = False
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("EngagementThread")
 
     def __del__(self):
         self.wait()
@@ -99,21 +97,22 @@ class EngagementThread(QThread):
     def engagement(self, start=True):
         if start is False:
             self.stop_engagement = True
-        elif (not self.isRunning()):
+        elif not self.isRunning():
             self.start()
 
     def run(self):
         self.stop_engagement = False
         try:
-            self.robot_controller.engagement(is_engaged_signal=self.is_engaged, start=True)
-            while self.stop_engagement is False:
-                time.sleep(1)
+            if self.robot_controller is not None:
+                self.robot_controller.engagement(is_engaged_signal=self.is_engaged, start=True)
+                while self.stop_engagement is False:
+                    time.sleep(1)
 
-            self.robot_controller.engagement(is_engaged_signal=None, start=False)
-            self.robot_controller.posture(reset=True)
+                self.robot_controller.engagement(is_engaged_signal=None, start=False)
+                self.robot_controller.posture(reset=True)
         except Exception as e:
             self.is_disconnected.emit(True)
-            self.logger.error("Error while connecting to the robot: {}".format(e))
+            self.logger.error("Error while connecting to the robot: {} | {}".format(self.robot_controller, e))
 
 
 """
@@ -130,7 +129,7 @@ class FaceTrackerThread(QThread):
         self.stop_tracking = False
         self.gaze_pattern = GazePattern.FIXATED
         self.tracking_start_time = 0
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("FaceTrackerThread")
 
     def __del__(self):
         self.wait()
@@ -144,20 +143,15 @@ class FaceTrackerThread(QThread):
     def run(self):
         self.stop_tracking = False
         try:
-            self.robot_controller.face_tracker(start=True)
-            self.gaze_pattern = GazePattern.FIXATED
-            self.tracking_start_time = time.time()
+            if self.robot_controller is not None:
+                self.robot_controller.face_tracker(start=True)
+                self.tracking_start_time = time.time()
 
-            while self.stop_tracking is False:
-                if ('DIVERTED' in self.gaze_pattern.name) and (
-                        time.time() - self.tracking_start_time > pconfig.tracker_divert_time):
-                    self.robot_controller.divert_face_tracker(gaze_pattern=self.gaze_pattern)
-                    self.logger.info("*** Diverting gaze")
-                    self.tracking_start_time = time.time()
-                time.sleep(1)
+                while self.stop_tracking is False:
+                    time.sleep(1)
 
-            self.robot_controller.face_tracker(start=False)
-            self.robot_controller.posture(reset=True)
+                self.robot_controller.face_tracker(start=False)
+                self.robot_controller.posture(reset=True)
         except Exception as e:
             # self.is_disconnected.emit(True)
-            self.logger.error("Error: {}".format(e))
+            self.logger.error("Error while running: {}".format(e))

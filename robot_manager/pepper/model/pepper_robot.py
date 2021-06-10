@@ -13,6 +13,7 @@
 import functools
 import logging
 import time
+from PyQt5.QtCore import pyqtSignal, QThread
 
 import es_common.hre_config as pconfig  # TODO: replace!
 from es_common.enums.led_enums import LedColor
@@ -28,22 +29,25 @@ from robot_manager.pepper.handler.screen_handler import ScreenHandler
 from robot_manager.pepper.handler.sensor_handler import SensorHandler
 from robot_manager.pepper.handler.speech_handler import SpeechHandler
 from robot_manager.pepper.model.person import Person
+from thread_manager.db_threads import DBChangeStreamThread
 
 
-class PepperRobot(object):
+class PepperRobot(QThread):
+    update_people_signal = pyqtSignal(bool)
 
     def __init__(self, name=RobotName.PEPPER):
+        super(PepperRobot, self).__init__()
         self.logger = logging.getLogger("SoftBank Robot")
 
         self.name = name
         self.touch = None
-        self.people_in_zones, self.people_in_zones_id = (None,) * 2
         self.is_interacting = False
         self.is_in_engagement_mode = False
         self.pid = 0  # person id
         self.last_input = None
         self.person_approached, self.person_approached_event = (None,) * 2
         self.is_engaged_signal, self.block_completed_signal, self.user_answer_signal = (None,) * 3
+
         self.animation_handler, self.sensor_handler, self.engagement_handler = (None,) * 3
         self.speech_handler, self.screen_handler = (None,) * 2
         self.time_of_last_picture = 0
@@ -51,29 +55,34 @@ class PepperRobot(object):
 
         self.sound_detected = None
         self.session = None
+        self.db_thread = DBChangeStreamThread()
 
     def connect(self, robot_ip, port):
         message, error, is_awake = [None, None, False]
         self.session = ConnectionHandler.create_qi_session(robot_ip, port)
+
         if self.session is None:
-            return message, "Unable to connect to Naoqi:\n- IP: {} | Port: {}".format(robot_ip, port), is_awake
+            return message, "\n*** Unable to connect to Naoqi:\n- IP: {} | Port: {}\n\n".format(robot_ip, port), is_awake
 
         try:
-            self._init_handlers(robot_ip, port)
+            self._init_handlers()
+
             message = "Successfully connected to Pepper:\n- IP: {} | Port: {}".format(robot_ip, port)
             is_awake = self.is_awake()
         except RuntimeError as e:
-            error = "Unable to connect to Naoqi:\n- IP: {} | Port: {}\n{}".format(robot_ip, port, e)
+            error = "\n\n*** Unable to connect to Naoqi:\n- IP: {} | Port: {}\n{}".format(robot_ip, port, e)
         finally:
             return message, error, is_awake
 
-    def _init_handlers(self, robot_ip, port):
-        self.animation_handler = AnimationHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.speech_handler = SpeechHandler(session=self.session, robot_ip=robot_ip, port=port)
+    def _init_handlers(self):
+        self.animation_handler = AnimationHandler(session=self.session)
+        self.speech_handler = SpeechHandler(session=self.session)
         if self.name is None or self.name is RobotName.PEPPER:
-            self.screen_handler = ScreenHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.sensor_handler = SensorHandler(session=self.session, robot_ip=robot_ip, port=port)
-        self.engagement_handler = EngagementHandler(session=self.session, robot_ip=robot_ip, port=port)
+            self.screen_handler = ScreenHandler(session=self.session)
+        self.sensor_handler = SensorHandler(session=self.session)
+        self.engagement_handler = EngagementHandler(session=self.session)
+
+        self.logger.debug("\n\n\nInitiated the robot handlers.\n\n\n")
 
     """
     TOUCH EVENTS
@@ -106,8 +115,11 @@ class PepperRobot(object):
     def subscribe_to_dialog_events(self, block_completed_signal, user_answer_signal):
         self.block_completed_signal = block_completed_signal
         self.user_answer_signal = user_answer_signal
-        self.speech_handler.block_completed.signal.connect(self.raise_block_completed_event)
-        self.speech_handler.answer_listener.signal.connect(self.raise_user_answer_event)
+
+        # Add the signals to DBThread and start listening
+        self.db_thread.signals_dict['blockCompleted'] = self.block_completed_signal
+        self.db_thread.signals_dict['userAnswer'] = self.user_answer_signal
+        self.db_thread.start_listening()
 
     def raise_block_completed_event(self, val):
         if self.block_completed_signal is not None:
@@ -145,54 +157,37 @@ class PepperRobot(object):
     """
 
     def engagement(self, is_engaged_signal, start=True):
-        if start:
-            self.is_engaged_signal = is_engaged_signal
-            self.subscribe_to_engagement_events(subscribe=True)
-            self.is_in_engagement_mode = True
-            self.logger.info("Engagement is set.")
-            # self.move_and_animate(message = "Hello, how are you?")
-        else:
-            self.is_in_engagement_mode = False
-            self.subscribe_to_engagement_events(subscribe=False)
-            self.engagement_handler.set_engagement(mode=EngagementMode.UNENGAGED)
-            self.posture(reset=True)
-            # self.stop_dialog()
+        try:
+            if start:
+                self.is_engaged_signal = is_engaged_signal
+                self.subscribe_to_engagement_events(subscribe=True)
+                self.is_in_engagement_mode = True
+                self.logger.info("Engagement is set.")
+                # self.move_and_animate(message = "Hello, how are you?")
+            else:
+                self.is_in_engagement_mode = False
+                self.subscribe_to_engagement_events(subscribe=False)
+                self.engagement_handler.set_engagement(mode=EngagementMode.UNENGAGED)
+                self.posture(reset=True)
+                # self.stop_dialog()
+        except Exception as e:
+            self.logger.error("Error while setting engagement: {}".format(e))
 
     def subscribe_to_engagement_events(self, subscribe=True):
         if subscribe is True:
-            if self.people_in_zones is None:
-                self.people_in_zones = self.engagement_handler.memory.subscriber("EngagementZones/PeopleInZonesUpdated")
-            self.people_in_zones_id = self.people_in_zones.signal.connect(
-                functools.partial(self.update_people, "EngagementZones/PeopleInZonesUpdated"))  # (self.update_people)
             self.engagement_handler.subscribe()
+
+            self.update_people_signal.connect(self.update_people)
+            self.db_thread.signals_dict['updatePeople'] = self.update_people_signal
+            self.db_thread.start_listening()
             self.logger.info("Successfully subscribed to engagement zones.")
         else:
             self.engagement_handler.unsubscribe()
-            self.people_in_zones.signal.disconnect(self.people_in_zones_id)
-            # self.people_in_zones = None
 
-    def subscribe_to_approach_events(self, subscribe=True):
-        # TODO: test to see if this works!
-        if subscribe is True:
-            self.engagement_handler.people_perception.subscribe(pconfig.speech_recognition_user)
-            self.engagement_handler.movement_detection.subscribe(pconfig.speech_recognition_user)
-            self.person_approached_event = self.engagement_handler.memory.subscriber("EngagementZones/PersonApproached")
-            self.person_approached_event.signal.connect(
-                functools.partial(self.update_person_approached, "EngagementZones/PersonApproached"))
-            self.logger.info("***Subscribed to approach events.")
-        else:
-            self.engagement_handler.people_perception.unsubscribe(pconfig.speech_recognition_user)
-            self.engagement_handler.movement_detection.unsubscribe(pconfig.speech_recognition_user)
-            self.logger.info("***Unsubscribed from approach events.")
-
-    def update_person_approached(self, event_name, value):
-        self.person_approached = Person(pid=value)
-        self.logger.info("This person approached Pepper: {}".format(self.person_approached.to_string))
-
-    def update_people(self, event_name, value):
+    def update_people(self, event_name=None, value=None):
         if self.is_in_engagement_mode is True:  # otherwise, do nothing!
             self.people_in_zone_1 = self.engagement_handler.get_people(zone=EngagementZone.ZONE1)
-
+            print("\n\nPeople in zone_1: {}\n\n".format(self.people_in_zone_1))
             if len(self.people_in_zone_1) > 0:
                 self.logger.info("*** People in zone 1: {}".format(self.people_in_zone_1))
 

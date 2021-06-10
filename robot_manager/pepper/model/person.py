@@ -19,7 +19,7 @@ from robot_manager.pepper.enums.motion_enums import MovingStatus
 
 class Person(object):
     def __init__(self, pid=None, is_new=True):
-        self.logger = logging.getLogger(pconfig.logger_name)
+        self.logger = logging.getLogger("Person")
         self.is_new = is_new
         self.distance = 0
         self.moving_status = MovingStatus.UNKNOWN
